@@ -5,6 +5,11 @@
 #include "winScreen.h"
 #include "loseScreen.h"
 
+#include "bg00.h"
+#include "bg01.h"
+#include "spriteSheet.h"
+#include "game.h"
+
 //Function prototypes
 void initialize();
 void goToStart();
@@ -59,17 +64,17 @@ int main() {
 }
 
 void initialize() {
+    REG_DISPCTL = MODE0 | BG0_ENABLE | BG1_ENABLE | SPRITE_ENABLE;
+
     //initialize background and mode
-    REG_BG0CNT = BG_CHARBLOCK(0) | BG_SCREENBLOCK(28);
+    REG_BG0CNT = BG_CHARBLOCK(0) | BG_SCREENBLOCK(28) | BG_4BPP | BG_SIZE_WIDE;
+    REG_BG1CNT = BG_CHARBLOCK(1) | BG_SCREENBLOCK(30) | BG_4BPP | BG_SIZE_WIDE;
 
     //initialize spritesheet
-    // DMANow(3, snakeSpritesPal, SPRITEPALETTE, 256);
-    // DMANow(3, snakeSpritesTiles, &CHARBLOCK[4], snakeSpritesTilesLen/2);
+    DMANow(3, spriteSheetPal, SPRITEPALETTE, 256);
+    DMANow(3, spriteSheetTiles, &CHARBLOCK[4], spriteSheetTilesLen/2);
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
-
-
-    REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
 
     //sets state to start
     goToStart();
@@ -89,21 +94,38 @@ void start() {
     seed++;
     if (BUTTON_PRESSED(BUTTON_START)) {
         goToGame();
-        // initGame();
+        initGame();
         srand(seed);
     }
 }
 
 void goToGame() {
-    DMANow(3, gameScreen2Pal, PALETTE, 256);
-    DMANow(3, gameScreen2Tiles, &CHARBLOCK[0], gameScreen2TilesLen/2);
-    DMANow(3, gameScreen2Map, &SCREENBLOCK[28], gameScreen2MapLen/2);
+    // DMANow(3, gameScreen2Pal, PALETTE, 256);
+    // DMANow(3, gameScreen2Tiles, &CHARBLOCK[0], gameScreen2TilesLen/2);
+    // DMANow(3, gameScreen2Map, &SCREENBLOCK[28], gameScreen2MapLen/2);
+
+    //initialized bg palette
+    DMANow(3, bg01Pal, PALETTE, bg01PalLen/2);
+
+    DMANow(3, bg00Tiles, &CHARBLOCK[1], bg00TilesLen/2);
+    DMANow(3, bg00Map, &SCREENBLOCK[30], bg00MapLen/2);
+
+    DMANow(3, bg01Tiles, &CHARBLOCK[0], bg01TilesLen/2);
+    DMANow(3, bg01Map, &SCREENBLOCK[28], bg01MapLen/2);
+
+    REG_BG0VOFF = 96;
+    REG_BG1VOFF = 96;
+    
+    
     state = GAME;
 }
 
 void game() {
     // updateGame();
-    // drawGame();
+    drawGame();
+    // REG_BG0HOFF = hOff;
+    // REG_BG1HOFF = hOff/2;
+
     waitForVBlank();
     DMANow(3, shadowOAM, OAM, 512);
 
@@ -116,6 +138,12 @@ void game() {
     if(BUTTON_PRESSED(BUTTON_B)) {
         goToLose();
     }
+    // if(BUTTON_HELD(BUTTON_LEFT)) {
+    //     hOff--;
+    // }
+    // if(BUTTON_HELD(BUTTON_RIGHT)) {
+    //     hOff++;
+    // }
     // if(loseCol) { 
     //     goToLose();
     // }

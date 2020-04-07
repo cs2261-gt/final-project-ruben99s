@@ -77,29 +77,48 @@ initialize:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, r5, r6, lr}
-	mov	r2, #7168
-	mov	r4, #67108864
-	ldr	r3, .L8
-	strh	r2, [r4, #8]	@ movhi
+	mov	r3, #67108864
+	mov	r0, #23552
+	mov	r1, #4864
+	ldr	r2, .L8
+	push	{r4, lr}
+	strh	r0, [r3, #8]	@ movhi
+	ldr	r4, .L8+4
+	strh	r1, [r3]	@ movhi
+	strh	r2, [r3, #10]	@ movhi
+	mov	r0, #3
+	mov	r3, #256
+	ldr	r2, .L8+8
+	ldr	r1, .L8+12
+	mov	lr, pc
+	bx	r4
+	mov	r0, #3
+	ldr	r2, .L8+16
+	ldr	r1, .L8+20
+	mov	r3, #32768
+	mov	lr, pc
+	bx	r4
+	ldr	r3, .L8+24
 	mov	lr, pc
 	bx	r3
-	ldr	r5, .L8+4
 	mov	r3, #512
 	mov	r2, #117440512
 	mov	r0, #3
-	ldr	r1, .L8+8
+	ldr	r1, .L8+28
 	mov	lr, pc
-	bx	r5
-	mov	r3, #4352
-	strh	r3, [r4]	@ movhi
-	pop	{r4, r5, r6, lr}
+	bx	r4
+	pop	{r4, lr}
 	b	goToStart
 .L9:
 	.align	2
 .L8:
-	.word	hideSprites
+	.word	24068
 	.word	DMANow
+	.word	83886592
+	.word	spriteSheetPal
+	.word	100728832
+	.word	spriteSheetTiles
+	.word	hideSprites
 	.word	shadowOAM
 	.size	initialize, .-initialize
 	.align	2
@@ -141,31 +160,53 @@ goToGame:
 	ldr	r1, .L16+4
 	mov	lr, pc
 	bx	r4
-	mov	r3, #32
-	mov	r2, #100663296
 	mov	r0, #3
-	ldr	r1, .L16+8
-	mov	lr, pc
-	bx	r4
-	mov	r3, #1024
+	ldr	r3, .L16+8
 	ldr	r2, .L16+12
-	mov	r0, #3
 	ldr	r1, .L16+16
 	mov	lr, pc
 	bx	r4
-	mov	r2, #1
-	ldr	r3, .L16+20
+	mov	r3, #2048
+	mov	r0, #3
+	ldr	r2, .L16+20
+	ldr	r1, .L16+24
+	mov	lr, pc
+	bx	r4
+	mov	r2, #100663296
+	mov	r0, #3
+	ldr	r3, .L16+28
+	ldr	r1, .L16+32
+	mov	lr, pc
+	bx	r4
+	mov	r3, #2048
+	mov	r0, #3
+	ldr	r2, .L16+36
+	ldr	r1, .L16+40
+	mov	lr, pc
+	bx	r4
+	mov	r3, #67108864
+	mov	r2, #96
+	mov	r0, #1
+	ldr	r1, .L16+44
+	strh	r2, [r3, #18]	@ movhi
 	pop	{r4, lr}
-	str	r2, [r3]
+	strh	r2, [r3, #22]	@ movhi
+	str	r0, [r1]
 	bx	lr
 .L17:
 	.align	2
 .L16:
 	.word	DMANow
-	.word	gameScreen2Pal
-	.word	gameScreen2Tiles
+	.word	bg01Pal
+	.word	6944
+	.word	100679680
+	.word	bg00Tiles
+	.word	100724736
+	.word	bg00Map
+	.word	7520
+	.word	bg01Tiles
 	.word	100720640
-	.word	gameScreen2Map
+	.word	bg01Map
 	.word	state
 	.size	goToGame, .-goToGame
 	.align	2
@@ -196,8 +237,11 @@ start:
 	bx	lr
 .L24:
 	bl	goToGame
-	ldr	r0, [r4]
 	ldr	r3, .L25+12
+	mov	lr, pc
+	bx	r3
+	ldr	r0, [r4]
+	ldr	r3, .L25+16
 	mov	lr, pc
 	bx	r3
 	pop	{r4, lr}
@@ -208,6 +252,7 @@ start:
 	.word	oldButtons
 	.word	seed
 	.word	buttons
+	.word	initGame
 	.word	srand
 	.size	start, .-start
 	.align	2
@@ -453,34 +498,37 @@ game:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, lr}
 	ldr	r3, .L74
-	ldr	r4, .L74+4
 	mov	lr, pc
 	bx	r3
-	ldr	r5, .L74+8
+	ldr	r4, .L74+4
+	ldr	r3, .L74+8
+	mov	lr, pc
+	bx	r3
+	ldr	r5, .L74+12
 	mov	r3, #512
 	mov	r2, #117440512
 	mov	r0, #3
-	ldr	r1, .L74+12
+	ldr	r1, .L74+16
 	mov	lr, pc
 	bx	r5
 	ldrh	r3, [r4]
 	tst	r3, #8
 	beq	.L58
-	ldr	r2, .L74+16
+	ldr	r2, .L74+20
 	ldrh	r2, [r2]
 	tst	r2, #8
 	beq	.L71
 .L58:
 	tst	r3, #1
 	beq	.L59
-	ldr	r2, .L74+16
+	ldr	r2, .L74+20
 	ldrh	r2, [r2]
 	tst	r2, #1
 	beq	.L72
 .L59:
 	tst	r3, #2
 	beq	.L57
-	ldr	r3, .L74+16
+	ldr	r3, .L74+20
 	ldrh	r3, [r3]
 	tst	r3, #2
 	beq	.L73
@@ -501,8 +549,9 @@ game:
 .L75:
 	.align	2
 .L74:
-	.word	waitForVBlank
+	.word	drawGame
 	.word	oldButtons
+	.word	waitForVBlank
 	.word	DMANow
 	.word	shadowOAM
 	.word	buttons
