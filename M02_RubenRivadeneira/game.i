@@ -132,6 +132,43 @@ typedef struct {
     int numFrames;
 } PLAYER;
 
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+    int type;
+
+    int aniCounter;
+    int aniState;
+    int prevAniState;
+    int curFrame;
+    int numFrames;
+} BALLOONS;
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+
+    int aniCounter;
+    int aniState;
+    int prevAniState;
+    int curFrame;
+    int numFrames;
+} BUZZ;
+
 
 extern int hOff;
 extern int vOff;
@@ -170,19 +207,31 @@ PLAYER player;
 void initGame() {
     vOff = 96;
     hOff = 0;
+    direction = RIGHT;
+    (*(volatile unsigned short *)0x04000012) = vOff;
+    (*(volatile unsigned short *)0x04000016) = vOff;
     initPlayer();
 }
 
 void drawGame() {
     drawPlayer();
+    waitForVBlank();
+    DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
+
+    (*(volatile unsigned short *)0x04000010) = hOff;
+    (*(volatile unsigned short *)0x04000014) = hOff/2;
+}
+
+void updateGame() {
+    updatePlayer();
 }
 
 
 void initPlayer() {
     player.height = 32;
     player.width = 32;
-    player.colDelta = 1;
-    player.rowDelta = 1;
+    player.colDelta = 2;
+    player.rowDelta = 2;
     player.worldCol = 10;
     player.worldRow = 256 - player.height - 13;
 
@@ -191,7 +240,7 @@ void initPlayer() {
 
     player.aniCounter = 0;
     player.curFrame = 0;
-    player.numFrames = 5;
+    player.numFrames = 4;
     player.aniState = PLAYERRIGHT;
 }
 
@@ -205,9 +254,11 @@ void animatePlayer() {
 
     if((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
         player.aniState = PLAYERLEFT;
+        direction = LEFT;
     }
     if((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
         player.aniState = PLAYERRIGHT;
+        direction = RIGHT;
     }
     if((~((*(volatile unsigned short *)0x04000130)) & ((1<<6)))) {
         player.aniState = PLAYERUP;
@@ -228,5 +279,42 @@ void animatePlayer() {
 void drawPlayer() {
     shadowOAM[0].attr0 = (0xFF & player.screenRow) | (0<<14);
     shadowOAM[0].attr1 = (0x1FF & player.screenCol) | (2<<14);
-    shadowOAM[0].attr2 = ((0)*32+(0)) | ((0)<<12);
+    if (player.aniState == PLAYERDOWN) {
+        if (direction == RIGHT) {
+            shadowOAM[0].attr2 = ((5 * 4)*32+(0)) | ((0)<<12);
+        }
+        if (direction == LEFT) {
+            shadowOAM[0].attr2 = ((5 * 4)*32+(1 * 4)) | ((0)<<12);
+        }
+    } else {
+        shadowOAM[0].attr2 = ((player.curFrame * 4)*32+(player.aniState * 4)) | ((0)<<12);
+    }
+
+}
+
+void updatePlayer() {
+    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
+        if (player.worldCol + player.width - 1 < 512) {
+            player.worldCol += player.colDelta;
+
+            if (hOff + 1 < 512 - 240 && player.screenCol > 240/2) {
+                hOff += player.colDelta;
+            }
+        }
+    }
+
+    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
+        if (player.worldCol >= 0) {
+            player.worldCol -= player.colDelta;
+
+            if (hOff - 1 >= 0 && player.screenCol < 240/2) {
+                hOff -= player.colDelta;
+            }
+        }
+    }
+
+    player.screenCol = player.worldCol - hOff;
+    player.screenRow = player.worldRow - vOff;
+
+    animatePlayer();
 }

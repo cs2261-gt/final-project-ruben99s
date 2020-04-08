@@ -181,13 +181,7 @@ extern const unsigned short bg01Map[2048];
 
 extern const unsigned short bg01Pal[256];
 # 10 "main.c" 2
-# 1 "spriteSheet.h" 1
-# 21 "spriteSheet.h"
-extern const unsigned short spriteSheetTiles[32768];
 
-
-extern const unsigned short spriteSheetPal[256];
-# 11 "main.c" 2
 # 1 "game.h" 1
 
 
@@ -210,6 +204,43 @@ typedef struct {
     int numFrames;
 } PLAYER;
 
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+    int type;
+
+    int aniCounter;
+    int aniState;
+    int prevAniState;
+    int curFrame;
+    int numFrames;
+} BALLOONS;
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+
+    int aniCounter;
+    int aniState;
+    int prevAniState;
+    int curFrame;
+    int numFrames;
+} BUZZ;
+
 
 extern int hOff;
 extern int vOff;
@@ -230,6 +261,20 @@ void updatePlayer();
 void animatePlayer();
 void drawPlayer();
 # 12 "main.c" 2
+# 1 "spriteSheetTest.h" 1
+# 21 "spriteSheetTest.h"
+extern const unsigned short spriteSheetTestTiles[16384];
+
+
+extern const unsigned short spriteSheetTestPal[256];
+# 13 "main.c" 2
+# 1 "finalSpriteSheet.h" 1
+# 21 "finalSpriteSheet.h"
+extern const unsigned short finalSpriteSheetTiles[16384];
+
+
+extern const unsigned short finalSpriteSheetPal[256];
+# 14 "main.c" 2
 
 
 void initialize();
@@ -253,7 +298,7 @@ unsigned short buttons;
 unsigned short oldButtons;
 
 
-int seed;
+
 
 int main() {
     initialize();
@@ -285,15 +330,16 @@ int main() {
 }
 
 void initialize() {
-    (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<9) | (1<<12);
-
 
     (*(volatile unsigned short*)0x4000008) = ((0)<<2) | ((28)<<8) | (0<<7) | (1<<14);
     (*(volatile unsigned short*)0x400000A) = ((1)<<2) | ((30)<<8) | (0<<7) | (1<<14);
 
 
-    DMANow(3, spriteSheetPal, ((unsigned short *)0x5000200), 256);
-    DMANow(3, spriteSheetTiles, &((charblock *)0x6000000)[4], 65536/2);
+    DMANow(3, finalSpriteSheetPal, ((unsigned short *)0x5000200), 256);
+    DMANow(3, finalSpriteSheetTiles, &((charblock *)0x6000000)[4], 32768/2);
+
+
+
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
 
@@ -302,6 +348,10 @@ void initialize() {
 }
 
 void goToStart() {
+    (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
+    (*(volatile unsigned short *)0x04000010) = 0;
+    (*(volatile unsigned short *)0x04000014) = 0;
+
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
 
@@ -312,43 +362,27 @@ void goToStart() {
 }
 
 void start() {
-    seed++;
+
     if ((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
-        goToGame();
         initGame();
-        srand(seed);
+        goToGame();
+
     }
 }
 
 void goToGame() {
+    (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<9) | (1<<12);
 
-
-
-
-
-    DMANow(3, bg01Pal, ((unsigned short *)0x5000000), 512/2);
-
-    DMANow(3, bg00Tiles, &((charblock *)0x6000000)[1], 13888/2);
-    DMANow(3, bg00Map, &((screenblock *)0x6000000)[30], 4096/2);
-
-    DMANow(3, bg01Tiles, &((charblock *)0x6000000)[0], 15040/2);
-    DMANow(3, bg01Map, &((screenblock *)0x6000000)[28], 4096/2);
-
-    (*(volatile unsigned short *)0x04000012) = 96;
-    (*(volatile unsigned short *)0x04000016) = 96;
-
-
+    DMANow(3, gameScreen2Pal, ((unsigned short *)0x5000000), 256);
+    DMANow(3, gameScreen2Tiles, &((charblock *)0x6000000)[0], 64/2);
+    DMANow(3, gameScreen2Map, &((screenblock *)0x6000000)[28], 2048/2);
+# 125 "main.c"
     state = GAME;
 }
 
 void game() {
-
+    updateGame();
     drawGame();
-
-
-
-    waitForVBlank();
-    DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
 
     if((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
         goToPause();
@@ -359,10 +393,13 @@ void game() {
     if((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
         goToLose();
     }
-# 153 "main.c"
+
 }
 
 void goToPause() {
+    (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
+    (*(volatile unsigned short *)0x04000010) = 0;
+    (*(volatile unsigned short *)0x04000014) = 0;
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
     DMANow(3, pauseScreenPal, ((unsigned short *)0x5000000), 256);
@@ -381,6 +418,9 @@ void pause() {
 }
 
 void goToWin() {
+    (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
+    (*(volatile unsigned short *)0x04000010) = 0;
+    (*(volatile unsigned short *)0x04000014) = 0;
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
     DMANow(3, winScreenPal, ((unsigned short *)0x5000000), 256);
@@ -396,6 +436,9 @@ void win() {
 }
 
 void goToLose() {
+    (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
+    (*(volatile unsigned short *)0x04000010) = 0;
+    (*(volatile unsigned short *)0x04000014) = 0;
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
     DMANow(3, loseScreenPal, ((unsigned short *)0x5000000), 256);

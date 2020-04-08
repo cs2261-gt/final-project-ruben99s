@@ -21,10 +21,16 @@ goToStart:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, lr}
-	ldr	r3, .L4
+	push	{r4, r5, r6, lr}
+	mov	r3, #67108864
+	mov	r5, #0
+	mov	r2, #4352
+	strh	r5, [r3, #16]	@ movhi
+	strh	r2, [r3]	@ movhi
+	strh	r5, [r3, #20]	@ movhi
+	ldr	r2, .L4
 	mov	lr, pc
-	bx	r3
+	bx	r2
 	ldr	r4, .L4+4
 	mov	r3, #512
 	mov	r2, #117440512
@@ -45,15 +51,14 @@ goToStart:
 	mov	lr, pc
 	bx	r4
 	mov	r3, #1024
-	ldr	r2, .L4+20
 	mov	r0, #3
+	ldr	r2, .L4+20
 	ldr	r1, .L4+24
 	mov	lr, pc
 	bx	r4
-	mov	r2, #0
 	ldr	r3, .L4+28
-	pop	{r4, lr}
-	str	r2, [r3]
+	str	r5, [r3]
+	pop	{r4, r5, r6, lr}
 	bx	lr
 .L5:
 	.align	2
@@ -77,16 +82,14 @@ initialize:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	mov	r3, #67108864
-	mov	r0, #23552
-	mov	r1, #4864
-	ldr	r2, .L8
+	mov	r2, #67108864
+	mov	r3, #23552
+	ldr	r1, .L8
 	push	{r4, lr}
-	strh	r0, [r3, #8]	@ movhi
-	ldr	r4, .L8+4
-	strh	r1, [r3]	@ movhi
-	strh	r2, [r3, #10]	@ movhi
 	mov	r0, #3
+	strh	r3, [r2, #8]	@ movhi
+	ldr	r4, .L8+4
+	strh	r1, [r2, #10]	@ movhi
 	mov	r3, #256
 	ldr	r2, .L8+8
 	ldr	r1, .L8+12
@@ -95,7 +98,7 @@ initialize:
 	mov	r0, #3
 	ldr	r2, .L8+16
 	ldr	r1, .L8+20
-	mov	r3, #32768
+	mov	r3, #16384
 	mov	lr, pc
 	bx	r4
 	ldr	r3, .L8+24
@@ -115,9 +118,9 @@ initialize:
 	.word	24068
 	.word	DMANow
 	.word	83886592
-	.word	spriteSheetPal
+	.word	finalSpriteSheetPal
 	.word	100728832
-	.word	spriteSheetTiles
+	.word	finalSpriteSheetTiles
 	.word	hideSprites
 	.word	shadowOAM
 	.size	initialize, .-initialize
@@ -152,63 +155,69 @@ goToGame:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
+	mov	r2, #67108864
+	mov	r1, #4864
 	push	{r4, lr}
 	mov	r3, #256
 	ldr	r4, .L16
-	mov	r2, #83886080
+	strh	r1, [r2]	@ movhi
 	mov	r0, #3
+	mov	r2, #83886080
 	ldr	r1, .L16+4
 	mov	lr, pc
 	bx	r4
+	mov	r3, #32
+	mov	r2, #100663296
 	mov	r0, #3
-	ldr	r3, .L16+8
+	ldr	r1, .L16+8
+	mov	lr, pc
+	bx	r4
+	mov	r3, #1024
 	ldr	r2, .L16+12
+	mov	r0, #3
 	ldr	r1, .L16+16
 	mov	lr, pc
 	bx	r4
-	mov	r3, #2048
-	mov	r0, #3
-	ldr	r2, .L16+20
-	ldr	r1, .L16+24
-	mov	lr, pc
-	bx	r4
-	mov	r2, #100663296
-	mov	r0, #3
-	ldr	r3, .L16+28
-	ldr	r1, .L16+32
-	mov	lr, pc
-	bx	r4
-	mov	r3, #2048
-	mov	r0, #3
-	ldr	r2, .L16+36
-	ldr	r1, .L16+40
-	mov	lr, pc
-	bx	r4
-	mov	r3, #67108864
-	mov	r2, #96
-	mov	r0, #1
-	ldr	r1, .L16+44
-	strh	r2, [r3, #18]	@ movhi
+	mov	r2, #1
+	ldr	r3, .L16+20
 	pop	{r4, lr}
-	strh	r2, [r3, #22]	@ movhi
-	str	r0, [r1]
+	str	r2, [r3]
 	bx	lr
 .L17:
 	.align	2
 .L16:
 	.word	DMANow
-	.word	bg01Pal
-	.word	6944
-	.word	100679680
-	.word	bg00Tiles
-	.word	100724736
-	.word	bg00Map
-	.word	7520
-	.word	bg01Tiles
+	.word	gameScreen2Pal
+	.word	gameScreen2Tiles
 	.word	100720640
-	.word	bg01Map
+	.word	gameScreen2Map
 	.word	state
 	.size	goToGame, .-goToGame
+	.align	2
+	.syntax unified
+	.arm
+	.fpu softvfp
+	.type	start.part.0, %function
+start.part.0:
+	@ Function supports interworking.
+	@ args = 0, pretend = 0, frame = 0
+	@ frame_needed = 0, uses_anonymous_args = 0
+	ldr	r3, .L23
+	ldrh	r3, [r3]
+	tst	r3, #8
+	bxne	lr
+	push	{r4, lr}
+	ldr	r3, .L23+4
+	mov	lr, pc
+	bx	r3
+	pop	{r4, lr}
+	b	goToGame
+.L24:
+	.align	2
+.L23:
+	.word	buttons
+	.word	initGame
+	.size	start.part.0, .-start.part.0
 	.align	2
 	.global	start
 	.syntax unified
@@ -219,41 +228,16 @@ start:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, lr}
-	ldr	r2, .L25
-	ldr	r4, .L25+4
-	ldrh	r2, [r2]
-	ldr	r3, [r4]
-	tst	r2, #8
-	add	r3, r3, #1
-	str	r3, [r4]
-	beq	.L18
-	ldr	r3, .L25+8
+	@ link register save eliminated.
+	ldr	r3, .L27
 	ldrh	r3, [r3]
 	tst	r3, #8
-	beq	.L24
-.L18:
-	pop	{r4, lr}
-	bx	lr
-.L24:
-	bl	goToGame
-	ldr	r3, .L25+12
-	mov	lr, pc
-	bx	r3
-	ldr	r0, [r4]
-	ldr	r3, .L25+16
-	mov	lr, pc
-	bx	r3
-	pop	{r4, lr}
-	bx	lr
-.L26:
+	bxeq	lr
+	b	start.part.0
+.L28:
 	.align	2
-.L25:
+.L27:
 	.word	oldButtons
-	.word	seed
-	.word	buttons
-	.word	initGame
-	.word	srand
 	.size	start, .-start
 	.align	2
 	.global	goToPause
@@ -265,43 +249,49 @@ goToPause:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
+	mov	r3, #67108864
+	mov	r2, #0
+	mov	r1, #4352
 	push	{r4, lr}
-	ldr	r3, .L29
+	strh	r2, [r3, #16]	@ movhi
+	strh	r1, [r3]	@ movhi
+	strh	r2, [r3, #20]	@ movhi
+	ldr	r1, .L31
 	mov	lr, pc
-	bx	r3
-	ldr	r4, .L29+4
+	bx	r1
+	ldr	r4, .L31+4
 	mov	r3, #512
 	mov	r2, #117440512
 	mov	r0, #3
-	ldr	r1, .L29+8
+	ldr	r1, .L31+8
 	mov	lr, pc
 	bx	r4
 	mov	r3, #256
 	mov	r2, #83886080
 	mov	r0, #3
-	ldr	r1, .L29+12
+	ldr	r1, .L31+12
 	mov	lr, pc
 	bx	r4
 	mov	r3, #32
 	mov	r2, #100663296
 	mov	r0, #3
-	ldr	r1, .L29+16
+	ldr	r1, .L31+16
 	mov	lr, pc
 	bx	r4
 	mov	r3, #1024
-	ldr	r2, .L29+20
+	ldr	r2, .L31+20
 	mov	r0, #3
-	ldr	r1, .L29+24
+	ldr	r1, .L31+24
 	mov	lr, pc
 	bx	r4
 	mov	r2, #2
-	ldr	r3, .L29+28
+	ldr	r3, .L31+28
 	pop	{r4, lr}
 	str	r2, [r3]
 	bx	lr
-.L30:
+.L32:
 	.align	2
-.L29:
+.L31:
 	.word	hideSprites
 	.word	DMANow
 	.word	shadowOAM
@@ -322,34 +312,34 @@ pause:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, lr}
-	ldr	r4, .L43
+	ldr	r4, .L45
 	ldrh	r3, [r4]
 	tst	r3, #8
-	beq	.L32
-	ldr	r2, .L43+4
+	beq	.L34
+	ldr	r2, .L45+4
 	ldrh	r2, [r2]
 	tst	r2, #8
-	beq	.L41
-.L32:
+	beq	.L43
+.L34:
 	tst	r3, #4
-	beq	.L31
-	ldr	r3, .L43+4
+	beq	.L33
+	ldr	r3, .L45+4
 	ldrh	r3, [r3]
 	tst	r3, #4
-	beq	.L42
-.L31:
+	beq	.L44
+.L33:
 	pop	{r4, lr}
 	bx	lr
-.L42:
+.L44:
 	pop	{r4, lr}
 	b	goToStart
-.L41:
+.L43:
 	bl	goToGame
 	ldrh	r3, [r4]
-	b	.L32
-.L44:
+	b	.L34
+.L46:
 	.align	2
-.L43:
+.L45:
 	.word	oldButtons
 	.word	buttons
 	.size	pause, .-pause
@@ -363,43 +353,49 @@ goToWin:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
+	mov	r3, #67108864
+	mov	r2, #0
+	mov	r1, #4352
 	push	{r4, lr}
-	ldr	r3, .L47
+	strh	r2, [r3, #16]	@ movhi
+	strh	r1, [r3]	@ movhi
+	strh	r2, [r3, #20]	@ movhi
+	ldr	r1, .L49
 	mov	lr, pc
-	bx	r3
-	ldr	r4, .L47+4
+	bx	r1
+	ldr	r4, .L49+4
 	mov	r3, #512
 	mov	r2, #117440512
 	mov	r0, #3
-	ldr	r1, .L47+8
+	ldr	r1, .L49+8
 	mov	lr, pc
 	bx	r4
 	mov	r3, #256
 	mov	r2, #83886080
 	mov	r0, #3
-	ldr	r1, .L47+12
+	ldr	r1, .L49+12
 	mov	lr, pc
 	bx	r4
 	mov	r3, #32
 	mov	r2, #100663296
 	mov	r0, #3
-	ldr	r1, .L47+16
+	ldr	r1, .L49+16
 	mov	lr, pc
 	bx	r4
 	mov	r3, #1024
-	ldr	r2, .L47+20
+	ldr	r2, .L49+20
 	mov	r0, #3
-	ldr	r1, .L47+24
+	ldr	r1, .L49+24
 	mov	lr, pc
 	bx	r4
 	mov	r2, #3
-	ldr	r3, .L47+28
+	ldr	r3, .L49+28
 	pop	{r4, lr}
 	str	r2, [r3]
 	bx	lr
-.L48:
+.L50:
 	.align	2
-.L47:
+.L49:
 	.word	hideSprites
 	.word	DMANow
 	.word	shadowOAM
@@ -420,14 +416,14 @@ win:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	@ link register save eliminated.
-	ldr	r3, .L51
+	ldr	r3, .L53
 	ldrh	r3, [r3]
 	tst	r3, #8
 	bxeq	lr
 	b	win.part.0
-.L52:
+.L54:
 	.align	2
-.L51:
+.L53:
 	.word	oldButtons
 	.size	win, .-win
 	.align	2
@@ -440,43 +436,49 @@ goToLose:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
+	mov	r3, #67108864
+	mov	r2, #0
+	mov	r1, #4352
 	push	{r4, lr}
-	ldr	r3, .L55
+	strh	r2, [r3, #16]	@ movhi
+	strh	r1, [r3]	@ movhi
+	strh	r2, [r3, #20]	@ movhi
+	ldr	r1, .L57
 	mov	lr, pc
-	bx	r3
-	ldr	r4, .L55+4
+	bx	r1
+	ldr	r4, .L57+4
 	mov	r3, #512
 	mov	r2, #117440512
 	mov	r0, #3
-	ldr	r1, .L55+8
+	ldr	r1, .L57+8
 	mov	lr, pc
 	bx	r4
 	mov	r3, #256
 	mov	r2, #83886080
 	mov	r0, #3
-	ldr	r1, .L55+12
+	ldr	r1, .L57+12
 	mov	lr, pc
 	bx	r4
 	mov	r3, #32
 	mov	r2, #100663296
 	mov	r0, #3
-	ldr	r1, .L55+16
+	ldr	r1, .L57+16
 	mov	lr, pc
 	bx	r4
 	mov	r3, #1024
-	ldr	r2, .L55+20
+	ldr	r2, .L57+20
 	mov	r0, #3
-	ldr	r1, .L55+24
+	ldr	r1, .L57+24
 	mov	lr, pc
 	bx	r4
 	mov	r2, #4
-	ldr	r3, .L55+28
+	ldr	r3, .L57+28
 	pop	{r4, lr}
 	str	r2, [r3]
 	bx	lr
-.L56:
+.L58:
 	.align	2
-.L55:
+.L57:
 	.word	hideSprites
 	.word	DMANow
 	.word	shadowOAM
@@ -496,64 +498,55 @@ game:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, r5, r6, lr}
-	ldr	r3, .L74
+	push	{r4, lr}
+	ldr	r3, .L76
+	ldr	r4, .L76+4
 	mov	lr, pc
 	bx	r3
-	ldr	r4, .L74+4
-	ldr	r3, .L74+8
+	ldr	r3, .L76+8
 	mov	lr, pc
 	bx	r3
-	ldr	r5, .L74+12
-	mov	r3, #512
-	mov	r2, #117440512
-	mov	r0, #3
-	ldr	r1, .L74+16
-	mov	lr, pc
-	bx	r5
 	ldrh	r3, [r4]
 	tst	r3, #8
-	beq	.L58
-	ldr	r2, .L74+20
+	beq	.L60
+	ldr	r2, .L76+12
 	ldrh	r2, [r2]
 	tst	r2, #8
-	beq	.L71
-.L58:
+	beq	.L73
+.L60:
 	tst	r3, #1
-	beq	.L59
-	ldr	r2, .L74+20
+	beq	.L61
+	ldr	r2, .L76+12
 	ldrh	r2, [r2]
 	tst	r2, #1
-	beq	.L72
-.L59:
+	beq	.L74
+.L61:
 	tst	r3, #2
-	beq	.L57
-	ldr	r3, .L74+20
+	beq	.L59
+	ldr	r3, .L76+12
 	ldrh	r3, [r3]
 	tst	r3, #2
-	beq	.L73
-.L57:
-	pop	{r4, r5, r6, lr}
+	beq	.L75
+.L59:
+	pop	{r4, lr}
 	bx	lr
-.L73:
-	pop	{r4, r5, r6, lr}
+.L75:
+	pop	{r4, lr}
 	b	goToLose
-.L71:
+.L73:
 	bl	goToPause
 	ldrh	r3, [r4]
-	b	.L58
-.L72:
+	b	.L60
+.L74:
 	bl	goToWin
 	ldrh	r3, [r4]
-	b	.L59
-.L75:
+	b	.L61
+.L77:
 	.align	2
-.L74:
-	.word	drawGame
+.L76:
+	.word	updateGame
 	.word	oldButtons
-	.word	waitForVBlank
-	.word	DMANow
-	.word	shadowOAM
+	.word	drawGame
 	.word	buttons
 	.size	game, .-game
 	.section	.text.startup,"ax",%progbits
@@ -568,79 +561,81 @@ main:
 	@ Volatile: function does not return.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r6, .L90
-	ldr	r10, .L90+4
+	ldr	r6, .L93
+	ldr	r9, .L93+4
 	push	{r4, r7, fp, lr}
-	ldr	r3, .L90+8
+	ldr	r3, .L93+8
 	mov	lr, pc
 	bx	r3
-	ldr	r5, .L90+12
+	ldr	r5, .L93+12
 	ldr	r2, [r6]
-	ldrh	r0, [r10]
-	ldr	r9, .L90+16
-	ldr	r8, .L90+20
-	ldr	r7, .L90+24
-	ldr	fp, .L90+28
-	ldr	r4, .L90+32
-.L78:
+	ldrh	r0, [r9]
+	ldr	fp, .L93+16
+	ldr	r8, .L93+20
+	ldr	r7, .L93+24
+	ldr	r10, .L93+28
+	ldr	r4, .L93+32
+.L80:
 	strh	r0, [r5]	@ movhi
 	ldrh	r3, [r4, #48]
-	strh	r3, [r10]	@ movhi
+	strh	r3, [r9]	@ movhi
 	cmp	r2, #4
 	ldrls	pc, [pc, r2, asl #2]
-	b	.L86
-.L80:
+	b	.L88
+.L82:
+	.word	.L86
+	.word	.L85
 	.word	.L84
 	.word	.L83
-	.word	.L82
 	.word	.L81
-	.word	.L79
-.L79:
+.L81:
 	tst	r0, #8
-	beq	.L86
-	ldr	r3, .L90+36
+	beq	.L88
+	ldr	r3, .L93+36
 	mov	lr, pc
 	bx	r3
 	ldr	r2, [r6]
-	ldrh	r0, [r10]
-	b	.L78
-.L81:
+	ldrh	r0, [r9]
+	b	.L80
+.L83:
 	tst	r0, #8
-	beq	.L86
+	beq	.L88
 	mov	lr, pc
-	bx	fp
+	bx	r10
 	ldr	r2, [r6]
-	ldrh	r0, [r10]
-	b	.L78
-.L82:
+	ldrh	r0, [r9]
+	b	.L80
+.L84:
 	mov	lr, pc
 	bx	r7
 	ldr	r2, [r6]
-	ldrh	r0, [r10]
-	b	.L78
-.L83:
+	ldrh	r0, [r9]
+	b	.L80
+.L85:
 	mov	lr, pc
 	bx	r8
 	ldr	r2, [r6]
-	ldrh	r0, [r10]
-	b	.L78
-.L84:
-	mov	lr, pc
-	bx	r9
-	ldr	r2, [r6]
-	ldrh	r0, [r10]
-	b	.L78
+	ldrh	r0, [r9]
+	b	.L80
 .L86:
+	tst	r0, #8
+	beq	.L88
+	mov	lr, pc
+	bx	fp
+	ldr	r2, [r6]
+	ldrh	r0, [r9]
+	b	.L80
+.L88:
 	mov	r0, r3
-	b	.L78
-.L91:
+	b	.L80
+.L94:
 	.align	2
-.L90:
+.L93:
 	.word	state
 	.word	buttons
 	.word	initialize
 	.word	oldButtons
-	.word	start
+	.word	start.part.0
 	.word	game
 	.word	pause
 	.word	win.part.0
@@ -661,7 +656,6 @@ lose:
 	@ link register save eliminated.
 	b	win
 	.size	lose, .-lose
-	.comm	seed,4,4
 	.comm	oldButtons,2,2
 	.comm	buttons,2,2
 	.comm	state,4,4
