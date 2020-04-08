@@ -39,12 +39,8 @@ typedef struct {
 
     int active;
     int type;
-
-    int aniCounter;
-    int aniState;
-    int prevAniState;
-    int curFrame;
-    int numFrames;
+    int held;
+    int num;
 } BALLOON;
 
 typedef struct {

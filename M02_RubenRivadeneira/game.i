@@ -152,12 +152,8 @@ typedef struct {
 
     int active;
     int type;
-
-    int aniCounter;
-    int aniState;
-    int prevAniState;
-    int curFrame;
-    int numFrames;
+    int held;
+    int num;
 } BALLOON;
 
 typedef struct {
@@ -202,7 +198,7 @@ extern OBJ_ATTR shadowOAM[128];
 extern PLAYER player;
 extern BUZZ enemies[];
 extern BALLOON balloons[];
-# 101 "game.h"
+# 97 "game.h"
 void initGame();
 void updateGame();
 void drawGame();
@@ -254,18 +250,7 @@ void initGame() {
     (*(volatile unsigned short *)0x04000016) = vOff;
     initPlayer();
     initBuzz();
-}
-
-void drawGame() {
-    drawPlayer();
-    for (int i = 0; i < 1; i++) {
-        drawBuzz(&enemies[i]);
-    }
-    waitForVBlank();
-    DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
-
-    (*(volatile unsigned short *)0x04000010) = hOff;
-    (*(volatile unsigned short *)0x04000014) = hOff/2;
+    initBalloons();
 }
 
 void updateGame() {
@@ -273,6 +258,24 @@ void updateGame() {
     for (int i = 0; i < 1; i++) {
         updateBuzz(&enemies[i]);
     }
+    for (int i = 0; i < 5; i++) {
+        updateBalloons(&balloons[i]);
+    }
+}
+
+void drawGame() {
+    drawPlayer();
+    for (int i = 0; i < 1; i++) {
+        drawBuzz(&enemies[i]);
+    }
+    for (int i = 0; i < 5; i++) {
+        drawBalloons(&balloons[i]);
+    }
+    waitForVBlank();
+    DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
+
+    (*(volatile unsigned short *)0x04000010) = hOff;
+    (*(volatile unsigned short *)0x04000014) = hOff/2;
 }
 
 
@@ -478,5 +481,100 @@ void animateBuzz(BUZZ *enemy) {
     }
     if (enemy->direction == RIGHT) {
         enemy->aniState = 2;
+    }
+}
+
+
+void initBalloons() {
+    for (int i = 0; i < 5; i++) {
+        balloons[i].width = 12;
+        balloons[i].height = 16;
+        balloons[i].type = SINGLE;
+        balloons[i].worldCol = player.worldCol + 16;
+        balloons[i].worldRow = player.worldRow;
+        balloons[i].screenCol = balloons[i].worldCol - hOff;
+        balloons[i].screenRow = balloons[i].worldRow - vOff;
+        balloons[i].colDelta = player.colDelta;
+        balloons[i].rowDelta = player.rowDelta;
+        balloons[i].held = 0;
+        balloons[i].active = 0;
+        if (i == 0) {
+            balloons[i].active = 1;
+            balloons[i].held = 1;
+        }
+        balloons[i].num = i;
+    }
+}
+
+void updateBalloons(BALLOON *balloon) {
+    if (balloon->active) {
+        if (balloon->held) {
+            if (player.aniState == PLAYERRIGHT) {
+                switch(player.curFrame) {
+                    case 0:
+                        balloon->worldCol = player.worldCol + 16;
+                        balloon->worldRow = player.worldRow;
+                        break;
+                    case 1:
+                        balloon->worldCol = player.worldCol + 18;
+                        balloon->worldRow = player.worldRow;
+                        break;
+                    case 2:
+                        balloon->worldCol = player.worldCol + 18;
+                        balloon->worldRow = player.worldRow - 6;
+                        break;
+                    case 3:
+                        balloon->worldCol = player.worldCol + 16;
+                        balloon->worldRow = player.worldRow;
+                        break;
+                    case 4:
+                        balloon->worldCol = player.worldCol + 18;
+                        balloon->worldRow = player.worldRow - 6;
+                        break;
+                    case 5:
+                        balloon->worldCol = player.worldCol + 13;
+                        balloon->worldRow = player.worldRow + 16;
+                        break;
+                }
+            }
+            if (player.aniState == PLAYERLEFT) {
+                switch(player.curFrame) {
+                    case 0:
+                        balloon->worldCol = player.worldCol;
+                        balloon->worldRow = player.worldRow;
+                        break;
+                    case 1:
+                        balloon->worldCol = player.worldCol - 2;
+                        balloon->worldRow = player.worldRow;
+                        break;
+                    case 2:
+                        balloon->worldCol = player.worldCol - 2;
+                        balloon->worldRow = player.worldRow - 6;
+                        break;
+                    case 3:
+                        balloon->worldCol = player.worldCol;
+                        balloon->worldRow = player.worldRow;
+                        break;
+                    case 4:
+                        balloon->worldCol = player.worldCol - 2;
+                        balloon->worldRow = player.worldRow - 6;
+                        break;
+                    case 5:
+                        balloon->worldCol = player.worldCol + 3;
+                        balloon->worldRow = player.worldRow + 16;
+                        break;
+                }
+            }
+        }
+    }
+    balloon->screenCol = balloon->worldCol - hOff;
+    balloon->screenRow = balloon->worldRow - vOff;
+}
+
+void drawBalloons(BALLOON *balloon) {
+     if (balloon->active) {
+        shadowOAM[2 + balloon->num].attr0 = (0xFF & balloon->screenRow) | (0<<14);
+        shadowOAM[2 + balloon->num].attr1 = (0x1FF & balloon->screenCol) | (1<<14);
+        shadowOAM[2 + balloon->num].attr2 = ((24)*32+(0)) | ((1)<<12);
     }
 }
