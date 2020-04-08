@@ -124,6 +124,14 @@ typedef struct {
     int height;
     int width;
 
+    int prevWorldCol;
+
+    int upLimit;
+    int downLimit;
+
+    int jumping;
+    int crouching;
+
 
     int aniCounter;
     int aniState;
@@ -141,6 +149,7 @@ typedef struct {
     int rowDelta;
     int height;
     int width;
+
     int active;
     int type;
 
@@ -149,7 +158,7 @@ typedef struct {
     int prevAniState;
     int curFrame;
     int numFrames;
-} BALLOONS;
+} BALLOON;
 
 typedef struct {
     int screenCol;
@@ -162,6 +171,11 @@ typedef struct {
     int width;
     int active;
 
+    int rightLimit;
+    int leftLimit;
+    int direction;
+    int state;
+
     int aniCounter;
     int aniState;
     int prevAniState;
@@ -169,17 +183,26 @@ typedef struct {
     int numFrames;
 } BUZZ;
 
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+} BULLET;
+
 
 extern int hOff;
 extern int vOff;
 extern OBJ_ATTR shadowOAM[128];
 extern PLAYER player;
-
-
-
-
-
-
+extern BUZZ enemies[];
+extern BALLOON balloons[];
+# 101 "game.h"
 void initGame();
 void updateGame();
 void drawGame();
@@ -188,6 +211,17 @@ void initPlayer();
 void updatePlayer();
 void animatePlayer();
 void drawPlayer();
+void playerAttack();
+
+void initBuzz();
+void updateBuzz(BUZZ *enemy);
+void animateBuzz(BUZZ *enemy);
+void drawBuzz(BUZZ *enemy);
+void buzzAttack(BUZZ *enemy);
+
+void initBalloons();
+void updateBalloons();
+void drawBalloons();
 # 3 "game.c" 2
 
 
@@ -198,10 +232,18 @@ int direction;
 enum {PLAYERRIGHT, PLAYERLEFT, PLAYERUP, PLAYERDOWN, PLAYERIDLE};
 
 
+enum {BUZZCALM, BUZZANGRY};
+
+
+enum {SINGLE, AOF};
+
+
 int hOff;
 int vOff;
 OBJ_ATTR shadowOAM[128];
 PLAYER player;
+BUZZ enemies[1];
+BALLOON balloons[5];
 
 
 void initGame() {
@@ -211,10 +253,14 @@ void initGame() {
     (*(volatile unsigned short *)0x04000012) = vOff;
     (*(volatile unsigned short *)0x04000016) = vOff;
     initPlayer();
+    initBuzz();
 }
 
 void drawGame() {
     drawPlayer();
+    for (int i = 0; i < 1; i++) {
+        drawBuzz(&enemies[i]);
+    }
     waitForVBlank();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
 
@@ -224,19 +270,29 @@ void drawGame() {
 
 void updateGame() {
     updatePlayer();
+    for (int i = 0; i < 1; i++) {
+        updateBuzz(&enemies[i]);
+    }
 }
 
 
 void initPlayer() {
-    player.height = 32;
-    player.width = 32;
+    player.height = 30;
+    player.width = 20;
     player.colDelta = 2;
     player.rowDelta = 2;
     player.worldCol = 10;
-    player.worldRow = 256 - player.height - 13;
+    player.worldRow = 256 - player.height - 14;
+    player.prevWorldCol = player.worldCol;
+
+    player.upLimit = player.worldRow - 80;
+    player.downLimit = player.worldRow;
 
     player.screenCol = player.worldCol - hOff;
     player.screenRow = player.worldRow - vOff;
+
+    player.jumping = 0;
+    player.crouching = 0;
 
     player.aniCounter = 0;
     player.curFrame = 0;
@@ -261,11 +317,25 @@ void animatePlayer() {
         direction = RIGHT;
     }
     if((~((*(volatile unsigned short *)0x04000130)) & ((1<<6)))) {
-        player.aniState = PLAYERUP;
+        if (direction == RIGHT) {
+            player.aniState = PLAYERRIGHT;
+        }
+        if (direction == LEFT) {
+            player.aniState = PLAYERLEFT;
+        }
+        player.curFrame = 4;
     }
     if((~((*(volatile unsigned short *)0x04000130)) & ((1<<7)))) {
-        player.aniState = PLAYERDOWN;
+        if (direction == RIGHT) {
+            player.aniState = PLAYERRIGHT;
+        }
+        if (direction == LEFT) {
+            player.aniState = PLAYERLEFT;
+        }
+        player.curFrame = 5;
+
     }
+
 
     if (player.aniState == PLAYERIDLE) {
         player.curFrame = 0;
@@ -279,25 +349,17 @@ void animatePlayer() {
 void drawPlayer() {
     shadowOAM[0].attr0 = (0xFF & player.screenRow) | (0<<14);
     shadowOAM[0].attr1 = (0x1FF & player.screenCol) | (2<<14);
-    if (player.aniState == PLAYERDOWN) {
-        if (direction == RIGHT) {
-            shadowOAM[0].attr2 = ((5 * 4)*32+(0)) | ((0)<<12);
-        }
-        if (direction == LEFT) {
-            shadowOAM[0].attr2 = ((5 * 4)*32+(1 * 4)) | ((0)<<12);
-        }
-    } else {
-        shadowOAM[0].attr2 = ((player.curFrame * 4)*32+(player.aniState * 4)) | ((0)<<12);
-    }
-
+    shadowOAM[0].attr2 = ((player.curFrame * 4)*32+(player.aniState * 4)) | ((0)<<12);
 }
 
 void updatePlayer() {
+    player.prevWorldCol = player.worldCol;
+
     if((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
         if (player.worldCol + player.width - 1 < 512) {
             player.worldCol += player.colDelta;
 
-            if (hOff + 1 < 512 - 240 && player.screenCol > 240/2) {
+            if (hOff + 1 < 512 - 240 && player.screenCol > 240/4) {
                 hOff += player.colDelta;
             }
         }
@@ -307,9 +369,37 @@ void updatePlayer() {
         if (player.worldCol >= 0) {
             player.worldCol -= player.colDelta;
 
-            if (hOff - 1 >= 0 && player.screenCol < 240/2) {
+            if (hOff - 1 >= 0 && player.screenCol < 240/4) {
                 hOff -= player.colDelta;
             }
+        }
+    }
+
+    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<7)))) {
+        player.crouching = 1;
+        player.height = 22;
+        player.worldCol = player.prevWorldCol;
+    } else {
+        player.crouching = 0;
+        player.height = 30;
+    }
+
+    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<6)))) {
+         if (player.worldRow >= player.downLimit) {
+            player.jumping = 1;
+        }
+    } else {
+        player.jumping = 0;
+    }
+
+
+    if (!player.jumping && player.worldRow < player.downLimit) {
+        player.worldRow += player.rowDelta;
+    }
+    if (player.jumping) {
+        player.worldRow -= player.rowDelta;
+        if (player.worldRow <= player.upLimit) {
+            player.jumping = 0;
         }
     }
 
@@ -317,4 +407,76 @@ void updatePlayer() {
     player.screenRow = player.worldRow - vOff;
 
     animatePlayer();
+}
+
+
+void initBuzz() {
+    for (int i = 0; i < 1; i++) {
+        enemies[i].height = 20;
+        enemies[i].width = 23;
+        enemies[i].active = 0;
+        enemies[i].state = BUZZCALM;
+        enemies[i].direction = LEFT;
+        enemies[i].colDelta = 1;
+        enemies[i].rowDelta = 1;
+
+        enemies[i].worldRow = 256 - 33 - enemies[i].height;
+        enemies[i].worldCol = 240 + (10 * i);
+        enemies[i].screenRow = enemies[i].worldRow - vOff;
+
+
+        enemies[i].rightLimit = enemies[i].worldCol + enemies[i].width + 20;
+        enemies[i].leftLimit = enemies[i].worldCol - 20;
+
+        enemies[i].aniState = 3;
+    }
+}
+
+void drawBuzz(BUZZ *enemy) {
+    if (enemy->active) {
+        shadowOAM[1].attr0 = (0xFF & enemy->screenRow) | (0<<14);
+        shadowOAM[1].attr1 = (0x1FF & enemy->screenCol) | (2<<14);
+        shadowOAM[1].attr2 = ((0 * 4)*32+(enemy->aniState * 4)) | ((0)<<12);
+    }
+}
+
+void updateBuzz(BUZZ *enemy) {
+    int screenCol = enemy->worldCol - hOff;
+    if (screenCol >= 0 && screenCol < 240) {
+        enemy->screenCol = screenCol;
+        enemy->active = 1;
+    }
+
+    if (enemy->active) {
+        if (enemy->state == BUZZCALM) {
+            if (enemy->direction == LEFT) {
+                if (enemy->worldCol > enemy->leftLimit) {
+                    enemy->worldCol -= enemy->colDelta;
+                } else {
+                    enemy->direction = RIGHT;
+                }
+            }
+
+            if (enemy->direction == RIGHT) {
+                if (enemy->worldCol < enemy->rightLimit) {
+                    enemy->worldCol += enemy->colDelta;
+                } else {
+                    enemy->direction = LEFT;
+                }
+            }
+        }
+    }
+
+    enemy->screenCol = enemy->worldCol - hOff;
+    enemy->screenRow = enemy->worldRow - vOff;
+    animateBuzz(enemy);
+}
+
+void animateBuzz(BUZZ *enemy) {
+    if (enemy->direction == LEFT) {
+        enemy->aniState = 3;
+    }
+    if (enemy->direction == RIGHT) {
+        enemy->aniState = 2;
+    }
 }

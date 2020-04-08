@@ -196,6 +196,14 @@ typedef struct {
     int height;
     int width;
 
+    int prevWorldCol;
+
+    int upLimit;
+    int downLimit;
+
+    int jumping;
+    int crouching;
+
 
     int aniCounter;
     int aniState;
@@ -213,6 +221,7 @@ typedef struct {
     int rowDelta;
     int height;
     int width;
+
     int active;
     int type;
 
@@ -221,7 +230,7 @@ typedef struct {
     int prevAniState;
     int curFrame;
     int numFrames;
-} BALLOONS;
+} BALLOON;
 
 typedef struct {
     int screenCol;
@@ -234,6 +243,11 @@ typedef struct {
     int width;
     int active;
 
+    int rightLimit;
+    int leftLimit;
+    int direction;
+    int state;
+
     int aniCounter;
     int aniState;
     int prevAniState;
@@ -241,17 +255,26 @@ typedef struct {
     int numFrames;
 } BUZZ;
 
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+} BULLET;
+
 
 extern int hOff;
 extern int vOff;
 extern OBJ_ATTR shadowOAM[128];
 extern PLAYER player;
-
-
-
-
-
-
+extern BUZZ enemies[];
+extern BALLOON balloons[];
+# 101 "game.h"
 void initGame();
 void updateGame();
 void drawGame();
@@ -260,6 +283,17 @@ void initPlayer();
 void updatePlayer();
 void animatePlayer();
 void drawPlayer();
+void playerAttack();
+
+void initBuzz();
+void updateBuzz(BUZZ *enemy);
+void animateBuzz(BUZZ *enemy);
+void drawBuzz(BUZZ *enemy);
+void buzzAttack(BUZZ *enemy);
+
+void initBalloons();
+void updateBalloons();
+void drawBalloons();
 # 12 "main.c" 2
 # 1 "spriteSheetTest.h" 1
 # 21 "spriteSheetTest.h"
@@ -373,10 +407,19 @@ void start() {
 void goToGame() {
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<9) | (1<<12);
 
-    DMANow(3, gameScreen2Pal, ((unsigned short *)0x5000000), 256);
-    DMANow(3, gameScreen2Tiles, &((charblock *)0x6000000)[0], 64/2);
-    DMANow(3, gameScreen2Map, &((screenblock *)0x6000000)[28], 2048/2);
-# 125 "main.c"
+
+
+
+
+
+    DMANow(3, bg01Pal, ((unsigned short *)0x5000000), 512/2);
+
+    DMANow(3, bg00Tiles, &((charblock *)0x6000000)[1], 13888/2);
+    DMANow(3, bg00Map, &((screenblock *)0x6000000)[30], 4096/2);
+
+    DMANow(3, bg01Tiles, &((charblock *)0x6000000)[0], 15040/2);
+    DMANow(3, bg01Map, &((screenblock *)0x6000000)[28], 4096/2);
+
     state = GAME;
 }
 

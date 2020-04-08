@@ -166,20 +166,32 @@ goToGame:
 	ldr	r1, .L16+4
 	mov	lr, pc
 	bx	r4
-	mov	r3, #32
-	mov	r2, #100663296
 	mov	r0, #3
-	ldr	r1, .L16+8
-	mov	lr, pc
-	bx	r4
-	mov	r3, #1024
+	ldr	r3, .L16+8
 	ldr	r2, .L16+12
-	mov	r0, #3
 	ldr	r1, .L16+16
 	mov	lr, pc
 	bx	r4
+	mov	r3, #2048
+	mov	r0, #3
+	ldr	r2, .L16+20
+	ldr	r1, .L16+24
+	mov	lr, pc
+	bx	r4
+	mov	r2, #100663296
+	mov	r0, #3
+	ldr	r3, .L16+28
+	ldr	r1, .L16+32
+	mov	lr, pc
+	bx	r4
+	mov	r3, #2048
+	ldr	r2, .L16+36
+	mov	r0, #3
+	ldr	r1, .L16+40
+	mov	lr, pc
+	bx	r4
 	mov	r2, #1
-	ldr	r3, .L16+20
+	ldr	r3, .L16+44
 	pop	{r4, lr}
 	str	r2, [r3]
 	bx	lr
@@ -187,10 +199,16 @@ goToGame:
 	.align	2
 .L16:
 	.word	DMANow
-	.word	gameScreen2Pal
-	.word	gameScreen2Tiles
+	.word	bg01Pal
+	.word	6944
+	.word	100679680
+	.word	bg00Tiles
+	.word	100724736
+	.word	bg00Map
+	.word	7520
+	.word	bg01Tiles
 	.word	100720640
-	.word	gameScreen2Map
+	.word	bg01Map
 	.word	state
 	.size	goToGame, .-goToGame
 	.align	2

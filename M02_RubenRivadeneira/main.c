@@ -109,18 +109,18 @@ void start() {
 void goToGame() {
     REG_DISPCTL = MODE0 | BG0_ENABLE | BG1_ENABLE | SPRITE_ENABLE;
     //testing background
-    DMANow(3, gameScreen2Pal, PALETTE, 256);
-    DMANow(3, gameScreen2Tiles, &CHARBLOCK[0], gameScreen2TilesLen/2);
-    DMANow(3, gameScreen2Map, &SCREENBLOCK[28], gameScreen2MapLen/2);
+    // DMANow(3, gameScreen2Pal, PALETTE, 256);
+    // DMANow(3, gameScreen2Tiles, &CHARBLOCK[0], gameScreen2TilesLen/2);
+    // DMANow(3, gameScreen2Map, &SCREENBLOCK[28], gameScreen2MapLen/2);
 
     //simultaneous backgrounds
-    // DMANow(3, bg01Pal, PALETTE, bg01PalLen/2);
+    DMANow(3, bg01Pal, PALETTE, bg01PalLen/2);
 
-    // DMANow(3, bg00Tiles, &CHARBLOCK[1], bg00TilesLen/2);
-    // DMANow(3, bg00Map, &SCREENBLOCK[30], bg00MapLen/2);
+    DMANow(3, bg00Tiles, &CHARBLOCK[1], bg00TilesLen/2);
+    DMANow(3, bg00Map, &SCREENBLOCK[30], bg00MapLen/2);
 
-    // DMANow(3, bg01Tiles, &CHARBLOCK[0], bg01TilesLen/2);
-    // DMANow(3, bg01Map, &SCREENBLOCK[28], bg01MapLen/2);
+    DMANow(3, bg01Tiles, &CHARBLOCK[0], bg01TilesLen/2);
+    DMANow(3, bg01Map, &SCREENBLOCK[28], bg01MapLen/2);
   
     state = GAME;
 }

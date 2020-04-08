@@ -10,6 +10,14 @@ typedef struct {
     int rowDelta;
     int height;
     int width;
+
+    int prevWorldCol;
+
+    int upLimit;
+    int downLimit;
+
+    int jumping;
+    int crouching;
     
     //animation attributes
     int aniCounter;
@@ -28,6 +36,7 @@ typedef struct {
     int rowDelta;
     int height;
     int width;
+
     int active;
     int type;
 
@@ -36,7 +45,7 @@ typedef struct {
     int prevAniState;
     int curFrame;
     int numFrames;
-} BALLOONS;
+} BALLOON;
 
 typedef struct {
     int screenCol;
@@ -49,6 +58,11 @@ typedef struct {
     int width;
     int active;
 
+    int rightLimit;
+    int leftLimit;
+    int direction;
+    int state;
+
     int aniCounter;
     int aniState;
     int prevAniState;
@@ -56,17 +70,32 @@ typedef struct {
     int numFrames;
 } BUZZ;
 
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+} BULLET;
+
 //global variables
 extern int hOff;
 extern int vOff;
 extern OBJ_ATTR shadowOAM[128];
 extern PLAYER player;
 extern BUZZ enemies[];
+extern BALLOON balloons[];
 
 //constants
 #define MAPHEIGHT 256
 #define MAPWIDTH 512
 #define MAXENEMIES 1
+#define MAXBALLOONS 5
+#define MAXBULLETS 5
 
 //Prototypes
 void initGame();
@@ -77,8 +106,14 @@ void initPlayer();
 void updatePlayer();
 void animatePlayer();
 void drawPlayer();
+void playerAttack();
 
 void initBuzz();
-void updateBuzz();
-void animateBuzz();
-void drawBuzz();
+void updateBuzz(BUZZ *enemy);
+void animateBuzz(BUZZ *enemy);
+void drawBuzz(BUZZ *enemy);
+void buzzAttack(BUZZ *enemy);
+
+void initBalloons();
+void updateBalloons();
+void drawBalloons();
