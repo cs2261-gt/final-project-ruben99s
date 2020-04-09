@@ -11,6 +11,7 @@
 #include "game.h"
 #include "spriteSheetTest.h"
 #include "finalSpriteSheet.h"
+#include "instructionScreen.h"
 
 //Function prototypes
 void initialize();
@@ -24,9 +25,11 @@ void goToWin();
 void win();
 void goToLose();
 void lose();
+void goToInstruction();
+void instruction();
 
 //state enum
-enum {START, GAME, PAUSE, WIN, LOSE};
+enum {START, GAME, PAUSE, WIN, LOSE, INSTRUCTION};
 int state;
 
 //button inputs
@@ -60,6 +63,9 @@ int main() {
             case LOSE:
                 lose();
                 break;
+            case INSTRUCTION:
+                instruction();
+                break;
         }
 
     }
@@ -85,8 +91,8 @@ void initialize() {
 
 void goToStart() {
     REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
-    REG_BG0HOFF = 0;
-    REG_BG1HOFF = 0;
+    REG_BG0VOFF = 0;
+    // REG_BG1HOFF = 0;
     
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
@@ -104,10 +110,15 @@ void start() {
         goToGame();
         // srand(seed);
     }
+    if (BUTTON_PRESSED(BUTTON_SELECT)) {
+        goToInstruction();
+    }
 }
 
 void goToGame() {
     REG_DISPCTL = MODE0 | BG0_ENABLE | BG1_ENABLE | SPRITE_ENABLE;
+    REG_BG0VOFF = 96;
+    REG_BG0HOFF = hOff;
     //testing background
     // DMANow(3, gameScreen2Pal, PALETTE, 256);
     // DMANow(3, gameScreen2Tiles, &CHARBLOCK[0], gameScreen2TilesLen/2);
@@ -148,8 +159,9 @@ void game() {
 
 void goToPause() {
     REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
+    REG_BG0VOFF = 0;
     REG_BG0HOFF = 0;
-    REG_BG1HOFF = 0;
+    // REG_BG1HOFF = 0;
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
     DMANow(3, pauseScreenPal, PALETTE, 256);
@@ -169,8 +181,9 @@ void pause() {
 
 void goToWin() {
     REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
+    REG_BG0VOFF = 0;
     REG_BG0HOFF = 0;
-    REG_BG1HOFF = 0;
+    // REG_BG1HOFF = 0;
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
     DMANow(3, winScreenPal, PALETTE, 256);
@@ -187,8 +200,9 @@ void win() {
 
 void goToLose() {
     REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
+    REG_BG0VOFF = 0;
     REG_BG0HOFF = 0;
-    REG_BG1HOFF = 0;
+    // REG_BG1HOFF = 0;
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
     DMANow(3, loseScreenPal, PALETTE, 256);
@@ -198,6 +212,25 @@ void goToLose() {
 }
 
 void lose() {
+    if(BUTTON_PRESSED(BUTTON_START)) {
+        goToStart();
+    }
+}
+
+void goToInstruction() {
+    REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
+    REG_BG0VOFF = 0;
+    REG_BG0HOFF = 0;
+    // REG_BG1HOFF = 0;
+    hideSprites();
+    DMANow(3, shadowOAM, OAM, 512);
+    DMANow(3, instructionScreenPal, PALETTE, 256);
+    DMANow(3, instructionScreenTiles, &CHARBLOCK[0], instructionScreenTilesLen/2);
+    DMANow(3, instructionScreenMap, &SCREENBLOCK[28], instructionScreenMapLen/2);
+    state = INSTRUCTION;
+}
+
+void instruction() {
     if(BUTTON_PRESSED(BUTTON_START)) {
         goToStart();
     }

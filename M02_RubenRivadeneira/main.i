@@ -112,7 +112,7 @@ int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, i
 # 2 "main.c" 2
 # 1 "mainScreen.h" 1
 # 22 "mainScreen.h"
-extern const unsigned short mainScreenTiles[32];
+extern const unsigned short mainScreenTiles[960];
 
 
 extern const unsigned short mainScreenMap[1024];
@@ -132,7 +132,7 @@ extern const unsigned short gameScreen2Pal[256];
 # 4 "main.c" 2
 # 1 "pauseScreen.h" 1
 # 22 "pauseScreen.h"
-extern const unsigned short pauseScreenTiles[32];
+extern const unsigned short pauseScreenTiles[816];
 
 
 extern const unsigned short pauseScreenMap[1024];
@@ -142,7 +142,7 @@ extern const unsigned short pauseScreenPal[256];
 # 5 "main.c" 2
 # 1 "winScreen.h" 1
 # 22 "winScreen.h"
-extern const unsigned short winScreenTiles[32];
+extern const unsigned short winScreenTiles[784];
 
 
 extern const unsigned short winScreenMap[1024];
@@ -152,7 +152,7 @@ extern const unsigned short winScreenPal[256];
 # 6 "main.c" 2
 # 1 "loseScreen.h" 1
 # 22 "loseScreen.h"
-extern const unsigned short loseScreenTiles[32];
+extern const unsigned short loseScreenTiles[800];
 
 
 extern const unsigned short loseScreenMap[1024];
@@ -314,6 +314,16 @@ extern const unsigned short finalSpriteSheetTiles[16384];
 
 extern const unsigned short finalSpriteSheetPal[256];
 # 14 "main.c" 2
+# 1 "instructionScreen.h" 1
+# 22 "instructionScreen.h"
+extern const unsigned short instructionScreenTiles[1152];
+
+
+extern const unsigned short instructionScreenMap[1024];
+
+
+extern const unsigned short instructionScreenPal[256];
+# 15 "main.c" 2
 
 
 void initialize();
@@ -327,9 +337,11 @@ void goToWin();
 void win();
 void goToLose();
 void lose();
+void goToInstruction();
+void instruction();
 
 
-enum {START, GAME, PAUSE, WIN, LOSE};
+enum {START, GAME, PAUSE, WIN, LOSE, INSTRUCTION};
 int state;
 
 
@@ -363,6 +375,9 @@ int main() {
             case LOSE:
                 lose();
                 break;
+            case INSTRUCTION:
+                instruction();
+                break;
         }
 
     }
@@ -388,14 +403,14 @@ void initialize() {
 
 void goToStart() {
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
-    (*(volatile unsigned short *)0x04000010) = 0;
-    (*(volatile unsigned short *)0x04000014) = 0;
+    (*(volatile unsigned short *)0x04000012) = 0;
+
 
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
 
     DMANow(3, mainScreenPal, ((unsigned short *)0x5000000), 256);
-    DMANow(3, mainScreenTiles, &((charblock *)0x6000000)[0], 64/2);
+    DMANow(3, mainScreenTiles, &((charblock *)0x6000000)[0], 1920/2);
     DMANow(3, mainScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
     state = START;
 }
@@ -407,10 +422,15 @@ void start() {
         goToGame();
 
     }
+    if ((!(~(oldButtons)&((1<<2))) && (~buttons & ((1<<2))))) {
+        goToInstruction();
+    }
 }
 
 void goToGame() {
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<9) | (1<<12);
+    (*(volatile unsigned short *)0x04000012) = 96;
+    (*(volatile unsigned short *)0x04000010) = hOff;
 
 
 
@@ -451,12 +471,13 @@ void game() {
 
 void goToPause() {
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
+    (*(volatile unsigned short *)0x04000012) = 0;
     (*(volatile unsigned short *)0x04000010) = 0;
-    (*(volatile unsigned short *)0x04000014) = 0;
+
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
     DMANow(3, pauseScreenPal, ((unsigned short *)0x5000000), 256);
-    DMANow(3, pauseScreenTiles, &((charblock *)0x6000000)[0], 64/2);
+    DMANow(3, pauseScreenTiles, &((charblock *)0x6000000)[0], 1632/2);
     DMANow(3, pauseScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
     state = PAUSE;
 }
@@ -472,12 +493,13 @@ void pause() {
 
 void goToWin() {
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
+    (*(volatile unsigned short *)0x04000012) = 0;
     (*(volatile unsigned short *)0x04000010) = 0;
-    (*(volatile unsigned short *)0x04000014) = 0;
+
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
     DMANow(3, winScreenPal, ((unsigned short *)0x5000000), 256);
-    DMANow(3, winScreenTiles, &((charblock *)0x6000000)[0], 64/2);
+    DMANow(3, winScreenTiles, &((charblock *)0x6000000)[0], 1568/2);
     DMANow(3, winScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
     state = WIN;
 }
@@ -490,17 +512,37 @@ void win() {
 
 void goToLose() {
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
+    (*(volatile unsigned short *)0x04000012) = 0;
     (*(volatile unsigned short *)0x04000010) = 0;
-    (*(volatile unsigned short *)0x04000014) = 0;
+
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
     DMANow(3, loseScreenPal, ((unsigned short *)0x5000000), 256);
-    DMANow(3, loseScreenTiles, &((charblock *)0x6000000)[0], 64/2);
+    DMANow(3, loseScreenTiles, &((charblock *)0x6000000)[0], 1600/2);
     DMANow(3, loseScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
     state = LOSE;
 }
 
 void lose() {
+    if((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
+        goToStart();
+    }
+}
+
+void goToInstruction() {
+    (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
+    (*(volatile unsigned short *)0x04000012) = 0;
+    (*(volatile unsigned short *)0x04000010) = 0;
+
+    hideSprites();
+    DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
+    DMANow(3, instructionScreenPal, ((unsigned short *)0x5000000), 256);
+    DMANow(3, instructionScreenTiles, &((charblock *)0x6000000)[0], 2304/2);
+    DMANow(3, instructionScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
+    state = INSTRUCTION;
+}
+
+void instruction() {
     if((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
         goToStart();
     }
