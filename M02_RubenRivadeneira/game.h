@@ -18,6 +18,10 @@ typedef struct {
 
     int jumping;
     int crouching;
+
+    int balloonTimer;
+
+    int health;
     
     //animation attributes
     int aniCounter;
@@ -36,6 +40,9 @@ typedef struct {
     int rowDelta;
     int height;
     int width;
+
+    int prevWorldCol;
+    int prevWorldRow;
 
     int active;
     int type;
@@ -85,6 +92,7 @@ extern OBJ_ATTR shadowOAM[128];
 extern PLAYER player;
 extern BUZZ enemies[];
 extern BALLOON balloons[];
+extern int remainingEnemies;
 
 //constants
 #define MAPHEIGHT 256
@@ -113,3 +121,4 @@ void buzzAttack(BUZZ *enemy);
 void initBalloons();
 void updateBalloons();
 void drawBalloons();
+void animateBalloons();

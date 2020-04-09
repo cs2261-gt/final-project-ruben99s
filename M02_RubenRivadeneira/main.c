@@ -132,13 +132,18 @@ void game() {
     if(BUTTON_PRESSED(BUTTON_START)) { 
         goToPause();
     }
-    if(BUTTON_PRESSED(BUTTON_A)) {
+    // if(BUTTON_PRESSED(BUTTON_A)) {
+    //     goToWin();
+    // }
+    // if(BUTTON_PRESSED(BUTTON_B)) {
+    //     goToLose();
+    // }
+    if(remainingEnemies <= 0) {
         goToWin();
     }
-    if(BUTTON_PRESSED(BUTTON_B)) {
+    if(player.health <= 0) {
         goToLose();
     }
- 
 }
 
 void goToPause() {

@@ -21,12 +21,14 @@ OBJ_ATTR shadowOAM[128];
 PLAYER player;
 BUZZ enemies[MAXENEMIES];
 BALLOON balloons[MAXBALLOONS];
+int remainingEnemies;
 
 //game functions-------------------------
 void initGame() {
     vOff = 96;
     hOff = 0;
     direction = RIGHT;
+    remainingEnemies = MAXENEMIES;
     REG_BG0VOFF = vOff;
     REG_BG1VOFF = vOff;
     initPlayer();
@@ -59,7 +61,9 @@ void drawGame() {
     REG_BG1HOFF = hOff/2;
 }
 
-//player functions-----------------------
+
+
+//player functions----------------------------
 void initPlayer() {
     player.height = 30;
     player.width = 20;
@@ -69,7 +73,7 @@ void initPlayer() {
     player.worldRow = MAPHEIGHT - player.height - 14;
     player.prevWorldCol = player.worldCol;
 
-    player.upLimit = player.worldRow - 80;
+    player.upLimit = player.worldRow - 100;
     player.downLimit = player.worldRow;
 
     player.screenCol = player.worldCol - hOff;
@@ -77,6 +81,11 @@ void initPlayer() {
 
     player.jumping = 0;
     player.crouching = 0;
+
+    player.balloonTimer = 0;
+
+    //change later to more health
+    player.health = 10;
 
     player.aniCounter = 0;
     player.curFrame = 0;
@@ -117,7 +126,6 @@ void animatePlayer() {
             player.aniState = PLAYERLEFT;
         }
         player.curFrame = 5;
-        // player.aniState = PLAYERDOWN;
     } 
     
 
@@ -176,6 +184,20 @@ void updatePlayer() {
         player.jumping = 0;
     }
 
+    if(BUTTON_PRESSED(BUTTON_A) && player.balloonTimer >= 15) {
+        playerAttack();
+        player.balloonTimer = 0;
+    }
+    player.balloonTimer++;
+
+    if(BUTTON_PRESSED(BUTTON_B)) {
+        for (int i = 0; i < MAXENEMIES; i++) {
+            if (enemies[i].active && enemies[i].screenCol >= 0 && enemies[i].screenCol < 240) {
+                enemies[i].state = BUZZANGRY;
+            }
+        }
+    }
+
     //gravity-ish
     if (!player.jumping && player.worldRow < player.downLimit) {
         player.worldRow += player.rowDelta;
@@ -193,7 +215,23 @@ void updatePlayer() {
     animatePlayer();
 }
 
-//enemy functions
+void playerAttack() {
+    for (int i = 0; i < MAXBALLOONS; i++) {
+        if (balloons[i].active && balloons[i].held) {
+            balloons[i].held = 0;
+        }
+        if (!balloons[i].active) {
+            balloons[i].active = 1;
+            balloons[i].held = 1;
+            animateBalloons(&balloons[i]);
+            break;
+        }
+    }
+}
+
+
+
+//enemy functions-------------------------------------------
 void initBuzz() {
     for (int i = 0; i < MAXENEMIES; i++) {
         enemies[i].height = 20;
@@ -209,8 +247,8 @@ void initBuzz() {
         enemies[i].screenRow = enemies[i].worldRow - vOff;
         // enemies[i].screenCol = enemies[i].worldCol - hOff;
 
-        enemies[i].rightLimit = enemies[i].worldCol + enemies[i].width + 20;
-        enemies[i].leftLimit = enemies[i].worldCol - 20;
+        enemies[i].rightLimit = enemies[i].worldCol + enemies[i].width + 35;
+        enemies[i].leftLimit = enemies[i].worldCol - 35;
 
         enemies[i].aniState = 3;        
     }
@@ -232,6 +270,7 @@ void updateBuzz(BUZZ *enemy) {
     } 
 
     if (enemy->active) {
+        //behavior when buzz is calm, just goes back and forth
         if (enemy->state == BUZZCALM) {
             if (enemy->direction == LEFT) {
                 if (enemy->worldCol > enemy->leftLimit) {
@@ -249,6 +288,44 @@ void updateBuzz(BUZZ *enemy) {
                 }
             }
         }
+
+        if (enemy->state == BUZZANGRY) {
+            if (player.worldCol <= enemy->worldCol) {
+                enemy->direction = LEFT;
+            } else {
+                enemy->direction = RIGHT;
+            }
+            
+            if (enemy->direction == LEFT) {
+                enemy->worldCol -= enemy->colDelta;
+            }
+            if (enemy->direction == RIGHT) {
+                enemy->worldCol += enemy->colDelta;
+            }
+        }
+
+        //collision with floating balloons
+        for (int i = 0; i < MAXBALLOONS; i++) {
+            if (balloons[i].active && !balloons[i].held &&
+                collision(balloons[i].worldCol, balloons[i].worldRow, balloons[i].width, balloons[i].height, 
+                enemy->worldCol, enemy->worldRow, enemy->width, enemy->height)) {
+                    balloons[i].active = 0;
+                    enemy->active = 0;
+                    remainingEnemies--;
+            }
+        } 
+
+        //collision with player
+        if (collision(player.worldCol, player.worldRow, player.width, player.height, 
+            enemy->worldCol, enemy->worldRow, enemy->width, enemy->height)) {
+                player.health = 0;
+        }
+        //TODO: needs to be changed to damage over time instead of insta kill
+
+        //if player enters buzz space then buzz gets angry
+        if (player.worldCol >= enemy->leftLimit && player.worldCol <= enemy->rightLimit) {
+            enemy->state = BUZZANGRY;
+        }
     }
 
     enemy->screenCol = enemy->worldCol - hOff;
@@ -265,7 +342,9 @@ void animateBuzz(BUZZ *enemy) {
     }
 }
 
-//balloon functions
+
+
+//balloon functions---------------------------------------
 void initBalloons() {
     for (int i = 0; i < MAXBALLOONS; i++) {
         balloons[i].width = 12;
@@ -279,6 +358,8 @@ void initBalloons() {
         balloons[i].rowDelta = player.rowDelta;
         balloons[i].held = 0;
         balloons[i].active = 0;
+        balloons[i].prevWorldCol = balloons[i].worldCol;
+        balloons[i].prevWorldRow = balloons[i].worldRow;
         if (i == 0) {
             balloons[i].active = 1;
             balloons[i].held = 1;
@@ -289,63 +370,17 @@ void initBalloons() {
 
 void updateBalloons(BALLOON *balloon) {
     if (balloon->active) {
+
+        balloon->prevWorldCol = balloon->worldCol;
+        balloon->prevWorldRow = balloon->worldRow;
+
         if (balloon->held) {
-            if (player.aniState == PLAYERRIGHT) {
-                switch(player.curFrame) {
-                    case 0:
-                        balloon->worldCol = player.worldCol + 16;
-                        balloon->worldRow = player.worldRow;
-                        break;
-                    case 1:
-                        balloon->worldCol = player.worldCol + 18;
-                        balloon->worldRow = player.worldRow;
-                        break;
-                    case 2:
-                        balloon->worldCol = player.worldCol + 18;
-                        balloon->worldRow = player.worldRow - 6;
-                        break;
-                    case 3:
-                        balloon->worldCol = player.worldCol + 16;
-                        balloon->worldRow = player.worldRow;
-                        break;
-                    case 4:
-                        balloon->worldCol = player.worldCol + 18;
-                        balloon->worldRow = player.worldRow - 6;
-                        break;
-                    case 5:
-                        balloon->worldCol = player.worldCol + 13;
-                        balloon->worldRow = player.worldRow + 16;
-                        break;
-                }
-            }
-            if (player.aniState == PLAYERLEFT) {
-                switch(player.curFrame) {
-                    case 0:
-                        balloon->worldCol = player.worldCol;
-                        balloon->worldRow = player.worldRow;
-                        break;
-                    case 1:
-                        balloon->worldCol = player.worldCol - 2;
-                        balloon->worldRow = player.worldRow;
-                        break;
-                    case 2:
-                        balloon->worldCol = player.worldCol - 2;
-                        balloon->worldRow = player.worldRow - 6;
-                        break;
-                    case 3:
-                        balloon->worldCol = player.worldCol;
-                        balloon->worldRow = player.worldRow;
-                        break;
-                    case 4:
-                        balloon->worldCol = player.worldCol - 2;
-                        balloon->worldRow = player.worldRow - 6;
-                        break;
-                    case 5:
-                        balloon->worldCol = player.worldCol + 3;
-                        balloon->worldRow = player.worldRow + 16;
-                        break;
-                }
-            }
+            animateBalloons(balloon);
+        }
+
+        if (!balloon->held) {
+            balloon->worldCol = balloon->prevWorldCol;
+            balloon->worldRow = balloon->prevWorldRow;
         }
     }
     balloon->screenCol = balloon->worldCol - hOff;
@@ -358,5 +393,68 @@ void drawBalloons(BALLOON *balloon) {
         shadowOAM[2 + balloon->num].attr1 = (COLMASK & balloon->screenCol) | ATTR1_SMALL;
         shadowOAM[2 + balloon->num].attr2 = ATTR2_TILEID(0, 24) | ATTR2_PALROW(1); 
     }
+}
+
+void animateBalloons(BALLOON *balloon) {
+    if (player.aniState == PLAYERRIGHT) {
+        switch(player.curFrame) {
+            case 0:
+                balloon->worldCol = player.worldCol + 16;
+                balloon->worldRow = player.worldRow;
+                break;
+            case 1:
+                balloon->worldCol = player.worldCol + 18;
+                balloon->worldRow = player.worldRow;
+                break;
+            case 2:
+                balloon->worldCol = player.worldCol + 18;
+                balloon->worldRow = player.worldRow - 6;
+                break;
+             case 3:
+                balloon->worldCol = player.worldCol + 16;
+                balloon->worldRow = player.worldRow;
+                break;
+            case 4:
+                balloon->worldCol = player.worldCol + 18;
+                balloon->worldRow = player.worldRow - 6;
+                break;
+            case 5:
+                balloon->worldCol = player.worldCol + 13;
+                balloon->worldRow = player.worldRow + 16;
+                break;
+        }
+    }
+
+    if (player.aniState == PLAYERLEFT) {
+        switch(player.curFrame) {
+            case 0:
+                balloon->worldCol = player.worldCol;
+                balloon->worldRow = player.worldRow;
+                break;
+            case 1:
+                balloon->worldCol = player.worldCol - 2;
+                balloon->worldRow = player.worldRow;
+                break;
+            case 2:
+                balloon->worldCol = player.worldCol - 2;
+                balloon->worldRow = player.worldRow - 6;
+                break;
+            case 3:
+                balloon->worldCol = player.worldCol;
+                balloon->worldRow = player.worldRow;
+                break;
+            case 4:
+                balloon->worldCol = player.worldCol - 2;
+                balloon->worldRow = player.worldRow - 6;
+                break;
+            case 5:
+                balloon->worldCol = player.worldCol + 3;
+                balloon->worldRow = player.worldRow + 16;
+                break;
+        }
+    }
+
+    balloon->screenCol = balloon->worldCol - hOff;
+    balloon->screenRow = balloon->worldRow - vOff;
 }
 

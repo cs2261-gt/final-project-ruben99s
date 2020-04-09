@@ -204,6 +204,10 @@ typedef struct {
     int jumping;
     int crouching;
 
+    int balloonTimer;
+
+    int health;
+
 
     int aniCounter;
     int aniState;
@@ -222,14 +226,13 @@ typedef struct {
     int height;
     int width;
 
+    int prevWorldCol;
+    int prevWorldRow;
+
     int active;
     int type;
-
-    int aniCounter;
-    int aniState;
-    int prevAniState;
-    int curFrame;
-    int numFrames;
+    int held;
+    int num;
 } BALLOON;
 
 typedef struct {
@@ -274,7 +277,8 @@ extern OBJ_ATTR shadowOAM[128];
 extern PLAYER player;
 extern BUZZ enemies[];
 extern BALLOON balloons[];
-# 101 "game.h"
+extern int remainingEnemies;
+# 105 "game.h"
 void initGame();
 void updateGame();
 void drawGame();
@@ -294,6 +298,7 @@ void buzzAttack(BUZZ *enemy);
 void initBalloons();
 void updateBalloons();
 void drawBalloons();
+void animateBalloons();
 # 12 "main.c" 2
 # 1 "spriteSheetTest.h" 1
 # 21 "spriteSheetTest.h"
@@ -430,13 +435,18 @@ void game() {
     if((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
         goToPause();
     }
-    if((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0))))) {
+
+
+
+
+
+
+    if(remainingEnemies <= 0) {
         goToWin();
     }
-    if((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
+    if(player.health <= 0) {
         goToLose();
     }
-
 }
 
 void goToPause() {
