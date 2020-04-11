@@ -96,7 +96,7 @@ extern int remainingEnemies;
 
 //constants
 #define MAPHEIGHT 256
-#define MAPWIDTH 512
+#define MAPWIDTH 2048
 #define MAXENEMIES 1
 #define MAXBALLOONS 5
 #define MAXBULLETS 5

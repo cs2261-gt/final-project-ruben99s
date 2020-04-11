@@ -163,17 +163,17 @@ extern const unsigned short loseScreenPal[256];
 
 # 1 "bg00.h" 1
 # 22 "bg00.h"
-extern const unsigned short bg00Tiles[6944];
+extern const unsigned short bg00Tiles[6096];
 
 
-extern const unsigned short bg00Map[2048];
+extern const unsigned short bg00Map[3072];
 
 
 extern const unsigned short bg00Pal[256];
 # 9 "main.c" 2
 # 1 "bg01.h" 1
 # 22 "bg01.h"
-extern const unsigned short bg01Tiles[7520];
+extern const unsigned short bg01Tiles[7264];
 
 
 extern const unsigned short bg01Map[2048];
@@ -437,13 +437,13 @@ void goToGame() {
 
 
 
-    DMANow(3, bg01Pal, ((unsigned short *)0x5000000), 512/2);
+    DMANow(3, bg00Pal, ((unsigned short *)0x5000000), 512/2);
 
-    DMANow(3, bg00Tiles, &((charblock *)0x6000000)[1], 13888/2);
-    DMANow(3, bg00Map, &((screenblock *)0x6000000)[30], 4096/2);
+    DMANow(3, bg00Tiles, &((charblock *)0x6000000)[0], 12192/2);
+    DMANow(3, bg00Map, &((screenblock *)0x6000000)[28], 6144/2);
 
-    DMANow(3, bg01Tiles, &((charblock *)0x6000000)[0], 15040/2);
-    DMANow(3, bg01Map, &((screenblock *)0x6000000)[28], 4096/2);
+    DMANow(3, bg01Tiles, &((charblock *)0x6000000)[1], 14528/2);
+    DMANow(3, bg01Map, &((screenblock *)0x6000000)[30], 4096/2);
 
     state = GAME;
 }
@@ -464,9 +464,9 @@ void game() {
     if(remainingEnemies <= 0) {
         goToWin();
     }
-    if(player.health <= 0) {
-        goToLose();
-    }
+
+
+
 }
 
 void goToPause() {

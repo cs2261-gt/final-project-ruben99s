@@ -988,7 +988,7 @@ updatePlayer:
 .L146:
 	ldr	r2, [r4, #28]
 	add	r2, r3, r2
-	cmp	r2, #512
+	cmp	r2, #2048
 	ldr	r5, .L173+8
 	bgt	.L147
 	ldr	r0, .L173+24
@@ -1038,7 +1038,7 @@ updatePlayer:
 	.word	oldButtons
 	.word	buttons
 	.word	vOff
-	.word	270
+	.word	1806
 	.word	enemies
 	.size	updatePlayer, .-updatePlayer
 	.align	2

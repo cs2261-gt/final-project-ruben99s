@@ -9,10 +9,10 @@ int direction;
 enum {PLAYERRIGHT, PLAYERLEFT, PLAYERUP, PLAYERDOWN, PLAYERIDLE};
 
 //enemy states
-enum {BUZZCALM, BUZZANGRY};
+enum {CALM, ANGRY};
 
 //balloon states
-enum {SINGLE, AOF};
+enum {SINGLE, AOE};
 
 //global variables
 int hOff;
@@ -147,9 +147,10 @@ void drawPlayer() {
 void updatePlayer() {
     player.prevWorldCol = player.worldCol;
 
+    //change MAPWIDTH value in game.h to make map longer
     if(BUTTON_HELD(BUTTON_RIGHT)) {
-        if (player.worldCol + player.width - 1 < 512) {
-            player.worldCol += player.colDelta;
+        if (player.worldCol + player.width - 1 < MAPWIDTH) {
+            player.worldCol += player.colDelta; 
             
             if (hOff + 1 < MAPWIDTH - SCREENWIDTH && player.screenCol > SCREENWIDTH/4) {
                 hOff += player.colDelta;
@@ -193,7 +194,7 @@ void updatePlayer() {
     if(BUTTON_PRESSED(BUTTON_B)) {
         for (int i = 0; i < MAXENEMIES; i++) {
             if (enemies[i].active && enemies[i].screenCol >= 0 && enemies[i].screenCol < 240) {
-                enemies[i].state = BUZZANGRY;
+                enemies[i].state = ANGRY;
             }
         }
     }
@@ -237,7 +238,7 @@ void initBuzz() {
         enemies[i].height = 20;
         enemies[i].width = 23;
         enemies[i].active = 0;
-        enemies[i].state = BUZZCALM;
+        enemies[i].state = CALM;
         enemies[i].direction = LEFT;
         enemies[i].colDelta = 1;
         enemies[i].rowDelta = 1;
@@ -271,7 +272,7 @@ void updateBuzz(BUZZ *enemy) {
 
     if (enemy->active) {
         //behavior when buzz is calm, just goes back and forth
-        if (enemy->state == BUZZCALM) {
+        if (enemy->state == CALM) {
             if (enemy->direction == LEFT) {
                 if (enemy->worldCol > enemy->leftLimit) {
                     enemy->worldCol -= enemy->colDelta;
@@ -289,7 +290,7 @@ void updateBuzz(BUZZ *enemy) {
             }
         }
 
-        if (enemy->state == BUZZANGRY) {
+        if (enemy->state == ANGRY) {
             if (player.worldCol <= enemy->worldCol) {
                 enemy->direction = LEFT;
             } else {
@@ -324,7 +325,7 @@ void updateBuzz(BUZZ *enemy) {
 
         //if player enters buzz space then buzz gets angry
         if (player.worldCol >= enemy->leftLimit && player.worldCol <= enemy->rightLimit) {
-            enemy->state = BUZZANGRY;
+            enemy->state = ANGRY;
         }
     }
 

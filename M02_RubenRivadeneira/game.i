@@ -237,10 +237,10 @@ int direction;
 enum {PLAYERRIGHT, PLAYERLEFT, PLAYERUP, PLAYERDOWN, PLAYERIDLE};
 
 
-enum {BUZZCALM, BUZZANGRY};
+enum {CALM, ANGRY};
 
 
-enum {SINGLE, AOF};
+enum {SINGLE, AOE};
 
 
 int hOff;
@@ -376,10 +376,10 @@ void updatePlayer() {
     player.prevWorldCol = player.worldCol;
 
     if((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
-        if (player.worldCol + player.width - 1 < 512) {
+        if (player.worldCol + player.width - 1 < 2048) {
             player.worldCol += player.colDelta;
 
-            if (hOff + 1 < 512 - 240 && player.screenCol > 240/4) {
+            if (hOff + 1 < 2048 - 240 && player.screenCol > 240/4) {
                 hOff += player.colDelta;
             }
         }
@@ -421,7 +421,7 @@ void updatePlayer() {
     if((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
         for (int i = 0; i < 1; i++) {
             if (enemies[i].active && enemies[i].screenCol >= 0 && enemies[i].screenCol < 240) {
-                enemies[i].state = BUZZANGRY;
+                enemies[i].state = ANGRY;
             }
         }
     }
@@ -465,7 +465,7 @@ void initBuzz() {
         enemies[i].height = 20;
         enemies[i].width = 23;
         enemies[i].active = 0;
-        enemies[i].state = BUZZCALM;
+        enemies[i].state = CALM;
         enemies[i].direction = LEFT;
         enemies[i].colDelta = 1;
         enemies[i].rowDelta = 1;
@@ -499,7 +499,7 @@ void updateBuzz(BUZZ *enemy) {
 
     if (enemy->active) {
 
-        if (enemy->state == BUZZCALM) {
+        if (enemy->state == CALM) {
             if (enemy->direction == LEFT) {
                 if (enemy->worldCol > enemy->leftLimit) {
                     enemy->worldCol -= enemy->colDelta;
@@ -517,7 +517,7 @@ void updateBuzz(BUZZ *enemy) {
             }
         }
 
-        if (enemy->state == BUZZANGRY) {
+        if (enemy->state == ANGRY) {
             if (player.worldCol <= enemy->worldCol) {
                 enemy->direction = LEFT;
             } else {
@@ -552,7 +552,7 @@ void updateBuzz(BUZZ *enemy) {
 
 
         if (player.worldCol >= enemy->leftLimit && player.worldCol <= enemy->rightLimit) {
-            enemy->state = BUZZANGRY;
+            enemy->state = ANGRY;
         }
     }
 

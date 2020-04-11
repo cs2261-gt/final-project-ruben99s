@@ -125,13 +125,13 @@ void goToGame() {
     // DMANow(3, gameScreen2Map, &SCREENBLOCK[28], gameScreen2MapLen/2);
 
     //simultaneous backgrounds
-    DMANow(3, bg01Pal, PALETTE, bg01PalLen/2);
+    DMANow(3, bg00Pal, PALETTE, bg01PalLen/2);
 
-    DMANow(3, bg00Tiles, &CHARBLOCK[1], bg00TilesLen/2);
-    DMANow(3, bg00Map, &SCREENBLOCK[30], bg00MapLen/2);
+    DMANow(3, bg00Tiles, &CHARBLOCK[0], bg00TilesLen/2);
+    DMANow(3, bg00Map, &SCREENBLOCK[28], bg00MapLen/2);
 
-    DMANow(3, bg01Tiles, &CHARBLOCK[0], bg01TilesLen/2);
-    DMANow(3, bg01Map, &SCREENBLOCK[28], bg01MapLen/2);
+    DMANow(3, bg01Tiles, &CHARBLOCK[1], bg01TilesLen/2);
+    DMANow(3, bg01Map, &SCREENBLOCK[30], bg01MapLen/2);
   
     state = GAME;
 }
@@ -152,9 +152,9 @@ void game() {
     if(remainingEnemies <= 0) {
         goToWin();
     }
-    if(player.health <= 0) {
-        goToLose();
-    }
+    // if(player.health <= 0) {
+    //     goToLose();
+    // }
 }
 
 void goToPause() {
