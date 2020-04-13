@@ -157,6 +157,71 @@ void animateBuzz(BUZZ *buzz);
 void drawBuzz(BUZZ *buzz);
 # 3 "buzz.c" 2
 # 1 "game.h" 1
+# 34 "game.h"
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+
+    int prevWorldCol;
+    int prevWorldRow;
+
+    int active;
+    int type;
+    int held;
+    int num;
+} BALLOON;
+
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+} BULLET;
+
+typedef enum {
+    LEFT,
+    RIGHT
+};
+
+
+extern int hOff;
+extern int vOff;
+extern OBJ_ATTR shadowOAM[128];
+
+extern BALLOON balloons[];
+extern int remainingEnemies;
+extern int numBalloons;
+extern direction;
+# 89 "game.h"
+void initGame();
+void updateGame();
+void drawGame();
+
+
+
+
+
+
+
+void initBalloons();
+void updateBalloons();
+void drawBalloons();
+void animateBalloons();
+void updateHeldBalloon();
+# 4 "buzz.c" 2
+# 1 "player.h" 1
 
 
 
@@ -190,74 +255,24 @@ typedef struct {
     int numFrames;
 } PLAYER;
 
-typedef struct {
-    int screenCol;
-    int screenRow;
-    int worldCol;
-    int worldRow;
-    int colDelta;
-    int rowDelta;
-    int height;
-    int width;
-
-    int prevWorldCol;
-    int prevWorldRow;
-
-    int active;
-    int type;
-    int held;
-    int num;
-} BALLOON;
-# 78 "game.h"
-typedef struct {
-    int screenCol;
-    int screenRow;
-    int worldCol;
-    int worldRow;
-    int colDelta;
-    int rowDelta;
-    int height;
-    int width;
-    int active;
-} BULLET;
-
 typedef enum {
-    LEFT,
-    RIGHT
+    PLAYERRIGHT,
+    PLAYERLEFT,
+    PLAYERUP,
+    PLAYERDOWN,
+    PLAYERIDLE
 };
 
-
-extern int hOff;
-extern int vOff;
-extern OBJ_ATTR shadowOAM[128];
 extern PLAYER player;
 
-extern BALLOON balloons[];
-extern int remainingEnemies;
-extern int numBalloons;
-# 113 "game.h"
-void initGame();
-void updateGame();
-void drawGame();
 
 void initPlayer();
 void updatePlayer();
 void animatePlayer();
 void drawPlayer();
 void playerAttack();
+# 5 "buzz.c" 2
 
-
-
-
-
-
-
-void initBalloons();
-void updateBalloons();
-void drawBalloons();
-void animateBalloons();
-void updateHeldBalloon();
-# 4 "buzz.c" 2
 
 BUZZ bees[3];
 

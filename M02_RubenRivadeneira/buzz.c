@@ -1,6 +1,7 @@
 #include "myLib.h"
 #include "buzz.h"
 #include "game.h"
+#include "player.h"
 
 //global variables
 BUZZ bees[MAXBEES];

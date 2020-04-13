@@ -111,39 +111,7 @@ typedef struct{
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
 # 2 "game.c" 2
 # 1 "game.h" 1
-
-
-
-typedef struct {
-    int screenCol;
-    int screenRow;
-    int worldCol;
-    int worldRow;
-    int colDelta;
-    int rowDelta;
-    int height;
-    int width;
-
-    int prevWorldCol;
-
-    int upLimit;
-    int downLimit;
-
-    int jumping;
-    int crouching;
-
-    int balloonTimer;
-
-    int health;
-
-
-    int aniCounter;
-    int aniState;
-    int prevAniState;
-    int curFrame;
-    int numFrames;
-} PLAYER;
-
+# 34 "game.h"
 typedef struct {
     int screenCol;
     int screenRow;
@@ -162,7 +130,8 @@ typedef struct {
     int held;
     int num;
 } BALLOON;
-# 78 "game.h"
+
+
 typedef struct {
     int screenCol;
     int screenRow;
@@ -184,21 +153,15 @@ typedef enum {
 extern int hOff;
 extern int vOff;
 extern OBJ_ATTR shadowOAM[128];
-extern PLAYER player;
 
 extern BALLOON balloons[];
 extern int remainingEnemies;
 extern int numBalloons;
-# 113 "game.h"
+extern int direction;
+# 89 "game.h"
 void initGame();
 void updateGame();
 void drawGame();
-
-void initPlayer();
-void updatePlayer();
-void animatePlayer();
-void drawPlayer();
-void playerAttack();
 
 
 
@@ -258,22 +221,67 @@ void updateBuzz(BUZZ *buzz);
 void animateBuzz(BUZZ *buzz);
 void drawBuzz(BUZZ *buzz);
 # 4 "game.c" 2
+# 1 "player.h" 1
 
 
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+
+    int prevWorldCol;
+
+    int upLimit;
+    int downLimit;
+
+    int jumping;
+    int crouching;
+
+    int balloonTimer;
+
+    int health;
+
+
+    int aniCounter;
+    int aniState;
+    int prevAniState;
+    int curFrame;
+    int numFrames;
+} PLAYER;
+
+typedef enum {
+    PLAYERRIGHT,
+    PLAYERLEFT,
+    PLAYERUP,
+    PLAYERDOWN,
+    PLAYERIDLE
+};
+
+extern PLAYER player;
+
+
+void initPlayer();
+void updatePlayer();
+void animatePlayer();
+void drawPlayer();
+void playerAttack();
+# 5 "game.c" 2
 
 int direction;
 
 
-enum {PLAYERRIGHT, PLAYERLEFT, PLAYERUP, PLAYERDOWN, PLAYERIDLE};
-
-
-enum {SINGLE, AOE};
+enum {SINGLE, AOE, JUMP, CHEAT};
 
 
 int hOff;
 int vOff;
 OBJ_ATTR shadowOAM[128];
-PLAYER player;
 BALLOON balloons[5];
 int remainingEnemies;
 int numBalloons;
@@ -330,182 +338,7 @@ void drawGame() {
     (*(volatile unsigned short *)0x04000010) = hOff;
     (*(volatile unsigned short *)0x04000014) = hOff/2;
 }
-
-
-
-
-void initPlayer() {
-    player.height = 30;
-    player.width = 20;
-    player.colDelta = 2;
-    player.rowDelta = 2;
-    player.worldCol = 10;
-    player.worldRow = 256 - player.height - 14;
-    player.prevWorldCol = player.worldCol;
-
-    player.upLimit = player.worldRow - 100;
-    player.downLimit = player.worldRow;
-
-    player.screenCol = player.worldCol - hOff;
-    player.screenRow = player.worldRow - vOff;
-
-    player.jumping = 0;
-    player.crouching = 0;
-
-    player.balloonTimer = 0;
-
-
-    player.health = 10;
-
-
-    player.aniCounter = 0;
-    player.curFrame = 0;
-    player.numFrames = 4;
-    player.aniState = PLAYERRIGHT;
-}
-
-void animatePlayer() {
-    player.prevAniState = player.aniState;
-    player.aniState = PLAYERIDLE;
-
-    if(player.aniCounter % 20 == 0) {
-        player.curFrame = (player.curFrame + 1) % player.numFrames;
-    }
-
-    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
-        player.aniState = PLAYERLEFT;
-        direction = LEFT;
-    }
-    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
-        player.aniState = PLAYERRIGHT;
-        direction = RIGHT;
-    }
-    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<6)))) {
-        if (direction == RIGHT) {
-            player.aniState = PLAYERRIGHT;
-        }
-        if (direction == LEFT) {
-            player.aniState = PLAYERLEFT;
-        }
-        player.curFrame = 4;
-    }
-    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<7)))) {
-        if (direction == RIGHT) {
-            player.aniState = PLAYERRIGHT;
-        }
-        if (direction == LEFT) {
-            player.aniState = PLAYERLEFT;
-        }
-        player.curFrame = 5;
-    }
-
-
-    if (player.aniState == PLAYERIDLE) {
-        player.curFrame = 0;
-        player.aniCounter = 0;
-        player.aniState = player.prevAniState;
-    } else {
-        player.aniCounter++;
-    }
-}
-
-void drawPlayer() {
-    shadowOAM[0].attr0 = (0xFF & player.screenRow) | (0<<14);
-    shadowOAM[0].attr1 = (0x1FF & player.screenCol) | (2<<14);
-    shadowOAM[0].attr2 = ((player.curFrame * 4)*32+(player.aniState * 4)) | ((0)<<12);
-}
-
-void updatePlayer() {
-    player.prevWorldCol = player.worldCol;
-
-
-    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
-        if (player.worldCol + player.width - 1 < 512) {
-            player.worldCol += player.colDelta;
-
-            if (hOff + 1 < 512 - 240 && player.screenCol > 240/4) {
-                hOff += player.colDelta;
-            }
-        }
-    }
-
-    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
-        if (player.worldCol >= 0) {
-            player.worldCol -= player.colDelta;
-
-            if (hOff - 1 >= 0 && player.screenCol < 240/4) {
-                hOff -= player.colDelta;
-            }
-        }
-    }
-
-    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<7)))) {
-        player.crouching = 1;
-        player.height = 22;
-        player.worldCol = player.prevWorldCol;
-    } else {
-        player.crouching = 0;
-        player.height = 30;
-    }
-
-    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<6)))) {
-         if (player.worldRow >= player.downLimit) {
-            player.jumping = 1;
-        }
-    } else {
-        player.jumping = 0;
-    }
-
-
-    if((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0)))) && player.balloonTimer >= 10) {
-        playerAttack();
-        player.balloonTimer = 0;
-    }
-    player.balloonTimer++;
-
-
-
-    if((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
-        for (int i = 0; i < 3; i++) {
-            if (bees[i].active && bees[i].screenCol >= 0 && bees[i].screenCol < 240) {
-                bees[i].state = ANGRY;
-            }
-        }
-    }
-
-
-    if (!player.jumping && player.worldRow < player.downLimit) {
-        player.worldRow += player.rowDelta;
-    }
-    if (player.jumping) {
-        player.worldRow -= player.rowDelta;
-        if (player.worldRow <= player.upLimit) {
-            player.jumping = 0;
-        }
-    }
-
-    player.screenCol = player.worldCol - hOff;
-    player.screenRow = player.worldRow - vOff;
-
-    animatePlayer();
-}
-
-void playerAttack() {
-    for (int i = 0; i < 5; i++) {
-        if (balloons[i].active && balloons[i].held) {
-            balloons[i].held = 0;
-            break;
-        }
-    }
-
-
-
-
-
-
-
-}
-# 264 "game.c"
+# 252 "game.c"
 void initBalloons() {
     for (int i = 0; i < 5; i++) {
         balloons[i].width = 12;
