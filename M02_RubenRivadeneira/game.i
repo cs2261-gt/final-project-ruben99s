@@ -111,25 +111,7 @@ typedef struct{
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
 # 2 "game.c" 2
 # 1 "game.h" 1
-# 34 "game.h"
-typedef struct {
-    int screenCol;
-    int screenRow;
-    int worldCol;
-    int worldRow;
-    int colDelta;
-    int rowDelta;
-    int height;
-    int width;
 
-    int prevWorldCol;
-    int prevWorldRow;
-
-    int active;
-    int type;
-    int held;
-    int num;
-} BALLOON;
 
 
 typedef struct {
@@ -153,27 +135,19 @@ typedef enum {
 extern int hOff;
 extern int vOff;
 extern OBJ_ATTR shadowOAM[128];
-
-extern BALLOON balloons[];
 extern int remainingEnemies;
 extern int numBalloons;
 extern int direction;
-# 89 "game.h"
+
+
+
+
+
+
+
 void initGame();
 void updateGame();
 void drawGame();
-
-
-
-
-
-
-
-void initBalloons();
-void updateBalloons();
-void drawBalloons();
-void animateBalloons();
-void updateHeldBalloon();
 # 3 "game.c" 2
 # 1 "buzz.h" 1
 
@@ -272,17 +246,54 @@ void animatePlayer();
 void drawPlayer();
 void playerAttack();
 # 5 "game.c" 2
+# 1 "balloon.h" 1
+
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+
+    int prevWorldCol;
+    int prevWorldRow;
+
+    int active;
+    int type;
+    int held;
+    int num;
+} BALLOON;
+
+typedef enum {
+    SINGLE,
+    AOE,
+    JUMP,
+    CHEAT
+};
+
+
+
+extern BALLOON balloons[];
+
+
+
+void initBalloons();
+void updateBalloons();
+void drawBalloons();
+void animateBalloons();
+void updateHeldBalloon();
+# 6 "game.c" 2
 
 int direction;
-
-
-enum {SINGLE, AOE, JUMP, CHEAT};
 
 
 int hOff;
 int vOff;
 OBJ_ATTR shadowOAM[128];
-BALLOON balloons[5];
 int remainingEnemies;
 int numBalloons;
 
@@ -337,128 +348,4 @@ void drawGame() {
 
     (*(volatile unsigned short *)0x04000010) = hOff;
     (*(volatile unsigned short *)0x04000014) = hOff/2;
-}
-# 252 "game.c"
-void initBalloons() {
-    for (int i = 0; i < 5; i++) {
-        balloons[i].width = 12;
-        balloons[i].height = 16;
-        balloons[i].type = SINGLE;
-        balloons[i].colDelta = player.colDelta;
-        balloons[i].rowDelta = player.rowDelta;
-        balloons[i].held = 0;
-        balloons[i].active = 0;
-        balloons[i].num = i;
-
-        balloons[i].worldCol = player.worldCol + 16;
-        balloons[i].worldRow = player.worldRow;
-        balloons[i].screenCol = balloons[i].worldCol - hOff;
-        balloons[i].screenRow = balloons[i].worldRow - vOff;
-
-        balloons[i].prevWorldCol = balloons[i].worldCol;
-        balloons[i].prevWorldRow = balloons[i].worldRow;
-
-        if (i == 0) {
-            balloons[i].active = 1;
-            balloons[i].held = 1;
-        }
-    }
-}
-
-void updateBalloons(BALLOON *balloon) {
-    if (balloon->active) {
-        if (balloon->screenCol < 0 || balloon->screenCol >= 240) {
-            balloon->active = 0;
-            balloon->held = 0;
-            balloon->worldCol = player.worldCol + 16;
-            balloon->worldRow = player.worldRow;
-            balloon->prevWorldCol = balloon->worldCol;
-            balloon->prevWorldRow = balloon->worldRow;
-        } else {
-            balloon->prevWorldCol = balloon->worldCol;
-            balloon->prevWorldRow = balloon->worldRow;
-
-            if (balloon->held) {
-                updateHeldBalloon(balloon);
-            } else if (!balloon->held) {
-                balloon->worldCol = balloon->prevWorldCol;
-                balloon->worldRow = balloon->prevWorldRow;
-            }
-        }
-    }
-
-    balloon->screenCol = balloon->worldCol - hOff;
-    balloon->screenRow = balloon->worldRow - vOff;
-}
-
-void drawBalloons(BALLOON *balloon) {
-     if (balloon->active) {
-        shadowOAM[10 + balloon->num].attr0 = (0xFF & balloon->screenRow) | (0<<14);
-        shadowOAM[10 + balloon->num].attr1 = (0x1FF & balloon->screenCol) | (1<<14);
-        shadowOAM[10 + balloon->num].attr2 = ((24)*32+(0)) | ((0)<<12);
-    } else {
-        shadowOAM[10 + balloon->num].attr0 = (2<<8);
-    }
-}
-
-void updateHeldBalloon(BALLOON *balloon) {
-    if (balloon->held && balloon->active) {
-        if (player.aniState == PLAYERRIGHT) {
-            switch(player.curFrame) {
-                case 0:
-                    balloon->worldCol = player.worldCol + 16;
-                    balloon->worldRow = player.worldRow;
-                    break;
-                case 1:
-                    balloon->worldCol = player.worldCol + 18;
-                    balloon->worldRow = player.worldRow;
-                    break;
-                case 2:
-                    balloon->worldCol = player.worldCol + 18;
-                    balloon->worldRow = player.worldRow - 6;
-                    break;
-                case 3:
-                    balloon->worldCol = player.worldCol + 16;
-                    balloon->worldRow = player.worldRow;
-                    break;
-                case 4:
-                    balloon->worldCol = player.worldCol + 18;
-                    balloon->worldRow = player.worldRow - 6;
-                    break;
-                case 5:
-                    balloon->worldCol = player.worldCol + 13;
-                    balloon->worldRow = player.worldRow + 16;
-                    break;
-            }
-        }
-
-        if (player.aniState == PLAYERLEFT) {
-            switch(player.curFrame) {
-                case 0:
-                    balloon->worldCol = player.worldCol;
-                    balloon->worldRow = player.worldRow;
-                    break;
-                case 1:
-                    balloon->worldCol = player.worldCol - 2;
-                    balloon->worldRow = player.worldRow;
-                    break;
-                case 2:
-                    balloon->worldCol = player.worldCol - 2;
-                    balloon->worldRow = player.worldRow - 6;
-                    break;
-                case 3:
-                    balloon->worldCol = player.worldCol;
-                    balloon->worldRow = player.worldRow;
-                    break;
-                case 4:
-                    balloon->worldCol = player.worldCol - 2;
-                    balloon->worldRow = player.worldRow - 6;
-                    break;
-                case 5:
-                    balloon->worldCol = player.worldCol + 3;
-                    balloon->worldRow = player.worldRow + 16;
-                    break;
-            }
-        }
-    }
 }

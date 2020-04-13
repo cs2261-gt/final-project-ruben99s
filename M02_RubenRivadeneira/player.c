@@ -2,6 +2,7 @@
 #include "player.h"
 #include "game.h"
 #include "buzz.h"
+#include "balloon.h"
 
 PLAYER player;
 

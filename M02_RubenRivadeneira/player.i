@@ -162,27 +162,7 @@ void drawPlayer();
 void playerAttack();
 # 3 "player.c" 2
 # 1 "game.h" 1
-# 34 "game.h"
-typedef struct {
-    int screenCol;
-    int screenRow;
-    int worldCol;
-    int worldRow;
-    int colDelta;
-    int rowDelta;
-    int height;
-    int width;
-
-    int prevWorldCol;
-    int prevWorldRow;
-
-    int active;
-    int type;
-    int held;
-    int num;
-} BALLOON;
-
-
+# 24 "game.h"
 typedef struct {
     int screenCol;
     int screenRow;
@@ -205,26 +185,13 @@ extern int hOff;
 extern int vOff;
 extern OBJ_ATTR shadowOAM[128];
 
-extern BALLOON balloons[];
 extern int remainingEnemies;
 extern int numBalloons;
 extern int direction;
-# 89 "game.h"
+# 58 "game.h"
 void initGame();
 void updateGame();
 void drawGame();
-
-
-
-
-
-
-
-void initBalloons();
-void updateBalloons();
-void drawBalloons();
-void animateBalloons();
-void updateHeldBalloon();
 # 4 "player.c" 2
 # 1 "buzz.h" 1
 
@@ -272,6 +239,47 @@ void updateBuzz(BUZZ *buzz);
 void animateBuzz(BUZZ *buzz);
 void drawBuzz(BUZZ *buzz);
 # 5 "player.c" 2
+# 1 "balloon.h" 1
+
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+
+    int prevWorldCol;
+    int prevWorldRow;
+
+    int active;
+    int type;
+    int held;
+    int num;
+} BALLOON;
+
+typedef enum {
+    SINGLE,
+    AOE,
+    JUMP,
+    CHEAT
+};
+
+
+
+extern BALLOON balloons[];
+
+
+
+void initBalloons();
+void updateBalloons();
+void drawBalloons();
+void animateBalloons();
+void updateHeldBalloon();
+# 6 "player.c" 2
 
 PLAYER player;
 
