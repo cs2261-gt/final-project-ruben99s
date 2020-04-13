@@ -250,6 +250,7 @@ typedef struct {
     int leftLimit;
     int direction;
     int state;
+    int num;
 
     int aniCounter;
     int aniState;
@@ -278,7 +279,8 @@ extern PLAYER player;
 extern BUZZ enemies[];
 extern BALLOON balloons[];
 extern int remainingEnemies;
-# 105 "game.h"
+extern int numBalloons;
+# 107 "game.h"
 void initGame();
 void updateGame();
 void drawGame();
@@ -299,6 +301,7 @@ void initBalloons();
 void updateBalloons();
 void drawBalloons();
 void animateBalloons();
+void updateHeldBalloon();
 # 12 "main.c" 2
 # 1 "spriteSheetTest.h" 1
 # 21 "spriteSheetTest.h"

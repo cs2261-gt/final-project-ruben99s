@@ -60,11 +60,13 @@ typedef struct {
     int height;
     int width;
     int active;
+    int erased;
 
     int rightLimit;
     int leftLimit;
     int direction;
     int state;
+    int num;
 
     int aniCounter;
     int aniState;
@@ -93,11 +95,12 @@ extern PLAYER player;
 extern BUZZ enemies[];
 extern BALLOON balloons[];
 extern int remainingEnemies;
+extern int numBalloons;
 
 //constants
 #define MAPHEIGHT 256
-#define MAPWIDTH 2048
-#define MAXENEMIES 1
+#define MAPWIDTH 512
+#define MAXENEMIES 3
 #define MAXBALLOONS 5
 #define MAXBULLETS 5
 
@@ -122,3 +125,4 @@ void initBalloons();
 void updateBalloons();
 void drawBalloons();
 void animateBalloons();
+void updateHeldBalloon();
