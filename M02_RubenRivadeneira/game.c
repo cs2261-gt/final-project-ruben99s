@@ -1,15 +1,11 @@
 #include "myLib.h"
 #include "game.h"
+#include "buzz.h"
 
-//directional enum
-enum {LEFT, RIGHT};
 int direction;
 
 //player animation states
 enum {PLAYERRIGHT, PLAYERLEFT, PLAYERUP, PLAYERDOWN, PLAYERIDLE};
-
-//enemy states
-enum {CALM, ANGRY};
 
 //balloon states
 enum {SINGLE, AOE};
@@ -19,7 +15,6 @@ int hOff;
 int vOff;
 OBJ_ATTR shadowOAM[128];
 PLAYER player;
-BUZZ enemies[MAXENEMIES];
 BALLOON balloons[MAXBALLOONS];
 int remainingEnemies;
 int numBalloons;
@@ -28,8 +23,8 @@ int numBalloons;
 void initGame() {
     vOff = 96;
     hOff = 0;
-    direction = RIGHT;
-    remainingEnemies = MAXENEMIES;
+    direction = RIGHT; 
+    remainingEnemies = MAXBEES;
     numBalloons = 0;
     REG_BG0VOFF = vOff;
     REG_BG1VOFF = vOff;
@@ -42,8 +37,8 @@ void updateGame() {
     int numActiveBalloons = 0;
 
     updatePlayer();
-    for (int i = 0; i < MAXENEMIES; i++) {
-        updateBuzz(&enemies[i]);
+    for (int i = 0; i < MAXBEES; i++) {
+        updateBuzz(&bees[i]);
     }
     for (int i = 0; i < MAXBALLOONS; i++) {
         updateBalloons(&balloons[i]);
@@ -64,8 +59,8 @@ void updateGame() {
 
 void drawGame() {
     drawPlayer();
-    for (int i = 0; i < MAXENEMIES; i++) {
-        drawBuzz(&enemies[i]);
+    for (int i = 0; i < MAXBEES; i++) {
+        drawBuzz(&bees[i]);
     }
     for (int i = 0; i < MAXBALLOONS; i++) {
         drawBalloons(&balloons[i]);
@@ -212,9 +207,9 @@ void updatePlayer() {
 
     //player taunts
     if(BUTTON_PRESSED(BUTTON_B)) {
-        for (int i = 0; i < MAXENEMIES; i++) {
-            if (enemies[i].active && enemies[i].screenCol >= 0 && enemies[i].screenCol < 240) {
-                enemies[i].state = ANGRY;
+        for (int i = 0; i < MAXBEES; i++) {
+            if (bees[i].active && bees[i].screenCol >= 0 && bees[i].screenCol < 240) {
+                bees[i].state = ANGRY;
             }
         }
     }
@@ -253,126 +248,6 @@ void playerAttack() {
 }
 
 
-
-//enemy functions-------------------------------------------
-void initBuzz() {
-    for (int i = 0; i < MAXENEMIES; i++) {
-        enemies[i].height = 20;
-        enemies[i].width = 23;
-        enemies[i].active = 0;
-        enemies[i].state = CALM;
-        enemies[i].direction = LEFT;
-        enemies[i].colDelta = 1;
-        enemies[i].rowDelta = 1;
-        enemies[i].num = i;
-        enemies[i].erased = 0;
-
-        enemies[i].worldRow = MAPHEIGHT - 33 - enemies[i].height;
-        enemies[i].worldCol = SCREENWIDTH + (30 * i);
-        enemies[i].screenRow = enemies[i].worldRow - vOff;
-        // enemies[i].screenCol = enemies[i].worldCol - hOff;
-
-        enemies[i].rightLimit = enemies[i].worldCol + enemies[i].width + 35;
-        enemies[i].leftLimit = enemies[i].worldCol - 35;
-
-        enemies[i].aniState = 3;        
-    }
-}
-
-void drawBuzz(BUZZ *enemy) {
-    if (enemy->active) {
-        shadowOAM[1 + enemy->num].attr0 = (ROWMASK & enemy->screenRow) | ATTR0_SQUARE;
-        shadowOAM[1 + enemy->num].attr1 = (COLMASK & enemy->screenCol) | ATTR1_MEDIUM;
-        shadowOAM[1 + enemy->num].attr2 = ATTR2_TILEID(enemy->aniState * 4, 0 * 4) | ATTR2_PALROW(0); 
-    } else {
-        shadowOAM[1 + enemy->num].attr0 = ATTR0_HIDE;
-    }
-}
-
-void updateBuzz(BUZZ *enemy) {
-    int screenCol = enemy->worldCol - hOff;
-    if (screenCol >= 0 && screenCol < 240 && !enemy->erased) {
-        enemy->screenCol = screenCol;
-        enemy->active = 1;
-    } 
-
-    if (enemy->active) {
-        //behavior when buzz is calm, just goes back and forth
-        if (enemy->state == CALM) {
-            if (enemy->direction == LEFT) {
-                if (enemy->worldCol > enemy->leftLimit) {
-                    enemy->worldCol -= enemy->colDelta;
-                } else {
-                    enemy->direction = RIGHT;
-                }
-            }
-
-            if (enemy->direction == RIGHT) {
-                if (enemy->worldCol < enemy->rightLimit) {
-                    enemy->worldCol += enemy->colDelta;
-                } else {
-                    enemy->direction = LEFT;
-                }
-            }
-        }
-
-        //behavior when buzz is angry, chases player
-        if (enemy->state == ANGRY) {
-            if (player.worldCol <= enemy->worldCol) {
-                enemy->direction = LEFT;
-            } else {
-                enemy->direction = RIGHT;
-            }
-            
-            if (enemy->direction == LEFT) {
-                enemy->worldCol -= enemy->colDelta;
-            }
-            if (enemy->direction == RIGHT) {
-                enemy->worldCol += enemy->colDelta;
-            }
-        }
-
-        //collision with floating balloons
-        for (int i = 0; i < MAXBALLOONS; i++) {
-            if (balloons[i].active && !balloons[i].held) {
-                if (collision(balloons[i].worldCol, balloons[i].worldRow, balloons[i].width, balloons[i].height, 
-                enemy->worldCol, enemy->worldRow, enemy->width, enemy->height)) {
-                    balloons[i].active = 0;
-                    enemy->active = 0;
-                    enemy->erased = 1;
-                    remainingEnemies--;
-                }
-            }   
-        } 
-
-        //collision with player
-        if (collision(player.worldCol, player.worldRow, player.width, player.height, 
-            enemy->worldCol, enemy->worldRow, enemy->width, enemy->height)) {
-                player.health = 0;
-        }
-        //TODO: needs to be changed to damage over time instead of insta kill
-
-        //if player enters buzz space then buzz gets angry
-        if (player.worldCol >= enemy->leftLimit && player.worldCol <= enemy->rightLimit) {
-            enemy->state = ANGRY;
-        }
-    }
-
-    enemy->screenCol = enemy->worldCol - hOff;
-    enemy->screenRow = enemy->worldRow - vOff;
-    animateBuzz(enemy);
-}
-
-void animateBuzz(BUZZ *enemy) {
-    if (enemy->active) {
-        if (enemy->direction == LEFT) {
-            enemy->aniState = 3;
-        }
-        if (enemy->direction == RIGHT) {
-            enemy->aniState = 2;
-        }
-    }
-}
 
 
 

@@ -162,6 +162,58 @@ typedef struct {
     int held;
     int num;
 } BALLOON;
+# 78 "game.h"
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+} BULLET;
+
+typedef enum {
+    LEFT,
+    RIGHT
+};
+
+
+extern int hOff;
+extern int vOff;
+extern OBJ_ATTR shadowOAM[128];
+extern PLAYER player;
+
+extern BALLOON balloons[];
+extern int remainingEnemies;
+extern int numBalloons;
+# 113 "game.h"
+void initGame();
+void updateGame();
+void drawGame();
+
+void initPlayer();
+void updatePlayer();
+void animatePlayer();
+void drawPlayer();
+void playerAttack();
+
+
+
+
+
+
+
+void initBalloons();
+void updateBalloons();
+void drawBalloons();
+void animateBalloons();
+void updateHeldBalloon();
+# 3 "game.c" 2
+# 1 "buzz.h" 1
+
 
 typedef struct {
     int screenCol;
@@ -188,60 +240,31 @@ typedef struct {
     int numFrames;
 } BUZZ;
 
-typedef struct {
-    int screenCol;
-    int screenRow;
-    int worldCol;
-    int worldRow;
-    int colDelta;
-    int rowDelta;
-    int height;
-    int width;
-    int active;
-} BULLET;
+
+typedef enum {
+    CALM,
+    ANGRY
+};
 
 
-extern int hOff;
-extern int vOff;
-extern OBJ_ATTR shadowOAM[128];
-extern PLAYER player;
-extern BUZZ enemies[];
-extern BALLOON balloons[];
-extern int remainingEnemies;
-extern int numBalloons;
-# 108 "game.h"
-void initGame();
-void updateGame();
-void drawGame();
+extern BUZZ bees[];
 
-void initPlayer();
-void updatePlayer();
-void animatePlayer();
-void drawPlayer();
-void playerAttack();
+
+
+
 
 void initBuzz();
-void updateBuzz(BUZZ *enemy);
-void animateBuzz(BUZZ *enemy);
-void drawBuzz(BUZZ *enemy);
-void buzzAttack(BUZZ *enemy);
-
-void initBalloons();
-void updateBalloons();
-void drawBalloons();
-void animateBalloons();
-void updateHeldBalloon();
-# 3 "game.c" 2
+void updateBuzz(BUZZ *buzz);
+void animateBuzz(BUZZ *buzz);
+void drawBuzz(BUZZ *buzz);
+# 4 "game.c" 2
 
 
-enum {LEFT, RIGHT};
+
 int direction;
 
 
 enum {PLAYERRIGHT, PLAYERLEFT, PLAYERUP, PLAYERDOWN, PLAYERIDLE};
-
-
-enum {CALM, ANGRY};
 
 
 enum {SINGLE, AOE};
@@ -251,7 +274,6 @@ int hOff;
 int vOff;
 OBJ_ATTR shadowOAM[128];
 PLAYER player;
-BUZZ enemies[3];
 BALLOON balloons[5];
 int remainingEnemies;
 int numBalloons;
@@ -275,7 +297,7 @@ void updateGame() {
 
     updatePlayer();
     for (int i = 0; i < 3; i++) {
-        updateBuzz(&enemies[i]);
+        updateBuzz(&bees[i]);
     }
     for (int i = 0; i < 5; i++) {
         updateBalloons(&balloons[i]);
@@ -297,7 +319,7 @@ void updateGame() {
 void drawGame() {
     drawPlayer();
     for (int i = 0; i < 3; i++) {
-        drawBuzz(&enemies[i]);
+        drawBuzz(&bees[i]);
     }
     for (int i = 0; i < 5; i++) {
         drawBalloons(&balloons[i]);
@@ -445,8 +467,8 @@ void updatePlayer() {
 
     if((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
         for (int i = 0; i < 3; i++) {
-            if (enemies[i].active && enemies[i].screenCol >= 0 && enemies[i].screenCol < 240) {
-                enemies[i].state = ANGRY;
+            if (bees[i].active && bees[i].screenCol >= 0 && bees[i].screenCol < 240) {
+                bees[i].state = ANGRY;
             }
         }
     }
@@ -483,132 +505,7 @@ void playerAttack() {
 
 
 }
-
-
-
-
-void initBuzz() {
-    for (int i = 0; i < 3; i++) {
-        enemies[i].height = 20;
-        enemies[i].width = 23;
-        enemies[i].active = 0;
-        enemies[i].state = CALM;
-        enemies[i].direction = LEFT;
-        enemies[i].colDelta = 1;
-        enemies[i].rowDelta = 1;
-        enemies[i].num = i;
-        enemies[i].erased = 0;
-
-        enemies[i].worldRow = 256 - 33 - enemies[i].height;
-        enemies[i].worldCol = 240 + (30 * i);
-        enemies[i].screenRow = enemies[i].worldRow - vOff;
-
-
-        enemies[i].rightLimit = enemies[i].worldCol + enemies[i].width + 35;
-        enemies[i].leftLimit = enemies[i].worldCol - 35;
-
-        enemies[i].aniState = 3;
-    }
-}
-
-void drawBuzz(BUZZ *enemy) {
-    if (enemy->active) {
-        shadowOAM[1 + enemy->num].attr0 = (0xFF & enemy->screenRow) | (0<<14);
-        shadowOAM[1 + enemy->num].attr1 = (0x1FF & enemy->screenCol) | (2<<14);
-        shadowOAM[1 + enemy->num].attr2 = ((0 * 4)*32+(enemy->aniState * 4)) | ((0)<<12);
-    } else {
-        shadowOAM[1 + enemy->num].attr0 = (2<<8);
-    }
-}
-
-void updateBuzz(BUZZ *enemy) {
-    int screenCol = enemy->worldCol - hOff;
-    if (screenCol >= 0 && screenCol < 240 && !enemy->erased) {
-        enemy->screenCol = screenCol;
-        enemy->active = 1;
-    }
-
-    if (enemy->active) {
-
-        if (enemy->state == CALM) {
-            if (enemy->direction == LEFT) {
-                if (enemy->worldCol > enemy->leftLimit) {
-                    enemy->worldCol -= enemy->colDelta;
-                } else {
-                    enemy->direction = RIGHT;
-                }
-            }
-
-            if (enemy->direction == RIGHT) {
-                if (enemy->worldCol < enemy->rightLimit) {
-                    enemy->worldCol += enemy->colDelta;
-                } else {
-                    enemy->direction = LEFT;
-                }
-            }
-        }
-
-
-        if (enemy->state == ANGRY) {
-            if (player.worldCol <= enemy->worldCol) {
-                enemy->direction = LEFT;
-            } else {
-                enemy->direction = RIGHT;
-            }
-
-            if (enemy->direction == LEFT) {
-                enemy->worldCol -= enemy->colDelta;
-            }
-            if (enemy->direction == RIGHT) {
-                enemy->worldCol += enemy->colDelta;
-            }
-        }
-
-
-        for (int i = 0; i < 5; i++) {
-            if (balloons[i].active && !balloons[i].held) {
-                if (collision(balloons[i].worldCol, balloons[i].worldRow, balloons[i].width, balloons[i].height,
-                enemy->worldCol, enemy->worldRow, enemy->width, enemy->height)) {
-                    balloons[i].active = 0;
-                    enemy->active = 0;
-                    enemy->erased = 1;
-                    remainingEnemies--;
-                }
-            }
-        }
-
-
-        if (collision(player.worldCol, player.worldRow, player.width, player.height,
-            enemy->worldCol, enemy->worldRow, enemy->width, enemy->height)) {
-                player.health = 0;
-        }
-
-
-
-        if (player.worldCol >= enemy->leftLimit && player.worldCol <= enemy->rightLimit) {
-            enemy->state = ANGRY;
-        }
-    }
-
-    enemy->screenCol = enemy->worldCol - hOff;
-    enemy->screenRow = enemy->worldRow - vOff;
-    animateBuzz(enemy);
-}
-
-void animateBuzz(BUZZ *enemy) {
-    if (enemy->active) {
-        if (enemy->direction == LEFT) {
-            enemy->aniState = 3;
-        }
-        if (enemy->direction == RIGHT) {
-            enemy->aniState = 2;
-        }
-    }
-}
-
-
-
-
+# 264 "game.c"
 void initBalloons() {
     for (int i = 0; i < 5; i++) {
         balloons[i].width = 12;
