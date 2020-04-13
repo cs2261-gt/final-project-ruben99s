@@ -28,8 +28,13 @@ void lose();
 void goToInstruction();
 void instruction();
 
+void goToGame1();
+void game1();
+void goToGame2();
+void game2();
+
 //state enum
-enum {START, GAME, PAUSE, WIN, LOSE, INSTRUCTION};
+enum {START, GAME, GAME1, GAME2, PAUSE, WIN, LOSE, INSTRUCTION};
 int state;
 
 //button inputs
@@ -54,6 +59,12 @@ int main() {
             case GAME:
                 game();
                 break;
+            case GAME1:
+                game1();
+                break;
+            case GAME2:
+                game2();
+                break;
             case PAUSE:
                 pause();
                 break;
@@ -67,9 +78,12 @@ int main() {
                 instruction();
                 break;
         }
-
     }
 }
+
+/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 void initialize() {
     //initialize background and mode
@@ -89,10 +103,14 @@ void initialize() {
     goToStart();
 }
 
+/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
 void goToStart() {
     REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
     REG_BG0VOFF = 0;
-    // REG_BG1HOFF = 0;
+    REG_BG0HOFF = 0;
     
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
@@ -114,6 +132,10 @@ void start() {
         goToInstruction();
     }
 }
+
+/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 void goToGame() {
     REG_DISPCTL = MODE0 | BG0_ENABLE | BG1_ENABLE | SPRITE_ENABLE;
@@ -137,6 +159,7 @@ void goToGame() {
 }
 
 void game() {
+    //level 0 code
     updateGame();
     drawGame();
 
@@ -150,18 +173,87 @@ void game() {
     //     goToLose();
     // }
     if(remainingEnemies <= 0) {
-        goToWin();
+        // goToWin();
+        goToGame1();
     }
     // if(player.health <= 0) {
     //     goToLose();
     // }
 }
 
+/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+void goToGame1() {
+    // REG_DISPCTL = MODE0 | BG0_ENABLE | BG1_ENABLE | SPRITE_ENABLE;
+    // REG_BG0VOFF = 96;
+    // REG_BG0HOFF = hOff;
+
+    // testing background
+    REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
+    REG_BG0VOFF = 0;
+    REG_BG0HOFF = 0;
+    hideSprites();
+    DMANow(3, shadowOAM, OAM, 512);
+    DMANow(3, gameScreen2Pal, PALETTE, 256);
+    DMANow(3, gameScreen2Tiles, &CHARBLOCK[0], gameScreen2TilesLen/2);
+    DMANow(3, gameScreen2Map, &SCREENBLOCK[28], gameScreen2MapLen/2);
+
+    state = GAME1;
+}
+
+void game1() {
+    //level 1 code here
+    if(BUTTON_PRESSED(BUTTON_A)) {
+        // goToWin();
+        goToGame2();
+    }
+    if(BUTTON_PRESSED(BUTTON_B)) {
+        goToLose();
+    }
+}
+
+/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
+void goToGame2() {
+    // REG_DISPCTL = MODE0 | BG0_ENABLE | BG1_ENABLE | SPRITE_ENABLE;
+    // REG_BG0VOFF = 96;
+    // REG_BG0HOFF = hOff;
+
+    // testing background
+    REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
+    REG_BG0VOFF = 0;
+    REG_BG0HOFF = 0;
+    hideSprites();
+    DMANow(3, shadowOAM, OAM, 512);
+    DMANow(3, gameScreen2Pal, PALETTE, 256);
+    DMANow(3, gameScreen2Tiles, &CHARBLOCK[0], gameScreen2TilesLen/2);
+    DMANow(3, gameScreen2Map, &SCREENBLOCK[28], gameScreen2MapLen/2);
+
+    state = GAME2;
+}
+
+void game2() {
+    //level 2 code here
+    if(BUTTON_PRESSED(BUTTON_A)) {
+        goToWin();
+    }
+    if(BUTTON_PRESSED(BUTTON_B)) {
+        goToLose();
+    }
+}
+
+/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
 void goToPause() {
     REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
     REG_BG0VOFF = 0;
     REG_BG0HOFF = 0;
-    // REG_BG1HOFF = 0;
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
     DMANow(3, pauseScreenPal, PALETTE, 256);
@@ -179,11 +271,14 @@ void pause() {
     }
 }
 
+/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
 void goToWin() {
     REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
     REG_BG0VOFF = 0;
     REG_BG0HOFF = 0;
-    // REG_BG1HOFF = 0;
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
     DMANow(3, winScreenPal, PALETTE, 256);
@@ -198,11 +293,14 @@ void win() {
     }
 }
 
+/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
 void goToLose() {
     REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
     REG_BG0VOFF = 0;
     REG_BG0HOFF = 0;
-    // REG_BG1HOFF = 0;
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
     DMANow(3, loseScreenPal, PALETTE, 256);
@@ -217,11 +315,14 @@ void lose() {
     }
 }
 
+/*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
+
 void goToInstruction() {
     REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
     REG_BG0VOFF = 0;
     REG_BG0HOFF = 0;
-    // REG_BG1HOFF = 0;
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
     DMANow(3, instructionScreenPal, PALETTE, 256);

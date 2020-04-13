@@ -195,113 +195,31 @@ typedef struct {
     int rowDelta;
     int height;
     int width;
-
-    int prevWorldCol;
-
-    int upLimit;
-    int downLimit;
-
-    int jumping;
-    int crouching;
-
-    int balloonTimer;
-
-    int health;
-
-
-    int aniCounter;
-    int aniState;
-    int prevAniState;
-    int curFrame;
-    int numFrames;
-} PLAYER;
-
-typedef struct {
-    int screenCol;
-    int screenRow;
-    int worldCol;
-    int worldRow;
-    int colDelta;
-    int rowDelta;
-    int height;
-    int width;
-
-    int prevWorldCol;
-    int prevWorldRow;
-
-    int active;
-    int type;
-    int held;
-    int num;
-} BALLOON;
-
-typedef struct {
-    int screenCol;
-    int screenRow;
-    int worldCol;
-    int worldRow;
-    int colDelta;
-    int rowDelta;
-    int height;
-    int width;
-    int active;
-
-    int rightLimit;
-    int leftLimit;
-    int direction;
-    int state;
-    int num;
-
-    int aniCounter;
-    int aniState;
-    int prevAniState;
-    int curFrame;
-    int numFrames;
-} BUZZ;
-
-typedef struct {
-    int screenCol;
-    int screenRow;
-    int worldCol;
-    int worldRow;
-    int colDelta;
-    int rowDelta;
-    int height;
-    int width;
     int active;
 } BULLET;
+
+typedef enum {
+    LEFT,
+    RIGHT
+};
 
 
 extern int hOff;
 extern int vOff;
 extern OBJ_ATTR shadowOAM[128];
-extern PLAYER player;
-extern BUZZ enemies[];
-extern BALLOON balloons[];
 extern int remainingEnemies;
 extern int numBalloons;
-# 107 "game.h"
+extern int direction;
+
+
+
+
+
+
+
 void initGame();
 void updateGame();
 void drawGame();
-
-void initPlayer();
-void updatePlayer();
-void animatePlayer();
-void drawPlayer();
-void playerAttack();
-
-void initBuzz();
-void updateBuzz(BUZZ *enemy);
-void animateBuzz(BUZZ *enemy);
-void drawBuzz(BUZZ *enemy);
-void buzzAttack(BUZZ *enemy);
-
-void initBalloons();
-void updateBalloons();
-void drawBalloons();
-void animateBalloons();
-void updateHeldBalloon();
 # 12 "main.c" 2
 # 1 "spriteSheetTest.h" 1
 # 21 "spriteSheetTest.h"
@@ -343,8 +261,13 @@ void lose();
 void goToInstruction();
 void instruction();
 
+void goToGame1();
+void game1();
+void goToGame2();
+void game2();
 
-enum {START, GAME, PAUSE, WIN, LOSE, INSTRUCTION};
+
+enum {START, GAME, GAME1, GAME2, PAUSE, WIN, LOSE, INSTRUCTION};
 int state;
 
 
@@ -369,6 +292,12 @@ int main() {
             case GAME:
                 game();
                 break;
+            case GAME1:
+                game1();
+                break;
+            case GAME2:
+                game2();
+                break;
             case PAUSE:
                 pause();
                 break;
@@ -382,9 +311,12 @@ int main() {
                 instruction();
                 break;
         }
-
     }
 }
+
+
+
+
 
 void initialize() {
 
@@ -404,10 +336,14 @@ void initialize() {
     goToStart();
 }
 
+
+
+
+
 void goToStart() {
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 0;
-
+    (*(volatile unsigned short *)0x04000010) = 0;
 
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
@@ -429,6 +365,10 @@ void start() {
         goToInstruction();
     }
 }
+
+
+
+
 
 void goToGame() {
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<9) | (1<<12);
@@ -452,6 +392,7 @@ void goToGame() {
 }
 
 void game() {
+
     updateGame();
     drawGame();
 
@@ -465,18 +406,87 @@ void game() {
 
 
     if(remainingEnemies <= 0) {
-        goToWin();
+
+        goToGame1();
     }
 
 
 
 }
 
+
+
+
+
+void goToGame1() {
+
+
+
+
+
+    (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
+    (*(volatile unsigned short *)0x04000012) = 0;
+    (*(volatile unsigned short *)0x04000010) = 0;
+    hideSprites();
+    DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
+    DMANow(3, gameScreen2Pal, ((unsigned short *)0x5000000), 256);
+    DMANow(3, gameScreen2Tiles, &((charblock *)0x6000000)[0], 64/2);
+    DMANow(3, gameScreen2Map, &((screenblock *)0x6000000)[28], 2048/2);
+
+    state = GAME1;
+}
+
+void game1() {
+
+    if((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0))))) {
+
+        goToGame2();
+    }
+    if((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
+        goToLose();
+    }
+}
+
+
+
+
+
+void goToGame2() {
+
+
+
+
+
+    (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
+    (*(volatile unsigned short *)0x04000012) = 0;
+    (*(volatile unsigned short *)0x04000010) = 0;
+    hideSprites();
+    DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
+    DMANow(3, gameScreen2Pal, ((unsigned short *)0x5000000), 256);
+    DMANow(3, gameScreen2Tiles, &((charblock *)0x6000000)[0], 64/2);
+    DMANow(3, gameScreen2Map, &((screenblock *)0x6000000)[28], 2048/2);
+
+    state = GAME2;
+}
+
+void game2() {
+
+    if((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0))))) {
+        goToWin();
+    }
+    if((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
+        goToLose();
+    }
+}
+
+
+
+
+
 void goToPause() {
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 0;
     (*(volatile unsigned short *)0x04000010) = 0;
-
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
     DMANow(3, pauseScreenPal, ((unsigned short *)0x5000000), 256);
@@ -494,11 +504,14 @@ void pause() {
     }
 }
 
+
+
+
+
 void goToWin() {
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 0;
     (*(volatile unsigned short *)0x04000010) = 0;
-
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
     DMANow(3, winScreenPal, ((unsigned short *)0x5000000), 256);
@@ -513,11 +526,14 @@ void win() {
     }
 }
 
+
+
+
+
 void goToLose() {
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 0;
     (*(volatile unsigned short *)0x04000010) = 0;
-
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
     DMANow(3, loseScreenPal, ((unsigned short *)0x5000000), 256);
@@ -532,11 +548,14 @@ void lose() {
     }
 }
 
+
+
+
+
 void goToInstruction() {
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 0;
     (*(volatile unsigned short *)0x04000010) = 0;
-
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
     DMANow(3, instructionScreenPal, ((unsigned short *)0x5000000), 256);
