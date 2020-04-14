@@ -17,6 +17,13 @@ typedef struct {
     int type;
     int held;
     int num;
+
+    int radius;
+
+    int aniState;
+    int curFrame;
+    int aniCounter;
+    int numFrames;
 } BALLOON;
 
 typedef enum {
@@ -27,13 +34,23 @@ typedef enum {
 };
 
 // enum {SINGLE, AOE, JUMP, CHEAT}; 
+extern BALLOON allBalloons[];
 
-extern BALLOON balloons[];
+// extern BALLOON balloons[];
+// extern BALLOON balloonsAOE[];
+// extern BALLOON jumpBalloon;
+// extern BALLOON cheatBalloon;
 
 #define MAXBALLOONS 5
 
 void initBalloons();
+void initBalloonsSingle();
+void initBalloonsAOE();
+void initJumpBalloon();
+void initCheatBalloon();
+
 void updateBalloons();
 void drawBalloons();
 void animateBalloons();
 void updateHeldBalloon();
+void updateDropBalloon();

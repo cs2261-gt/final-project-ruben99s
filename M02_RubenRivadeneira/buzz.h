@@ -18,12 +18,26 @@ typedef struct {
     int state;
     int num;
 
+    int health;
+
     int aniCounter;
     int aniState;
     int prevAniState;
     int curFrame;
     int numFrames;
 } BUZZ;
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+} HONEY;
 
 //buzz states
 typedef enum {

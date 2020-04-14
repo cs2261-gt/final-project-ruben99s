@@ -1,18 +1,5 @@
 #include "myLib.h"
 
-//structs
-typedef struct {
-    int screenCol;
-    int screenRow;
-    int worldCol;
-    int worldRow;
-    int colDelta;
-    int rowDelta;
-    int height;
-    int width;
-    int active;
-} BULLET;
-
 typedef enum {
     LEFT,
     RIGHT
@@ -25,6 +12,8 @@ extern OBJ_ATTR shadowOAM[128];
 extern int remainingEnemies;
 extern int numBalloons;
 extern int direction;
+extern int isPlayerEnd;
+extern int playerHealth;
 
 //constants
 #define MAPHEIGHT 256

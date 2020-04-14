@@ -113,19 +113,6 @@ int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, i
 # 1 "game.h" 1
 
 
-
-typedef struct {
-    int screenCol;
-    int screenRow;
-    int worldCol;
-    int worldRow;
-    int colDelta;
-    int rowDelta;
-    int height;
-    int width;
-    int active;
-} BULLET;
-
 typedef enum {
     LEFT,
     RIGHT
@@ -138,6 +125,8 @@ extern OBJ_ATTR shadowOAM[128];
 extern int remainingEnemies;
 extern int numBalloons;
 extern int direction;
+extern int isPlayerEnd;
+extern int playerHealth;
 
 
 
@@ -170,12 +159,26 @@ typedef struct {
     int state;
     int num;
 
+    int health;
+
     int aniCounter;
     int aniState;
     int prevAniState;
     int curFrame;
     int numFrames;
 } BUZZ;
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+} HONEY;
 
 
 typedef enum {
@@ -218,6 +221,9 @@ typedef struct {
     int crouching;
 
     int balloonTimer;
+    int balloonType;
+    int lastBalloonType;
+    int highJumpLimit;
 
     int health;
 
@@ -266,6 +272,13 @@ typedef struct {
     int type;
     int held;
     int num;
+
+    int radius;
+
+    int aniState;
+    int curFrame;
+    int aniCounter;
+    int numFrames;
 } BALLOON;
 
 typedef enum {
@@ -276,16 +289,19 @@ typedef enum {
 };
 
 
-
-extern BALLOON balloons[];
-
-
-
+extern BALLOON allBalloons[];
+# 46 "balloon.h"
 void initBalloons();
+void initBalloonsSingle();
+void initBalloonsAOE();
+void initJumpBalloon();
+void initCheatBalloon();
+
 void updateBalloons();
 void drawBalloons();
 void animateBalloons();
 void updateHeldBalloon();
+void updateDropBalloon();
 # 6 "game.c" 2
 
 int direction;
@@ -296,6 +312,8 @@ int vOff;
 OBJ_ATTR shadowOAM[128];
 int remainingEnemies;
 int numBalloons;
+int isPlayerEnd;
+int playerHealth;
 
 
 void initGame() {
@@ -304,6 +322,7 @@ void initGame() {
     direction = RIGHT;
     remainingEnemies = 8;
     numBalloons = 0;
+    isPlayerEnd = 0;
     (*(volatile unsigned short *)0x04000012) = vOff;
     (*(volatile unsigned short *)0x04000016) = vOff;
     initPlayer();
@@ -318,21 +337,65 @@ void updateGame() {
     for (int i = 0; i < 8; i++) {
         updateBuzz(&bees[i]);
     }
-    for (int i = 0; i < 5; i++) {
-        updateBalloons(&balloons[i]);
-        if (balloons[i].active) {
-            numActiveBalloons++;
-        }
-    }
-    if (numActiveBalloons < 5) {
+
+
+    if (player.balloonType == SINGLE) {
         for (int i = 0; i < 5; i++) {
-            if (!balloons[i].active) {
-                balloons[i].active = 1;
-                balloons[i].held = 1;
-                break;
+            updateBalloons(&allBalloons[i]);
+            if (allBalloons[i].active) {
+                numActiveBalloons++;
+            }
+        }
+
+        if (numActiveBalloons < 5) {
+            for (int i = 0; i < 5 ; i++) {
+                if (!allBalloons[i].active) {
+                    allBalloons[i].active = 1;
+                    allBalloons[i].held = 1;
+                    break;
+                }
             }
         }
     }
+    if (player.balloonType == AOE) {
+        for (int i = 5; i < 5 * 2; i++) {
+            updateBalloons(&allBalloons[i]);
+            if (allBalloons[i].active) {
+                numActiveBalloons++;
+            }
+        }
+
+        if (numActiveBalloons < 5) {
+            for (int i = 5; i < 5 * 2; i++) {
+                if (!allBalloons[i].active) {
+                    allBalloons[i].active = 1;
+                    allBalloons[i].held = 1;
+                    break;
+                }
+            }
+        }
+    }
+    if (player.balloonType == JUMP) {
+        updateBalloons(&allBalloons[10]);
+    }
+    if (player.balloonType == CHEAT) {
+        updateBalloons(&allBalloons[11]);
+    }
+
+
+    for (int i = 0; i < 5 * 2 + 2; i++) {
+        if (!allBalloons[i].active) {
+            updateHeldBalloon(&allBalloons[i]);
+        }
+
+
+
+    }
+
+    if (player.worldCol >= 460) {
+        isPlayerEnd = 1;
+    }
+    playerHealth = player.health;
 }
 
 void drawGame() {
@@ -340,9 +403,24 @@ void drawGame() {
     for (int i = 0; i < 8; i++) {
         drawBuzz(&bees[i]);
     }
-    for (int i = 0; i < 5; i++) {
-        drawBalloons(&balloons[i]);
+
+    if (player.balloonType == SINGLE || player.lastBalloonType == SINGLE) {
+        for (int i = 0; i < 5; i++) {
+            drawBalloons(&allBalloons[i]);
+        }
     }
+    if (player.balloonType == AOE || player.lastBalloonType == AOE) {
+        for (int i = 5; i < 5 * 2; i++) {
+            drawBalloons(&allBalloons[i]);
+        }
+    }
+    if (player.balloonType == JUMP || player.lastBalloonType == JUMP) {
+        drawBalloons(&allBalloons[10]);
+    }
+    if (player.balloonType == CHEAT || player.lastBalloonType == CHEAT) {
+        drawBalloons(&allBalloons[11]);
+    }
+
     waitForVBlank();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
 

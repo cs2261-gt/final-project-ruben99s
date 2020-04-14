@@ -14,8 +14,8 @@
 #include "instructionScreen.h"
 
 //Function prototypes
-void initialize();
-void goToStart();
+void initialize(); 
+void goToStart(); 
 void start();
 void goToGame();
 void game();
@@ -172,13 +172,13 @@ void game() {
     // if(BUTTON_PRESSED(BUTTON_B)) {
     //     goToLose();
     // }
-    if(remainingEnemies <= 0) {
-        // goToWin();
+    if(remainingEnemies <= 0 && isPlayerEnd) {
+        // goToWin(); 
         goToGame1();
     }
-    // if(player.health <= 0) {
-    //     goToLose();
-    // }
+    if(playerHealth <= 0) {
+        goToLose();
+    }
 }
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

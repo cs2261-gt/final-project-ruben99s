@@ -20,6 +20,9 @@ typedef struct {
     int crouching;
 
     int balloonTimer;
+    int balloonType;
+    int lastBalloonType;
+    int highJumpLimit;
 
     int health;
     

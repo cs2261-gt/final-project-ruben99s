@@ -185,19 +185,6 @@ extern const unsigned short bg01Pal[256];
 # 1 "game.h" 1
 
 
-
-typedef struct {
-    int screenCol;
-    int screenRow;
-    int worldCol;
-    int worldRow;
-    int colDelta;
-    int rowDelta;
-    int height;
-    int width;
-    int active;
-} BULLET;
-
 typedef enum {
     LEFT,
     RIGHT
@@ -210,6 +197,8 @@ extern OBJ_ATTR shadowOAM[128];
 extern int remainingEnemies;
 extern int numBalloons;
 extern int direction;
+extern int isPlayerEnd;
+extern int playerHealth;
 
 
 
@@ -405,13 +394,13 @@ void game() {
 
 
 
-    if(remainingEnemies <= 0) {
+    if(remainingEnemies <= 0 && isPlayerEnd) {
 
         goToGame1();
     }
-
-
-
+    if(playerHealth <= 0) {
+        goToLose();
+    }
 }
 
 

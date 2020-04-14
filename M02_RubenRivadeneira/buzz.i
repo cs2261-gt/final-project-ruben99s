@@ -131,12 +131,26 @@ typedef struct {
     int state;
     int num;
 
+    int health;
+
     int aniCounter;
     int aniState;
     int prevAniState;
     int curFrame;
     int numFrames;
 } BUZZ;
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+} HONEY;
 
 
 typedef enum {
@@ -159,19 +173,6 @@ void drawBuzz(BUZZ *buzz);
 # 1 "game.h" 1
 
 
-
-typedef struct {
-    int screenCol;
-    int screenRow;
-    int worldCol;
-    int worldRow;
-    int colDelta;
-    int rowDelta;
-    int height;
-    int width;
-    int active;
-} BULLET;
-
 typedef enum {
     LEFT,
     RIGHT
@@ -184,6 +185,8 @@ extern OBJ_ATTR shadowOAM[128];
 extern int remainingEnemies;
 extern int numBalloons;
 extern int direction;
+extern int isPlayerEnd;
+extern int playerHealth;
 
 
 
@@ -218,6 +221,9 @@ typedef struct {
     int crouching;
 
     int balloonTimer;
+    int balloonType;
+    int lastBalloonType;
+    int highJumpLimit;
 
     int health;
 
@@ -266,6 +272,13 @@ typedef struct {
     int type;
     int held;
     int num;
+
+    int radius;
+
+    int aniState;
+    int curFrame;
+    int aniCounter;
+    int numFrames;
 } BALLOON;
 
 typedef enum {
@@ -276,22 +289,27 @@ typedef enum {
 };
 
 
-
-extern BALLOON balloons[];
-
-
-
+extern BALLOON allBalloons[];
+# 46 "balloon.h"
 void initBalloons();
+void initBalloonsSingle();
+void initBalloonsAOE();
+void initJumpBalloon();
+void initCheatBalloon();
+
 void updateBalloons();
 void drawBalloons();
 void animateBalloons();
 void updateHeldBalloon();
+void updateDropBalloon();
 # 6 "buzz.c" 2
 
 
 BUZZ bees[8];
+int healthTimer;
 
 void initBuzz() {
+    healthTimer = 0;
     for (int i = 0; i < 8; i++) {
         bees[i].height = 20;
         bees[i].width = 23;
@@ -302,6 +320,7 @@ void initBuzz() {
         bees[i].rowDelta = 1;
         bees[i].num = i;
         bees[i].erased = 0;
+        bees[i].health = 100;
 
         bees[i].worldRow = 256 - 33 - bees[i].height;
         bees[i].worldCol = 240 + (30 * i);
@@ -318,11 +337,11 @@ void initBuzz() {
 
 void drawBuzz(BUZZ *buzz) {
     if (buzz->active) {
-        shadowOAM[1 + buzz->num].attr0 = (0xFF & buzz->screenRow) | (0<<14);
-        shadowOAM[1 + buzz->num].attr1 = (0x1FF & buzz->screenCol) | (2<<14);
-        shadowOAM[1 + buzz->num].attr2 = ((buzz->curFrame * 4)*32+(buzz->aniState * 4)) | ((0)<<12);
+        shadowOAM[37 + buzz->num].attr0 = (0xFF & buzz->screenRow) | (0<<14);
+        shadowOAM[37 + buzz->num].attr1 = (0x1FF & buzz->screenCol) | (2<<14);
+        shadowOAM[37 + buzz->num].attr2 = ((buzz->curFrame * 4)*32+(buzz->aniState * 4)) | ((0)<<12);
     } else {
-        shadowOAM[1 + buzz->num].attr0 = (2<<8);
+        shadowOAM[37 + buzz->num].attr0 = (2<<8);
     }
 }
 
@@ -370,22 +389,44 @@ void updateBuzz(BUZZ *buzz) {
         }
 
 
-        for (int i = 0; i < 5; i++) {
-            if (balloons[i].active && !balloons[i].held) {
-                if (collision(balloons[i].worldCol, balloons[i].worldRow, balloons[i].width, balloons[i].height,
+        for (int i = 0; i < 5 * 2 + 2; i++) {
+            if (allBalloons[i].active && !allBalloons[i].held) {
+                if (collision(allBalloons[i].worldCol, allBalloons[i].worldRow, allBalloons[i].width, allBalloons[i].height,
                 buzz->worldCol, buzz->worldRow, buzz->width, buzz->height)) {
-                    balloons[i].active = 0;
-                    buzz->active = 0;
-                    buzz->erased = 1;
-                    remainingEnemies--;
+
+                    if (allBalloons[i].type == SINGLE) {
+                        buzz->health -= 100;
+                    }
+                    if (allBalloons[i].type == AOE) {
+
+                        int rightLimit = allBalloons[i].worldCol + allBalloons[i].width + allBalloons[i].radius;
+                        int leftLimit = allBalloons[i].worldCol - allBalloons[i].radius;
+                        for (int i = 0; i < 8; i++) {
+                            if (bees[i].worldCol >= leftLimit && bees[i].worldCol < rightLimit) {
+                                bees[i].health -= 34;
+                            }
+                        }
+                    }
+
+                    allBalloons[i].active = 0;
                 }
             }
+        }
+
+        if (buzz->health <= 0) {
+            buzz->active = 0;
+            buzz->erased = 1;
+            remainingEnemies--;
         }
 
 
         if (collision(player.worldCol, player.worldRow, player.width, player.height,
             buzz->worldCol, buzz->worldRow, buzz->width, buzz->height)) {
-                player.health = 0;
+                if (healthTimer % 250 == 0) {
+                    player.health -= 5;
+                    healthTimer = 0;
+                }
+                healthTimer++;
         }
 
 

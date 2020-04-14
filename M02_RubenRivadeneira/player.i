@@ -133,6 +133,9 @@ typedef struct {
     int crouching;
 
     int balloonTimer;
+    int balloonType;
+    int lastBalloonType;
+    int highJumpLimit;
 
     int health;
 
@@ -164,19 +167,6 @@ void playerAttack();
 # 1 "game.h" 1
 
 
-
-typedef struct {
-    int screenCol;
-    int screenRow;
-    int worldCol;
-    int worldRow;
-    int colDelta;
-    int rowDelta;
-    int height;
-    int width;
-    int active;
-} BULLET;
-
 typedef enum {
     LEFT,
     RIGHT
@@ -189,6 +179,8 @@ extern OBJ_ATTR shadowOAM[128];
 extern int remainingEnemies;
 extern int numBalloons;
 extern int direction;
+extern int isPlayerEnd;
+extern int playerHealth;
 
 
 
@@ -221,12 +213,26 @@ typedef struct {
     int state;
     int num;
 
+    int health;
+
     int aniCounter;
     int aniState;
     int prevAniState;
     int curFrame;
     int numFrames;
 } BUZZ;
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+} HONEY;
 
 
 typedef enum {
@@ -266,6 +272,13 @@ typedef struct {
     int type;
     int held;
     int num;
+
+    int radius;
+
+    int aniState;
+    int curFrame;
+    int aniCounter;
+    int numFrames;
 } BALLOON;
 
 typedef enum {
@@ -276,16 +289,19 @@ typedef enum {
 };
 
 
-
-extern BALLOON balloons[];
-
-
-
+extern BALLOON allBalloons[];
+# 46 "balloon.h"
 void initBalloons();
+void initBalloonsSingle();
+void initBalloonsAOE();
+void initJumpBalloon();
+void initCheatBalloon();
+
 void updateBalloons();
 void drawBalloons();
 void animateBalloons();
 void updateHeldBalloon();
+void updateDropBalloon();
 # 6 "player.c" 2
 
 PLAYER player;
@@ -308,7 +324,12 @@ void initPlayer() {
     player.jumping = 0;
     player.crouching = 0;
 
+    player.health = 100;
+
     player.balloonTimer = 0;
+    player.balloonType = SINGLE;
+    player.lastBalloonType = 4;
+    player.highJumpLimit = 0;
 
 
     player.health = 10;
@@ -429,6 +450,94 @@ void updatePlayer() {
         }
     }
 
+    if ((!(~(oldButtons)&((1<<9))) && (~buttons & ((1<<9))))) {
+
+        if (player.balloonType == SINGLE) {
+            for (int i = 0; i < 5; i++) {
+                allBalloons[i].active = 0;
+                allBalloons[i].held = 0;
+            }
+
+            player.lastBalloonType = player.balloonType;
+            player.balloonType = CHEAT;
+            allBalloons[11].active = 1;
+            allBalloons[11].held = 1;
+        } else if (player.balloonType == CHEAT) {
+            allBalloons[11].active = 0;
+            allBalloons[11].held = 0;
+
+            player.lastBalloonType = player.balloonType;
+            player.balloonType = JUMP;
+            allBalloons[10].active = 1;
+            allBalloons[10].held = 1;
+        } else if (player.balloonType == JUMP) {
+            allBalloons[10].active = 0;
+            allBalloons[10].held = 0;
+
+            player.lastBalloonType = player.balloonType;
+            player.balloonType = AOE;
+            allBalloons[5].active = 1;
+            allBalloons[5].held = 1;
+        } else if (player.balloonType == AOE) {
+            for (int i = 5; i < 5 * 2; i++) {
+                allBalloons[i].active = 0;
+                allBalloons[i].held = 0;
+            }
+
+            player.lastBalloonType = player.balloonType;
+            player.balloonType = SINGLE;
+            allBalloons[0].active = 1;
+            allBalloons[0].held = 1;
+        }
+    }
+
+    if ((!(~(oldButtons)&((1<<8))) && (~buttons & ((1<<8))))) {
+
+        if (player.balloonType == SINGLE) {
+            for (int i = 0; i < 5; i++) {
+                allBalloons[i].active = 0;
+                allBalloons[i].held = 0;
+            }
+
+            player.lastBalloonType = player.balloonType;
+            player.balloonType = AOE;
+            allBalloons[5].active = 1;
+            allBalloons[5].held = 1;
+        } else if (player.balloonType == AOE) {
+            for (int i = 5; i < 5 * 2; i++) {
+                allBalloons[i].active = 0;
+                allBalloons[i].held = 0;
+            }
+
+            player.lastBalloonType = player.balloonType;
+            player.balloonType = JUMP;
+            allBalloons[10].active = 1;
+            allBalloons[10].held = 1;
+        } else if (player.balloonType == JUMP) {
+            allBalloons[10].active = 0;
+            allBalloons[10].held = 0;
+
+            player.lastBalloonType = player.balloonType;
+            player.balloonType = CHEAT;
+            allBalloons[11].active = 1;
+            allBalloons[11].held = 1;
+        } else if (player.balloonType == CHEAT) {
+            allBalloons[11].active = 0;
+            allBalloons[11].held = 0;
+
+            player.lastBalloonType = player.balloonType;
+            player.balloonType = SINGLE;
+            allBalloons[0].active = 1;
+            allBalloons[0].held = 1;
+        }
+    }
+
+    if (player.balloonType == JUMP) {
+        player.upLimit = 100;
+    } else {
+        player.upLimit = 150;
+    }
+
 
     if (!player.jumping && player.worldRow < player.downLimit) {
         player.worldRow += player.rowDelta;
@@ -447,17 +556,20 @@ void updatePlayer() {
 }
 
 void playerAttack() {
-    for (int i = 0; i < 5; i++) {
-        if (balloons[i].active && balloons[i].held) {
-            balloons[i].held = 0;
-            break;
+    if (player.balloonType == SINGLE) {
+        for (int i = 0; i < 5; i++) {
+            if (allBalloons[i].active && allBalloons[i].held) {
+                allBalloons[i].held = 0;
+                break;
+            }
         }
     }
-
-
-
-
-
-
-
+    if (player.balloonType == AOE) {
+        for (int i = 5; i < 5 * 2; i++) {
+            if (allBalloons[i].active && allBalloons[i].held) {
+                allBalloons[i].held = 0;
+                break;
+            }
+        }
+    }
 }

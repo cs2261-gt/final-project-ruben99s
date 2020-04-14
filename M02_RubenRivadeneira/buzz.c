@@ -6,18 +6,21 @@
 
 //global variables
 BUZZ bees[MAXBEES];
+int healthTimer;
 
 void initBuzz() {
+    healthTimer = 0;
     for (int i = 0; i < MAXBEES; i++) {
         bees[i].height = 20;
         bees[i].width = 23; 
-        bees[i].active = 0; 
+        bees[i].active = 0;  
         bees[i].state = CALM;
         bees[i].direction = LEFT;
         bees[i].colDelta = 1;
         bees[i].rowDelta = 1;
         bees[i].num = i;
         bees[i].erased = 0;
+        bees[i].health = 100;
 
         bees[i].worldRow = MAPHEIGHT - 33 - bees[i].height;
         bees[i].worldCol = SCREENWIDTH + (30 * i);
@@ -34,11 +37,11 @@ void initBuzz() {
 
 void drawBuzz(BUZZ *buzz) {
     if (buzz->active) {
-        shadowOAM[1 + buzz->num].attr0 = (ROWMASK & buzz->screenRow) | ATTR0_SQUARE;
-        shadowOAM[1 + buzz->num].attr1 = (COLMASK & buzz->screenCol) | ATTR1_MEDIUM;
-        shadowOAM[1 + buzz->num].attr2 = ATTR2_TILEID(buzz->aniState * 4, buzz->curFrame * 4) | ATTR2_PALROW(0); 
+        shadowOAM[37 + buzz->num].attr0 = (ROWMASK & buzz->screenRow) | ATTR0_SQUARE;
+        shadowOAM[37 + buzz->num].attr1 = (COLMASK & buzz->screenCol) | ATTR1_MEDIUM;
+        shadowOAM[37 + buzz->num].attr2 = ATTR2_TILEID(buzz->aniState * 4, buzz->curFrame * 4) | ATTR2_PALROW(0); 
     } else {
-        shadowOAM[1 + buzz->num].attr0 = ATTR0_HIDE;
+        shadowOAM[37 + buzz->num].attr0 = ATTR0_HIDE;
     }
 }
 
@@ -86,22 +89,44 @@ void updateBuzz(BUZZ *buzz) {
         }
 
         //collision with floating balloons
-        for (int i = 0; i < MAXBALLOONS; i++) {
-            if (balloons[i].active && !balloons[i].held) {
-                if (collision(balloons[i].worldCol, balloons[i].worldRow, balloons[i].width, balloons[i].height, 
+        for (int i = 0; i < MAXBALLOONS * 2 + 2; i++) { 
+            if (allBalloons[i].active && !allBalloons[i].held) {
+                if (collision(allBalloons[i].worldCol, allBalloons[i].worldRow, allBalloons[i].width, allBalloons[i].height, 
                 buzz->worldCol, buzz->worldRow, buzz->width, buzz->height)) {
-                    balloons[i].active = 0;
-                    buzz->active = 0;
-                    buzz->erased = 1;
-                    remainingEnemies--;
+
+                    if (allBalloons[i].type == SINGLE) {
+                        buzz->health -= 100;
+                    }
+                    if (allBalloons[i].type == AOE) { 
+                        //a data structure that allows for O(1) lookup of bees coordinates
+                        int rightLimit = allBalloons[i].worldCol + allBalloons[i].width + allBalloons[i].radius;
+                        int leftLimit = allBalloons[i].worldCol - allBalloons[i].radius;
+                        for (int i = 0; i < MAXBEES; i++) {
+                            if (bees[i].worldCol >= leftLimit && bees[i].worldCol < rightLimit) {
+                                bees[i].health -= 34;
+                            }
+                        }
+                    }
+                    
+                    allBalloons[i].active = 0; 
                 }
             }   
         } 
 
+        if (buzz->health <= 0) {
+            buzz->active = 0;
+            buzz->erased = 1;
+            remainingEnemies--;
+        }
+
         //collision with player
         if (collision(player.worldCol, player.worldRow, player.width, player.height, 
             buzz->worldCol, buzz->worldRow, buzz->width, buzz->height)) {
-                player.health = 0;
+                if (healthTimer % 250 == 0) {
+                    player.health -= 5;
+                    healthTimer = 0;
+                }
+                healthTimer++;
         }
         //TODO: needs to be changed to damage over time instead of insta kill
 

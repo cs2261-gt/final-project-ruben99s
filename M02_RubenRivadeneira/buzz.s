@@ -21,18 +21,22 @@ initBuzz:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	mov	r0, #0
-	push	{r4, r5, r6, r7, r8, r9, lr}
+	mov	r3, #0
+	push	{r4, r5, r6, r7, r8, r9, r10, lr}
 	mov	r7, #203
 	mov	r1, #240
-	mov	r2, r0
-	mov	r9, #20
-	mov	r8, #23
+	mov	r10, #20
+	mov	r9, #23
 	mov	ip, #1
+	mov	r8, #100
 	mov	r6, #3
-	ldr	r3, .L6
-	ldr	r5, [r3]
-	ldr	r3, .L6+4
+	ldr	r4, .L6
+	ldr	lr, .L6+4
+	ldr	r5, [r4]
+	mov	r0, r3
+	mov	r2, r3
+	str	r3, [lr]
+	ldr	r3, .L6+8
 	sub	r5, r7, r5
 .L2:
 	str	r0, [r3, #56]
@@ -41,29 +45,31 @@ initBuzz:
 	sub	lr, r1, #35
 	cmp	r0, #8
 	str	r1, [r3, #8]
-	str	r9, [r3, #24]
-	str	r8, [r3, #28]
+	str	r10, [r3, #24]
+	str	r9, [r3, #28]
 	str	r2, [r3, #32]
 	str	r2, [r3, #52]
 	str	r2, [r3, #48]
 	str	ip, [r3, #16]
 	str	ip, [r3, #20]
 	str	r2, [r3, #36]
+	str	r8, [r3, #60]
 	str	r7, [r3, #12]
 	str	r5, [r3, #4]
-	str	r6, [r3, #64]
-	str	r2, [r3, #72]
+	str	r6, [r3, #68]
+	str	r2, [r3, #76]
 	str	r4, [r3, #40]
 	str	lr, [r3, #44]
 	add	r1, r1, #30
-	add	r3, r3, #80
+	add	r3, r3, #84
 	bne	.L2
-	pop	{r4, r5, r6, r7, r8, r9, lr}
+	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
 	bx	lr
 .L7:
 	.align	2
 .L6:
 	.word	vOff
+	.word	healthTimer
 	.word	bees
 	.size	initBuzz, .-initBuzz
 	.align	2
@@ -79,7 +85,7 @@ drawBuzz:
 	ldr	r2, [r0, #32]
 	ldr	r3, [r0, #56]
 	cmp	r2, #0
-	add	r3, r3, #1
+	add	r3, r3, #37
 	beq	.L9
 	ldr	r2, [r0]
 	lsl	r2, r2, #23
@@ -87,8 +93,8 @@ drawBuzz:
 	mvn	r2, r2, lsl #17
 	mvn	r2, r2, lsr #17
 	push	{r4, lr}
-	ldr	r1, [r0, #64]
-	ldr	r4, [r0, #72]
+	ldr	r1, [r0, #68]
+	ldr	r4, [r0, #76]
 	ldr	ip, .L15
 	ldrb	lr, [r0, #4]	@ zero_extendqisi2
 	add	r1, r1, r4, lsl #5
@@ -128,16 +134,16 @@ animateBuzz:
 	ldr	r3, [r0, #48]
 	cmp	r3, #0
 	moveq	r3, #3
-	streq	r3, [r0, #64]
+	streq	r3, [r0, #68]
 	beq	.L21
 	cmp	r3, #1
 	moveq	r3, #2
-	streq	r3, [r0, #64]
+	streq	r3, [r0, #68]
 .L21:
 	ldr	r3, [r0, #52]
 	cmp	r3, #1
 	moveq	r3, #3
-	streq	r3, [r0, #72]
+	streq	r3, [r0, #76]
 	bx	lr
 	.size	animateBuzz, .-animateBuzz
 	.align	2
@@ -150,163 +156,224 @@ updateBuzz:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
-	ldr	r9, .L55
+	push	{r4, r5, r6, r7, r8, r9, r10, lr}
+	ldr	r8, .L69
 	ldr	r2, [r0, #8]
-	ldr	r3, [r9]
+	ldr	r3, [r8]
 	sub	r3, r2, r3
 	cmp	r3, #239
-	mov	r4, r0
-	sub	sp, sp, #20
+	mov	r5, r0
+	sub	sp, sp, #16
 	bhi	.L24
 	ldr	r1, [r0, #36]
 	cmp	r1, #0
-	bne	.L24
+	beq	.L67
+.L24:
+	ldr	r1, [r5, #32]
+	cmp	r1, #0
+	bne	.L25
+.L26:
+	mov	r0, r5
+	ldr	r1, .L69+4
+	ldr	r2, [r5, #12]
+	ldr	r1, [r1]
+	sub	r2, r2, r1
+	str	r3, [r5]
+	str	r2, [r5, #4]
+	add	sp, sp, #16
+	@ sp needed
+	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
+	b	animateBuzz
+.L67:
 	mov	r1, #1
 	str	r3, [r0]
 	str	r1, [r0, #32]
 .L25:
-	ldr	r3, [r4, #52]
+	ldr	r3, [r5, #52]
 	cmp	r3, #0
 	bne	.L27
-	ldr	r3, [r4, #48]
+	ldr	r3, [r5, #48]
 	cmp	r3, #0
 	bne	.L28
-	ldr	r3, [r4, #44]
+	ldr	r3, [r5, #44]
 	cmp	r2, r3
 	ble	.L29
-	ldr	r3, [r4, #16]
+	ldr	r3, [r5, #16]
 	sub	r2, r2, r3
-	str	r2, [r4, #8]
-	ldr	r6, .L55+4
+	str	r2, [r5, #8]
+	ldr	r7, .L69+8
 .L30:
-	ldr	r5, .L55+8
-	ldr	r1, [r4, #12]
-	ldr	r0, [r4, #28]
-	ldr	ip, [r4, #24]
-	ldr	r10, .L55+12
-	ldr	fp, .L55+16
-	add	r7, r5, #280
-.L36:
-	ldr	r3, [r5, #40]
+	ldr	r4, .L69+12
+	mov	r10, #0
+	ldr	r1, [r5, #12]
+	ldr	r0, [r5, #28]
+	ldr	ip, [r5, #24]
+	ldr	r9, .L69+16
+	add	r6, r4, #912
+	b	.L42
+.L34:
+	add	r4, r4, #76
+	cmp	r6, r4
+	beq	.L68
+.L42:
+	ldr	r3, [r4, #32]
 	cmp	r3, #0
 	beq	.L34
-	ldr	r8, [r5, #48]
-	cmp	r8, #0
-	beq	.L54
-.L34:
-	add	r5, r5, #56
-	cmp	r5, r7
+	ldr	r3, [r4, #40]
+	cmp	r3, #0
+	bne	.L34
+	str	ip, [sp, #12]
+	str	r0, [sp, #8]
+	str	r1, [sp, #4]
+	str	r2, [sp]
+	ldr	r3, [r4, #16]
+	ldr	r2, [r4, #20]
+	ldm	r4, {r0, r1}
+	mov	lr, pc
+	bx	r9
+	cmp	r0, #0
+	beq	.L66
+	ldr	r3, [r4, #36]
+	cmp	r3, #0
 	bne	.L36
+	ldr	r3, [r5, #60]
+	sub	r3, r3, #100
+	str	r3, [r5, #60]
+.L37:
+	str	r10, [r4, #32]
+.L66:
+	add	r4, r4, #76
+	cmp	r6, r4
+	ldr	r2, [r5, #8]
+	ldr	r1, [r5, #12]
+	ldr	r0, [r5, #28]
+	ldr	ip, [r5, #24]
+	bne	.L42
+.L68:
+	ldr	r3, [r5, #60]
+	cmp	r3, #0
+	bgt	.L43
+	mov	r6, #0
+	mov	r4, #1
+	ldr	lr, .L69+20
+	ldr	r3, [lr]
+	sub	r3, r3, #1
+	str	r3, [lr]
+	str	r6, [r5, #32]
+	str	r4, [r5, #36]
+.L43:
 	str	r0, [sp, #8]
 	str	r2, [sp]
 	str	ip, [sp, #12]
 	str	r1, [sp, #4]
-	add	r0, r6, #8
-	ldr	r3, [r6, #24]
-	ldr	r2, [r6, #28]
+	add	r0, r7, #8
+	ldr	r3, [r7, #24]
+	ldr	r2, [r7, #28]
 	ldm	r0, {r0, r1}
 	mov	lr, pc
-	bx	r10
+	bx	r9
 	cmp	r0, #0
-	movne	r3, #0
-	ldr	r2, [r6, #8]
-	ldr	r0, [r4, #44]
-	strne	r3, [r6, #56]
-	ldr	r1, [r9]
-	ldr	r3, [r4, #8]
+	beq	.L44
+	ldr	r1, .L69+24
+	ldr	r0, .L69+28
+	ldr	r3, [r1]
+	ldr	r2, .L69+32
+	mla	r2, r3, r2, r0
+	cmp	r0, r2, ror #1
+	movcs	r3, #1
+	ldrcs	r2, [r7, #68]
+	addcc	r3, r3, #1
+	subcs	r2, r2, #5
+	strcs	r2, [r7, #68]
+	str	r3, [r1]
+.L44:
+	ldr	r2, [r7, #8]
+	ldr	r0, [r5, #44]
+	ldr	r1, [r8]
+	ldr	r3, [r5, #8]
 	cmp	r2, r0
 	sub	r3, r3, r1
 	blt	.L26
-	ldr	r1, [r4, #40]
+	ldr	r1, [r5, #40]
 	cmp	r2, r1
 	movle	r2, #1
-	strle	r2, [r4, #52]
-.L26:
-	mov	r0, r4
-	ldr	r1, .L55+20
-	ldr	r2, [r4, #12]
-	ldr	r1, [r1]
-	sub	r2, r2, r1
-	str	r3, [r4]
-	str	r2, [r4, #4]
-	add	sp, sp, #20
-	@ sp needed
-	pop	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
-	b	animateBuzz
-.L24:
-	ldr	r1, [r4, #32]
-	cmp	r1, #0
-	beq	.L26
-	b	.L25
+	strle	r2, [r5, #52]
+	b	.L26
 .L27:
 	cmp	r3, #1
-	ldr	r6, .L55+4
+	ldr	r7, .L69+8
 	bne	.L30
-	ldr	r3, [r6, #8]
+	ldr	r3, [r7, #8]
 	cmp	r2, r3
 	movlt	r3, #1
 	movge	r3, #0
-	str	r3, [r4, #48]
-	ldr	r3, [r4, #16]
+	str	r3, [r5, #48]
+	ldr	r3, [r5, #16]
 	subge	r2, r2, r3
 	addlt	r2, r2, r3
-	str	r2, [r4, #8]
+	str	r2, [r5, #8]
 	b	.L30
-.L54:
-	str	ip, [sp, #12]
-	str	r0, [sp, #8]
-	str	r2, [sp]
-	str	r1, [sp, #4]
-	add	r0, r5, #8
-	ldr	r3, [r5, #24]
-	ldr	r2, [r5, #28]
-	ldm	r0, {r0, r1}
-	mov	lr, pc
-	bx	r10
-	cmp	r0, #0
-	movne	r2, #1
-	ldrne	r3, [fp]
-	strne	r8, [r5, #40]
-	subne	r3, r3, #1
-	strne	r2, [r4, #36]
-	strne	r8, [r4, #32]
-	strne	r3, [fp]
-	ldr	r2, [r4, #8]
-	ldr	r1, [r4, #12]
-	ldr	r0, [r4, #28]
-	ldr	ip, [r4, #24]
-	b	.L34
+.L36:
+	cmp	r3, #1
+	bne	.L37
+	ldr	ip, [r4]
+	ldr	r0, [r4, #20]
+	ldr	r2, [r4, #48]
+	ldr	r3, .L69+36
+	add	r0, ip, r0
+	add	r0, r0, r2
+	sub	ip, ip, r2
+	add	lr, r3, #672
+.L40:
+	ldr	r2, [r3, #8]
+	cmp	r2, r0
+	movlt	r1, #1
+	movge	r1, #0
+	cmp	r2, ip
+	movlt	r1, #0
+	cmp	r1, #0
+	ldrne	r2, [r3, #60]
+	subne	r2, r2, #34
+	strne	r2, [r3, #60]
+	add	r3, r3, #84
+	cmp	lr, r3
+	bne	.L40
+	b	.L37
 .L28:
 	cmp	r3, #1
 	beq	.L31
-.L52:
-	ldr	r6, .L55+4
+.L65:
+	ldr	r7, .L69+8
 	b	.L30
 .L29:
 	mov	r3, #1
-	str	r3, [r4, #48]
+	str	r3, [r5, #48]
 .L31:
-	ldr	r3, [r4, #40]
+	ldr	r3, [r5, #40]
 	cmp	r2, r3
-	ldrlt	r3, [r4, #16]
+	ldrlt	r3, [r5, #16]
 	addlt	r2, r2, r3
-	strlt	r2, [r4, #8]
-	blt	.L52
+	strlt	r2, [r5, #8]
+	blt	.L65
 .L32:
 	mov	r3, #0
-	ldr	r6, .L55+4
-	str	r3, [r4, #48]
+	ldr	r7, .L69+8
+	str	r3, [r5, #48]
 	b	.L30
-.L56:
+.L70:
 	.align	2
-.L55:
+.L69:
 	.word	hOff
+	.word	vOff
 	.word	player
-	.word	balloons
+	.word	allBalloons+8
 	.word	collision
 	.word	remainingEnemies
-	.word	vOff
+	.word	healthTimer
+	.word	17179868
+	.word	652835029
+	.word	bees
 	.size	updateBuzz, .-updateBuzz
-	.comm	bees,640,4
+	.comm	healthTimer,4,4
+	.comm	bees,672,4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"
