@@ -162,7 +162,9 @@ void drawPlayer();
 void playerAttack();
 # 3 "player.c" 2
 # 1 "game.h" 1
-# 24 "game.h"
+
+
+
 typedef struct {
     int screenCol;
     int screenRow;
@@ -184,11 +186,16 @@ typedef enum {
 extern int hOff;
 extern int vOff;
 extern OBJ_ATTR shadowOAM[128];
-
 extern int remainingEnemies;
 extern int numBalloons;
 extern int direction;
-# 58 "game.h"
+
+
+
+
+
+
+
 void initGame();
 void updateGame();
 void drawGame();
@@ -415,7 +422,7 @@ void updatePlayer() {
 
 
     if((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 8; i++) {
             if (bees[i].active && bees[i].screenCol >= 0 && bees[i].screenCol < 240) {
                 bees[i].state = ANGRY;
             }

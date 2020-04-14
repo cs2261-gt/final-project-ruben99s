@@ -10,8 +10,8 @@ BUZZ bees[MAXBEES];
 void initBuzz() {
     for (int i = 0; i < MAXBEES; i++) {
         bees[i].height = 20;
-        bees[i].width = 23;
-        bees[i].active = 0;
+        bees[i].width = 23; 
+        bees[i].active = 0; 
         bees[i].state = CALM;
         bees[i].direction = LEFT;
         bees[i].colDelta = 1;
@@ -27,7 +27,8 @@ void initBuzz() {
         bees[i].rightLimit = bees[i].worldCol + bees[i].width + 35;
         bees[i].leftLimit = bees[i].worldCol - 35;
 
-        bees[i].aniState = 3;        
+        bees[i].aniState = 3;
+        bees[i].curFrame = 0;         
     }
 }
 
@@ -35,7 +36,7 @@ void drawBuzz(BUZZ *buzz) {
     if (buzz->active) {
         shadowOAM[1 + buzz->num].attr0 = (ROWMASK & buzz->screenRow) | ATTR0_SQUARE;
         shadowOAM[1 + buzz->num].attr1 = (COLMASK & buzz->screenCol) | ATTR1_MEDIUM;
-        shadowOAM[1 + buzz->num].attr2 = ATTR2_TILEID(buzz->aniState * 4, 0 * 4) | ATTR2_PALROW(0); 
+        shadowOAM[1 + buzz->num].attr2 = ATTR2_TILEID(buzz->aniState * 4, buzz->curFrame * 4) | ATTR2_PALROW(0); 
     } else {
         shadowOAM[1 + buzz->num].attr0 = ATTR0_HIDE;
     }
@@ -117,11 +118,21 @@ void updateBuzz(BUZZ *buzz) {
 
 void animateBuzz(BUZZ *buzz) {
     if (buzz->active) {
+        // if (buzz->aniCounter % 20 == 0) {
+        //     buzz->curFrame = (buzz->curFrame + 1) % buzz->numFrames;
+        // }
+
         if (buzz->direction == LEFT) {
             buzz->aniState = 3;
         }
         if (buzz->direction == RIGHT) {
             buzz->aniState = 2;
         }
+
+        if (buzz->state == ANGRY) {
+            buzz->curFrame = 3;
+        }
+
+        // buzz->aniCounter++;
     }
 }

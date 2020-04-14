@@ -4,10 +4,10 @@
 #include "player.h"
 #include "balloon.h"
 
-int direction;
+int direction; 
 
 //global variables
-int hOff;
+int hOff; 
 int vOff;
 OBJ_ATTR shadowOAM[128];
 int remainingEnemies;

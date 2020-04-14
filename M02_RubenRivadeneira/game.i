@@ -302,7 +302,7 @@ void initGame() {
     vOff = 96;
     hOff = 0;
     direction = RIGHT;
-    remainingEnemies = 3;
+    remainingEnemies = 8;
     numBalloons = 0;
     (*(volatile unsigned short *)0x04000012) = vOff;
     (*(volatile unsigned short *)0x04000016) = vOff;
@@ -315,7 +315,7 @@ void updateGame() {
     int numActiveBalloons = 0;
 
     updatePlayer();
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 8; i++) {
         updateBuzz(&bees[i]);
     }
     for (int i = 0; i < 5; i++) {
@@ -337,7 +337,7 @@ void updateGame() {
 
 void drawGame() {
     drawPlayer();
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 8; i++) {
         drawBuzz(&bees[i]);
     }
     for (int i = 0; i < 5; i++) {

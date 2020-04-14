@@ -157,7 +157,9 @@ void animateBuzz(BUZZ *buzz);
 void drawBuzz(BUZZ *buzz);
 # 3 "buzz.c" 2
 # 1 "game.h" 1
-# 24 "game.h"
+
+
+
 typedef struct {
     int screenCol;
     int screenRow;
@@ -179,11 +181,16 @@ typedef enum {
 extern int hOff;
 extern int vOff;
 extern OBJ_ATTR shadowOAM[128];
-
 extern int remainingEnemies;
 extern int numBalloons;
 extern int direction;
-# 58 "game.h"
+
+
+
+
+
+
+
 void initGame();
 void updateGame();
 void drawGame();
@@ -282,10 +289,10 @@ void updateHeldBalloon();
 # 6 "buzz.c" 2
 
 
-BUZZ bees[3];
+BUZZ bees[8];
 
 void initBuzz() {
-    for (int i = 0; i < 3; i++) {
+    for (int i = 0; i < 8; i++) {
         bees[i].height = 20;
         bees[i].width = 23;
         bees[i].active = 0;
@@ -305,6 +312,7 @@ void initBuzz() {
         bees[i].leftLimit = bees[i].worldCol - 35;
 
         bees[i].aniState = 3;
+        bees[i].curFrame = 0;
     }
 }
 
@@ -312,7 +320,7 @@ void drawBuzz(BUZZ *buzz) {
     if (buzz->active) {
         shadowOAM[1 + buzz->num].attr0 = (0xFF & buzz->screenRow) | (0<<14);
         shadowOAM[1 + buzz->num].attr1 = (0x1FF & buzz->screenCol) | (2<<14);
-        shadowOAM[1 + buzz->num].attr2 = ((0 * 4)*32+(buzz->aniState * 4)) | ((0)<<12);
+        shadowOAM[1 + buzz->num].attr2 = ((buzz->curFrame * 4)*32+(buzz->aniState * 4)) | ((0)<<12);
     } else {
         shadowOAM[1 + buzz->num].attr0 = (2<<8);
     }
@@ -394,11 +402,21 @@ void updateBuzz(BUZZ *buzz) {
 
 void animateBuzz(BUZZ *buzz) {
     if (buzz->active) {
+
+
+
+
         if (buzz->direction == LEFT) {
             buzz->aniState = 3;
         }
         if (buzz->direction == RIGHT) {
             buzz->aniState = 2;
         }
+
+        if (buzz->state == ANGRY) {
+            buzz->curFrame = 3;
+        }
+
+
     }
 }

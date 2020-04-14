@@ -7,8 +7,8 @@
 PLAYER player;
 
 void initPlayer() {
-    player.height = 30;
-    player.width = 20;
+    player.height = 30; 
+    player.width = 20; 
     player.colDelta = 2;
     player.rowDelta = 2;
     player.worldCol = 10;

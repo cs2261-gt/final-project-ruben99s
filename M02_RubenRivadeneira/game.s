@@ -26,7 +26,7 @@ initGame:
 	push	{r4, lr}
 	mov	r2, #67108864
 	mov	lr, #1
-	mov	r0, #3
+	mov	r0, #8
 	ldr	ip, .L4
 	str	r3, [ip]
 	ldr	ip, .L4+4
@@ -73,26 +73,26 @@ updateGame:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, r7, r8, r9, r10, lr}
-	ldr	r3, .L19
+	ldr	r3, .L21
 	mov	lr, pc
 	bx	r3
-	ldr	r4, .L19+4
-	ldr	r0, .L19+8
+	ldr	r4, .L21+4
+	ldr	r6, .L21+8
+	add	r5, r4, #640
+.L7:
+	mov	r0, r4
+	add	r4, r4, #80
 	mov	lr, pc
-	bx	r4
-	ldr	r5, .L19+12
-	ldr	r0, .L19+16
-	mov	lr, pc
-	bx	r4
-	ldr	r0, .L19+20
-	mov	lr, pc
-	bx	r4
+	bx	r6
+	cmp	r4, r5
+	bne	.L7
+	ldr	r5, .L21+12
+	mov	r6, #0
 	mov	r8, r5
 	mov	r4, r5
-	mov	r6, #0
-	ldr	r9, .L19+24
+	ldr	r9, .L21+16
 	add	r7, r5, #280
-.L8:
+.L9:
 	mov	r0, r4
 	mov	lr, pc
 	bx	r9
@@ -100,23 +100,23 @@ updateGame:
 	add	r4, r4, #56
 	cmp	r3, #0
 	addne	r6, r6, #1
-	cmp	r7, r4
-	bne	.L8
+	cmp	r4, r7
+	bne	.L9
 	cmp	r6, #4
 	bgt	.L6
 	mov	r3, #0
-.L11:
+.L12:
 	ldr	r2, [r5, #40]
 	cmp	r2, #0
-	beq	.L18
+	beq	.L20
 	add	r3, r3, #1
 	cmp	r3, #5
 	add	r5, r5, #56
-	bne	.L11
+	bne	.L12
 .L6:
 	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
 	bx	lr
-.L18:
+.L20:
 	mov	r2, #1
 	rsb	r3, r3, r3, lsl #3
 	add	r3, r8, r3, lsl #3
@@ -124,15 +124,13 @@ updateGame:
 	str	r2, [r3, #48]
 	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
 	bx	lr
-.L20:
+.L22:
 	.align	2
-.L19:
+.L21:
 	.word	updatePlayer
-	.word	updateBuzz
 	.word	bees
+	.word	updateBuzz
 	.word	balloons
-	.word	bees+80
-	.word	bees+160
 	.word	updateBalloons
 	.size	updateGame, .-updateGame
 	.align	2
@@ -146,49 +144,47 @@ drawGame:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, lr}
-	ldr	r6, .L23
-	ldr	r3, .L23+4
+	ldr	r3, .L27
 	mov	lr, pc
 	bx	r3
-	ldr	r4, .L23+8
-	mov	r0, r6
+	ldr	r4, .L27+4
+	ldr	r6, .L27+8
+	add	r5, r4, #640
+.L24:
+	mov	r0, r4
+	add	r4, r4, #80
+	mov	lr, pc
+	bx	r6
+	cmp	r4, r5
+	bne	.L24
+	ldr	r4, .L27+12
+	ldr	r0, .L27+16
 	mov	lr, pc
 	bx	r4
-	ldr	r5, .L23+12
-	add	r0, r6, #80
+	ldr	r0, .L27+20
 	mov	lr, pc
 	bx	r4
-	add	r0, r6, #160
+	ldr	r0, .L27+24
 	mov	lr, pc
 	bx	r4
-	ldr	r4, .L23+16
-	mov	r0, r5
+	ldr	r0, .L27+28
 	mov	lr, pc
 	bx	r4
-	add	r0, r5, #56
+	ldr	r0, .L27+32
 	mov	lr, pc
 	bx	r4
-	add	r0, r5, #112
-	mov	lr, pc
-	bx	r4
-	add	r0, r5, #168
-	mov	lr, pc
-	bx	r4
-	add	r0, r5, #224
-	mov	lr, pc
-	bx	r4
-	ldr	r3, .L23+20
+	ldr	r3, .L27+36
 	mov	lr, pc
 	bx	r3
-	ldr	r4, .L23+24
+	ldr	r4, .L27+40
 	mov	r3, #512
 	mov	r2, #117440512
-	ldr	r1, .L23+28
+	ldr	r1, .L27+44
 	mov	r0, #3
 	mov	lr, pc
 	bx	r4
 	mov	r1, #67108864
-	ldr	r3, .L23+32
+	ldr	r3, .L27+48
 	ldr	r2, [r3]
 	add	r3, r2, r2, lsr #31
 	asr	r3, r3, #1
@@ -200,14 +196,18 @@ drawGame:
 	pop	{r4, r5, r6, lr}
 	strh	r3, [r1, #20]	@ movhi
 	bx	lr
-.L24:
+.L28:
 	.align	2
-.L23:
-	.word	bees
+.L27:
 	.word	drawPlayer
+	.word	bees
 	.word	drawBuzz
-	.word	balloons
 	.word	drawBalloons
+	.word	balloons
+	.word	balloons+56
+	.word	balloons+112
+	.word	balloons+168
+	.word	balloons+224
 	.word	waitForVBlank
 	.word	DMANow
 	.word	shadowOAM

@@ -28,14 +28,14 @@ typedef struct {
 //buzz states
 typedef enum {
     CALM,
-    ANGRY
+    ANGRY 
 };
 
 //global variables
 extern BUZZ bees[];
 
 //constants
-#define MAXBEES 3
+#define MAXBEES 8
 
 //prototypes
 void initBuzz();
