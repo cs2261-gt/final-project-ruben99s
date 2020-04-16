@@ -5,6 +5,7 @@
 #include "balloon.h"
 // #include "bg00CollisionMap.h"
 #include "game1.h"
+#include "game2.h"
 
 PLAYER player;
  

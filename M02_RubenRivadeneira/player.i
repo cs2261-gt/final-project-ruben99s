@@ -324,6 +324,29 @@ void initGame1();
 void updateGame1();
 void drawGame1();
 # 8 "player.c" 2
+# 1 "game2.h" 1
+
+
+
+extern int hOff;
+extern int vOff;
+
+extern int remainingEnemies;
+extern int numBalloons;
+extern int direction;
+extern int isPlayerEndL2;
+extern int playerHealth;
+
+
+
+
+
+
+
+void initGame2();
+void updateGame2();
+void drawGame2();
+# 9 "player.c" 2
 
 PLAYER player;
 

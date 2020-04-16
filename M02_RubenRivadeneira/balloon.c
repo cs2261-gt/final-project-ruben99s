@@ -3,6 +3,7 @@
 #include "game.h"
 #include "player.h"
 #include "game1.h"
+#include "game2.h"
 
 
 // BALLOON balloons[MAXBALLOONS];

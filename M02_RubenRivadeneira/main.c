@@ -17,6 +17,10 @@
 #include "bg01Level1.h"
 #include "game1.h"
 
+#include "bg00Level2.h"
+#include "game2.h"
+
+
 //Function prototypes
 void initialize(); 
 void goToStart();
@@ -193,24 +197,6 @@ void game() {
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 void goToGame1() {
-    REG_DISPCTL = MODE0 | BG0_ENABLE | BG1_ENABLE | SPRITE_ENABLE;
-    REG_BG0VOFF = 96;
-    REG_BG0HOFF = 0;
-
-    hideSprites();
-    DMANow(3, shadowOAM, OAM, 512);
-    //simultaneous backgrounds
-    DMANow(3, bg00Level1Pal, PALETTE, bg01PalLen/2);
-
-    DMANow(3, bg00Level1Tiles, &CHARBLOCK[0], bg00Level1TilesLen/2);
-    DMANow(3, bg00Level1Map, &SCREENBLOCK[28], bg00Level1MapLen/2);
-
-    DMANow(3, bg01Level1Tiles, &CHARBLOCK[1], bg01Level1TilesLen/2);
-    DMANow(3, bg01Level1Map, &SCREENBLOCK[30], bg01Level1MapLen/2);
-
-
- 
-
     // testing background
     // REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
     // REG_BG0VOFF = 0;
@@ -220,6 +206,22 @@ void goToGame1() {
     // DMANow(3, gameScreen2Pal, PALETTE, 256);
     // DMANow(3, gameScreen2Tiles, &CHARBLOCK[0], gameScreen2TilesLen/2);
     // DMANow(3, gameScreen2Map, &SCREENBLOCK[28], gameScreen2MapLen/2);
+
+    REG_DISPCTL = MODE0 | BG0_ENABLE | BG1_ENABLE | SPRITE_ENABLE;
+    REG_BG0VOFF = 96;
+    REG_BG0HOFF = 0;
+
+    hideSprites();
+    DMANow(3, shadowOAM, OAM, 512);
+    //simultaneous backgrounds
+    DMANow(3, bg00Level1Pal, PALETTE, bg00Level1PalLen/2);
+
+    DMANow(3, bg00Level1Tiles, &CHARBLOCK[0], bg00Level1TilesLen/2);
+    DMANow(3, bg00Level1Map, &SCREENBLOCK[28], bg00Level1MapLen/2);
+
+    DMANow(3, bg01Level1Tiles, &CHARBLOCK[1], bg01Level1TilesLen/2);
+    DMANow(3, bg01Level1Map, &SCREENBLOCK[30], bg01Level1MapLen/2);
+
 
     prevState = state;
     state = GAME1;
@@ -233,28 +235,22 @@ void game1() {
     if(BUTTON_PRESSED(BUTTON_START)) {
         goToPause();
     }
-    // if(BUTTON_PRESSED(BUTTON_A)) {
-    //     goToWin();
-    // }
-    // if(BUTTON_PRESSED(BUTTON_B)) {
-    //     goToLose();
-    // }
+  
     if(isPlayerEndL1) { 
-        // goToWin(); 
+        // goToWin();
+        initGame2();
         goToGame2();
     }
+    
     // if(remainingEnemies <= 0 && isPlayerEnd) {
     //     // goToWin(); 
     //     goToGame2();
     // }
+
     if(playerHealth <= 0) {
         goToLose();
     }
-
-    // if(BUTTON_PRESSED(BUTTON_A)) {
-    //     // goToWin();
-    //     goToGame2();
-    // }
+ 
     if(BUTTON_PRESSED(BUTTON_B)) {
         goToLose();
     }
@@ -265,19 +261,27 @@ void game1() {
 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++*/
 
 void goToGame2() {
-    // REG_DISPCTL = MODE0 | BG0_ENABLE | BG1_ENABLE | SPRITE_ENABLE;
-    // REG_BG0VOFF = 96;
-    // REG_BG0HOFF = hOff;
+    // // testing background
+    // REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
+    // REG_BG0VOFF = 0;
+    // REG_BG0HOFF = 0;
+    // hideSprites();
+    // DMANow(3, shadowOAM, OAM, 512);
+    // DMANow(3, gameScreen2Pal, PALETTE, 256);
+    // DMANow(3, gameScreen2Tiles, &CHARBLOCK[0], gameScreen2TilesLen/2);
+    // DMANow(3, gameScreen2Map, &SCREENBLOCK[28], gameScreen2MapLen/2);
 
-    // testing background
     REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
-    REG_BG0VOFF = 0;
+    REG_BG0VOFF = 96;
     REG_BG0HOFF = 0;
+
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
-    DMANow(3, gameScreen2Pal, PALETTE, 256);
-    DMANow(3, gameScreen2Tiles, &CHARBLOCK[0], gameScreen2TilesLen/2);
-    DMANow(3, gameScreen2Map, &SCREENBLOCK[28], gameScreen2MapLen/2);
+    //simultaneous backgrounds
+    DMANow(3, bg00Level2Pal, PALETTE, bg00Level2PalLen/2);
+
+    DMANow(3, bg00Level2Tiles, &CHARBLOCK[0], bg00Level2TilesLen/2);
+    DMANow(3, bg00Level2Map, &SCREENBLOCK[28], bg00Level2MapLen/2);
 
     prevState = state;
     state = GAME2;
@@ -285,9 +289,28 @@ void goToGame2() {
 
 void game2() {
     //level 2 code here
-    if(BUTTON_PRESSED(BUTTON_A)) {
-        goToWin();
+    updateGame2();
+    drawGame2(); 
+
+    if(BUTTON_PRESSED(BUTTON_START)) {
+        goToPause();
     }
+  
+    if(isPlayerEndL2) { 
+        goToWin();
+        // initGame2();
+        // goToGame2();
+    }
+    
+    // if(remainingEnemies <= 0 && isPlayerEnd) {
+    //     // goToWin(); 
+    //     goToGame2();
+    // }
+
+    if(playerHealth <= 0) {
+        goToLose();
+    }
+ 
     if(BUTTON_PRESSED(BUTTON_B)) {
         goToLose();
     }

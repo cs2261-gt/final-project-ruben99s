@@ -276,6 +276,41 @@ void updateGame1();
 void drawGame1();
 # 19 "main.c" 2
 
+# 1 "bg00Level2.h" 1
+# 22 "bg00Level2.h"
+extern const unsigned short bg00Level2Tiles[14864];
+
+
+extern const unsigned short bg00Level2Map[2048];
+
+
+extern const unsigned short bg00Level2Pal[256];
+# 21 "main.c" 2
+# 1 "game2.h" 1
+
+
+
+extern int hOff;
+extern int vOff;
+
+extern int remainingEnemies;
+extern int numBalloons;
+extern int direction;
+extern int isPlayerEndL2;
+extern int playerHealth;
+
+
+
+
+
+
+
+void initGame2();
+void updateGame2();
+void drawGame2();
+# 22 "main.c" 2
+
+
 
 void initialize();
 void goToStart();
@@ -452,6 +487,7 @@ void game() {
 
 
 void goToGame1() {
+# 210 "main.c"
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<9) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 96;
     (*(volatile unsigned short *)0x04000010) = 0;
@@ -466,7 +502,8 @@ void goToGame1() {
 
     DMANow(3, bg01Level1Tiles, &((charblock *)0x6000000)[1], 16320/2);
     DMANow(3, bg01Level1Map, &((screenblock *)0x6000000)[30], 4096/2);
-# 224 "main.c"
+
+
     prevState = state;
     state = GAME1;
 }
@@ -480,15 +517,13 @@ void game1() {
         goToPause();
     }
 
-
-
-
-
-
     if(isPlayerEndL1) {
 
+        initGame2();
         goToGame2();
     }
+
+
 
 
 
@@ -496,10 +531,6 @@ void game1() {
     if(playerHealth <= 0) {
         goToLose();
     }
-
-
-
-
 
     if((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
         goToLose();
@@ -511,19 +542,18 @@ void game1() {
 
 
 void goToGame2() {
-
-
-
-
-
+# 274 "main.c"
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
-    (*(volatile unsigned short *)0x04000012) = 0;
+    (*(volatile unsigned short *)0x04000012) = 96;
     (*(volatile unsigned short *)0x04000010) = 0;
+
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
-    DMANow(3, gameScreen2Pal, ((unsigned short *)0x5000000), 256);
-    DMANow(3, gameScreen2Tiles, &((charblock *)0x6000000)[0], 64/2);
-    DMANow(3, gameScreen2Map, &((screenblock *)0x6000000)[28], 2048/2);
+
+    DMANow(3, bg00Level2Pal, ((unsigned short *)0x5000000), 512/2);
+
+    DMANow(3, bg00Level2Tiles, &((charblock *)0x6000000)[0], 29728/2);
+    DMANow(3, bg00Level2Map, &((screenblock *)0x6000000)[28], 4096/2);
 
     prevState = state;
     state = GAME2;
@@ -531,9 +561,28 @@ void goToGame2() {
 
 void game2() {
 
-    if((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0))))) {
-        goToWin();
+    updateGame2();
+    drawGame2();
+
+    if((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
+        goToPause();
     }
+
+    if(isPlayerEndL2) {
+        goToWin();
+
+
+    }
+
+
+
+
+
+
+    if(playerHealth <= 0) {
+        goToLose();
+    }
+
     if((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
         goToLose();
     }

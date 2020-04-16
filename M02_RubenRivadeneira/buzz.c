@@ -4,6 +4,7 @@
 #include "player.h"
 #include "balloon.h"
 #include "game1.h"
+#include "game2.h"
 
 //global variables
 BUZZ bees[MAXBEES];

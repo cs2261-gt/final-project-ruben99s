@@ -234,8 +234,8 @@ typedef enum {
 extern PLAYER player;
 
 
-void initPlayer();
-void updatePlayer(const unsigned short *bitmap);
+void initPlayer(int *hOff, int *vOff);
+void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff);
 void animatePlayer();
 void drawPlayer();
 void playerAttack();
@@ -263,6 +263,29 @@ void initGame1();
 void updateGame1();
 void drawGame1();
 # 6 "balloon.c" 2
+# 1 "game2.h" 1
+
+
+
+extern int hOff;
+extern int vOff;
+
+extern int remainingEnemies;
+extern int numBalloons;
+extern int direction;
+extern int isPlayerEndL2;
+extern int playerHealth;
+
+
+
+
+
+
+
+void initGame2();
+void updateGame2();
+void drawGame2();
+# 7 "balloon.c" 2
 
 
 
