@@ -109,6 +109,8 @@ typedef struct{
 
 
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
+
+typedef enum {LEFT, RIGHT};
 # 2 "buzz.c" 2
 # 1 "buzz.h" 1
 
@@ -173,15 +175,10 @@ void drawBuzz(BUZZ *buzz);
 # 1 "game.h" 1
 
 
-typedef enum {
-    LEFT,
-    RIGHT
-};
-
 
 extern int hOff;
 extern int vOff;
-extern OBJ_ATTR shadowOAM[128];
+
 extern int remainingEnemies;
 extern int numBalloons;
 extern int direction;
@@ -247,7 +244,7 @@ extern PLAYER player;
 
 
 void initPlayer();
-void updatePlayer();
+void updatePlayer(const unsigned short *bitmap);
 void animatePlayer();
 void drawPlayer();
 void playerAttack();
@@ -303,6 +300,29 @@ void animateBalloons();
 void updateHeldBalloon();
 void updateDropBalloon();
 # 6 "buzz.c" 2
+# 1 "game1.h" 1
+
+
+
+extern int hOff;
+extern int vOff;
+
+extern int remainingEnemies;
+extern int numBalloons;
+extern int direction;
+extern int isPlayerEndL1;
+extern int playerHealth;
+
+
+
+
+
+
+
+void initGame1();
+void updateGame1();
+void drawGame1();
+# 7 "buzz.c" 2
 
 
 BUZZ bees[8];

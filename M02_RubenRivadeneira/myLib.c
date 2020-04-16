@@ -16,7 +16,7 @@ void setPixel3(int col, int row, unsigned short color) {
 
 // Set a pixel on the screen in Mode 4
 void setPixel4(int col, int row, unsigned char colorIndex) {
-    unsigned short pixelData = videoBuffer[OFFSET(col, row, SCREENWIDTH) / 2];
+    unsigned short pixelData = videoBuffer[OFFSET(col, row, SCREENWIDTH) / 2]; 
     if (col & 1) {
         pixelData &= 0x00FF;
         pixelData |= (colorIndex << 8);

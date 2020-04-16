@@ -1,10 +1,10 @@
 #include "myLib.h"
-#include "game.h"
+#include "game1.h"
 #include "buzz.h"
 #include "player.h"
 #include "balloon.h"
 
-#include "bg00CollisionMap.h"
+#include "bg00L1CollisionMap.h"
 
 int direction; 
 
@@ -12,33 +12,33 @@ int direction;
 int hOff; 
 int vOff;
 OBJ_ATTR shadowOAM[128]; 
-int remainingEnemies;
+// int remainingEnemies;
 int numBalloons;
-int isPlayerEnd;
+int isPlayerEndL1;
 int playerHealth;
 
 //game functions-------------------------
-void initGame() { 
+void initGame1() { 
     vOff = 96;
     hOff = 0;
     direction = RIGHT; 
-    remainingEnemies = MAXBEES; 
+    // remainingEnemies = MAXBEES; 
     numBalloons = 0;
-    isPlayerEnd = 0;
+    isPlayerEndL1 = 0;
     REG_BG0VOFF = vOff;
     REG_BG1VOFF = vOff;
     initPlayer(&hOff, &vOff);
-    initBuzz();
+    // initBuzz();
     initBalloons();
 }
 
-void updateGame() {
+void updateGame1() {
     int numActiveBalloons = 0; 
 
-    updatePlayer(&bg00CollisionMapBitmap, &hOff, &vOff);
-    for (int i = 0; i < MAXBEES; i++) {
-        updateBuzz(&bees[i]);
-    }
+    updatePlayer(&bg00L1CollisionMapBitmap, &hOff, &vOff);
+    // for (int i = 0; i < MAXBEES; i++) {
+    //     updateBuzz(&bees[i]);
+    // }
     
     //updates only the balloon type that is selected
     if (player.balloonType == SINGLE) {
@@ -94,17 +94,17 @@ void updateGame() {
         // }
     }
 
-    if (player.worldCol >= 460) {
-        isPlayerEnd = 1;
+    if (player.worldCol >= 460) { 
+        isPlayerEndL1 = 1;
     }
     playerHealth = player.health;
 }
 
-void drawGame() {
+void drawGame1() {
     drawPlayer();
-    for (int i = 0; i < MAXBEES; i++) {
-        drawBuzz(&bees[i]);
-    }
+    // for (int i = 0; i < MAXBEES; i++) {
+    //     drawBuzz(&bees[i]);
+    // }
     //updates only the balloon type that is selected or deletes the previous type selected
     if (player.balloonType == SINGLE || player.lastBalloonType == SINGLE) {
         for (int i = 0; i < MAXBALLOONS; i++) {

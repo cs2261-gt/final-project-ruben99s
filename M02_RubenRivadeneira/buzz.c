@@ -3,14 +3,15 @@
 #include "game.h"
 #include "player.h"
 #include "balloon.h"
+#include "game1.h"
 
 //global variables
 BUZZ bees[MAXBEES];
 int healthTimer;
 
 void initBuzz() {
-    healthTimer = 0;
-    for (int i = 0; i < MAXBEES; i++) {
+    healthTimer = 0; 
+    for (int i = 0; i < MAXBEES; i++) { 
         bees[i].height = 20;
         bees[i].width = 23; 
         bees[i].active = 0;  

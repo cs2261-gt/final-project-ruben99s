@@ -98,12 +98,12 @@ drawBuzz:
 	ldr	ip, .L15
 	ldrb	lr, [r0, #4]	@ zero_extendqisi2
 	add	r1, r1, r4, lsl #5
-	add	r0, ip, r3, lsl #3
+	lsl	r0, r3, #3
 	lsl	r1, r1, #2
-	lsl	r3, r3, #3
-	strh	lr, [ip, r3]	@ movhi
-	strh	r2, [r0, #2]	@ movhi
-	strh	r1, [r0, #4]	@ movhi
+	add	r3, ip, r3, lsl #3
+	strh	lr, [ip, r0]	@ movhi
+	strh	r2, [r3, #2]	@ movhi
+	strh	r1, [r3, #4]	@ movhi
 	pop	{r4, lr}
 	bx	lr
 .L9:

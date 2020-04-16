@@ -3,14 +3,15 @@
 #include "game.h"
 #include "buzz.h"
 #include "balloon.h"
-#include "bg00CollisionMap.h"
+// #include "bg00CollisionMap.h"
+#include "game1.h"
 
 PLAYER player;
  
-void initPlayer() {
-    player.height = 30; 
-    player.width = 20;  
-    player.colDelta = 2;
+void initPlayer(int *hOff, int *vOff) {
+    player.height = 30;
+    player.width = 20; 
+    player.colDelta = 2; 
     player.rowDelta = 2;
     player.worldCol = 10;
     player.worldRow = MAPHEIGHT - player.height - 14; 
@@ -19,8 +20,8 @@ void initPlayer() {
     player.upLimit = player.worldRow - 100;
     player.downLimit = player.worldRow;
 
-    player.screenCol = player.worldCol - hOff;
-    player.screenRow = player.worldRow - vOff;
+    player.screenCol = player.worldCol - *hOff;
+    player.screenRow = player.worldRow - *vOff;
 
     player.jumping = 0;
     player.crouching = 0;
@@ -93,23 +94,23 @@ void drawPlayer() {
     shadowOAM[0].attr2 = ATTR2_TILEID(player.aniState * 4, player.curFrame * 4) | ATTR2_PALROW(0); 
 }
 
-void updatePlayer() {
+void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
     player.prevWorldCol = player.worldCol;
 
     //change MAPWIDTH value in game.h to make map longer
     if(BUTTON_HELD(BUTTON_RIGHT)) {
         if (player.worldCol + player.width + 12 - 1 < MAPWIDTH) {
 
-            if (bg00CollisionMapBitmap[OFFSET(player.worldCol + player.width - 1 + 1, player.worldRow, MAPWIDTH)] &&
-                bg00CollisionMapBitmap[OFFSET(player.worldCol + player.width - 1 + 1, player.worldRow + player.height - 1, MAPWIDTH)]) {
+            if (bitmap[OFFSET(player.worldCol + player.width - 1 + 1, player.worldRow, MAPWIDTH)] &&
+                bitmap[OFFSET(player.worldCol + player.width - 1 + 1, player.worldRow + player.height - 1, MAPWIDTH)]) {
                 
                 player.worldCol += player.colDelta;
 
             }
              
             
-            if (hOff + 1 < MAPWIDTH - SCREENWIDTH && player.screenCol > SCREENWIDTH/4) {
-                hOff += player.colDelta;
+            if (*hOff + 1 < MAPWIDTH - SCREENWIDTH && player.screenCol > SCREENWIDTH/4) {
+                *hOff += player.colDelta;
             }
         }
     }
@@ -117,15 +118,15 @@ void updatePlayer() {
     if(BUTTON_HELD(BUTTON_LEFT)) {
         if (player.worldCol >= 6) {
 
-            if (bg00CollisionMapBitmap[OFFSET(player.worldCol - 1, player.worldRow, MAPWIDTH)] &&
-                bg00CollisionMapBitmap[OFFSET(player.worldCol - 1, player.worldRow + player.height - 1, MAPWIDTH)]) {
+            if (bitmap[OFFSET(player.worldCol - 1, player.worldRow, MAPWIDTH)] &&
+                bitmap[OFFSET(player.worldCol - 1, player.worldRow + player.height - 1, MAPWIDTH)]) {
                 
                 player.worldCol -= player.colDelta;
 
             }
 
-            if (hOff - 1 >= 0 && player.screenCol < SCREENWIDTH/4) {
-                hOff -= player.colDelta;
+            if (*hOff - 1 >= 0 && player.screenCol < SCREENWIDTH/4) {
+                *hOff -= player.colDelta;
             }
         }
     }
@@ -264,8 +265,8 @@ void updatePlayer() {
     //gravity-ish
     if (!player.jumping) {
         //falling down
-        if (bg00CollisionMapBitmap[OFFSET(player.worldCol, player.worldRow + player.height - 1 + player.rowDelta, MAPWIDTH)] &&
-            bg00CollisionMapBitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow + player.height - 1 + player.rowDelta, MAPWIDTH)]) {
+        if (bitmap[OFFSET(player.worldCol, player.worldRow + player.height - 1 + player.rowDelta, MAPWIDTH)] &&
+            bitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow + player.height - 1 + player.rowDelta, MAPWIDTH)]) {
             
             player.worldRow += player.rowDelta;
                 
@@ -273,16 +274,16 @@ void updatePlayer() {
     }
     if (player.jumping) {
         //going up
-        if (bg00CollisionMapBitmap[OFFSET(player.worldCol, player.worldRow - player.rowDelta, MAPWIDTH)] &&
-            bg00CollisionMapBitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow - player.rowDelta, MAPWIDTH)]) {
+        if (bitmap[OFFSET(player.worldCol, player.worldRow - player.rowDelta, MAPWIDTH)] &&
+            bitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow - player.rowDelta, MAPWIDTH)]) {
                 
             player.worldRow -= player.rowDelta;
         }
     }
     
 
-    player.screenCol = player.worldCol - hOff;
-    player.screenRow = player.worldRow - vOff;
+    player.screenCol = player.worldCol - *hOff;
+    player.screenRow = player.worldRow - *vOff;
 
     animatePlayer();
 }

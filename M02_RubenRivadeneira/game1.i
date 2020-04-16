@@ -1,7 +1,7 @@
-# 1 "game.c"
+# 1 "game1.c"
 # 1 "<built-in>"
 # 1 "<command-line>"
-# 1 "game.c"
+# 1 "game1.c"
 # 1 "myLib.h" 1
 
 
@@ -111,8 +111,8 @@ typedef struct{
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
 
 typedef enum {LEFT, RIGHT};
-# 2 "game.c" 2
-# 1 "game.h" 1
+# 2 "game1.c" 2
+# 1 "game1.h" 1
 
 
 
@@ -122,7 +122,7 @@ extern int vOff;
 extern int remainingEnemies;
 extern int numBalloons;
 extern int direction;
-extern int isPlayerEnd;
+extern int isPlayerEndL1;
 extern int playerHealth;
 
 
@@ -131,10 +131,10 @@ extern int playerHealth;
 
 
 
-void initGame();
-void updateGame();
-void drawGame();
-# 3 "game.c" 2
+void initGame1();
+void updateGame1();
+void drawGame1();
+# 3 "game1.c" 2
 # 1 "buzz.h" 1
 
 
@@ -194,7 +194,7 @@ void initBuzz();
 void updateBuzz(BUZZ *buzz);
 void animateBuzz(BUZZ *buzz);
 void drawBuzz(BUZZ *buzz);
-# 4 "game.c" 2
+# 4 "game1.c" 2
 # 1 "player.h" 1
 
 
@@ -248,7 +248,7 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff);
 void animatePlayer();
 void drawPlayer();
 void playerAttack();
-# 5 "game.c" 2
+# 5 "game1.c" 2
 # 1 "balloon.h" 1
 
 
@@ -299,12 +299,12 @@ void drawBalloons();
 void animateBalloons();
 void updateHeldBalloon();
 void updateDropBalloon();
-# 6 "game.c" 2
+# 6 "game1.c" 2
 
-# 1 "bg00CollisionMap.h" 1
-# 20 "bg00CollisionMap.h"
-extern const unsigned short bg00CollisionMapBitmap[131072];
-# 8 "game.c" 2
+# 1 "bg00L1CollisionMap.h" 1
+# 20 "bg00L1CollisionMap.h"
+extern const unsigned short bg00L1CollisionMapBitmap[131072];
+# 8 "game1.c" 2
 
 int direction;
 
@@ -312,33 +312,33 @@ int direction;
 int hOff;
 int vOff;
 OBJ_ATTR shadowOAM[128];
-int remainingEnemies;
+
 int numBalloons;
-int isPlayerEnd;
+int isPlayerEndL1;
 int playerHealth;
 
 
-void initGame() {
+void initGame1() {
     vOff = 96;
     hOff = 0;
     direction = RIGHT;
-    remainingEnemies = 8;
+
     numBalloons = 0;
-    isPlayerEnd = 0;
+    isPlayerEndL1 = 0;
     (*(volatile unsigned short *)0x04000012) = vOff;
     (*(volatile unsigned short *)0x04000016) = vOff;
     initPlayer(&hOff, &vOff);
-    initBuzz();
+
     initBalloons();
 }
 
-void updateGame() {
+void updateGame1() {
     int numActiveBalloons = 0;
 
-    updatePlayer(&bg00CollisionMapBitmap, &hOff, &vOff);
-    for (int i = 0; i < 8; i++) {
-        updateBuzz(&bees[i]);
-    }
+    updatePlayer(&bg00L1CollisionMapBitmap, &hOff, &vOff);
+
+
+
 
 
     if (player.balloonType == SINGLE) {
@@ -395,16 +395,16 @@ void updateGame() {
     }
 
     if (player.worldCol >= 460) {
-        isPlayerEnd = 1;
+        isPlayerEndL1 = 1;
     }
     playerHealth = player.health;
 }
 
-void drawGame() {
+void drawGame1() {
     drawPlayer();
-    for (int i = 0; i < 8; i++) {
-        drawBuzz(&bees[i]);
-    }
+
+
+
 
     if (player.balloonType == SINGLE || player.lastBalloonType == SINGLE) {
         for (int i = 0; i < 5; i++) {

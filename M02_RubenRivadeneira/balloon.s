@@ -316,13 +316,13 @@ drawBalloons:
 	lsl	r2, r2, #23
 	ldrb	lr, [r0, #4]	@ zero_extendqisi2
 	lsr	r2, r2, #23
-	add	r0, ip, r3, lsl #3
+	lsl	r0, r3, #3
 	add	r1, r1, r4, lsl #5
+	add	r3, ip, r3, lsl #3
 	orr	r2, r2, #16384
-	lsl	r3, r3, #3
-	strh	lr, [ip, r3]	@ movhi
-	strh	r2, [r0, #2]	@ movhi
-	strh	r1, [r0, #4]	@ movhi
+	strh	lr, [ip, r0]	@ movhi
+	strh	r2, [r3, #2]	@ movhi
+	strh	r1, [r3, #4]	@ movhi
 	pop	{r4, lr}
 	bx	lr
 .L30:

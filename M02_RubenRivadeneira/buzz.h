@@ -52,7 +52,7 @@ extern BUZZ bees[];
 #define MAXBEES 8
 
 //prototypes
-void initBuzz();
+void initBuzz(); 
 void updateBuzz(BUZZ *buzz);
 void animateBuzz(BUZZ *buzz);
 void drawBuzz(BUZZ *buzz);

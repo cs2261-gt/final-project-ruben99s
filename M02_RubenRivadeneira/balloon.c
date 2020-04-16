@@ -2,16 +2,17 @@
 #include "balloon.h"
 #include "game.h"
 #include "player.h"
+#include "game1.h"
 
 
 // BALLOON balloons[MAXBALLOONS];
 // BALLOON balloonsAOE[MAXBALLOONS];
 // BALLOON jumpBalloon;
-// BALLOON cheatBalloon;
+// BALLOON cheatBalloon; 
 
 BALLOON allBalloons[MAXBALLOONS * 2 + 2];
 
-void initBalloons() {
+void initBalloons() { 
     //initializes single damage balloons
     initBalloonsSingle();
     initBalloonsAOE();

@@ -355,5 +355,5 @@ typedef struct{
 // Miscellaneous Functions
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
 
-
+typedef enum {LEFT, RIGHT};
 #endif

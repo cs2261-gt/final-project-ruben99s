@@ -14,7 +14,7 @@ typedef struct {
     int prevWorldCol;
 
     int upLimit;
-    int downLimit;
+    int downLimit; 
 
     int jumping;
     int crouching;
@@ -45,8 +45,8 @@ typedef enum {
 extern PLAYER player;
 // enum {PLAYERRIGHT, PLAYERLEFT, PLAYERUP, PLAYERDOWN, PLAYERIDLE};
 
-void initPlayer();
-void updatePlayer();
+void initPlayer(int *hOff, int *vOff);
+void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff);
 void animatePlayer();
 void drawPlayer();
 void playerAttack();

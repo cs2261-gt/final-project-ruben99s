@@ -109,6 +109,8 @@ typedef struct{
 
 
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
+
+typedef enum {LEFT, RIGHT};
 # 2 "myLib.c" 2
 
 

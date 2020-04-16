@@ -18,7 +18,7 @@ typedef struct {
     int held;
     int num;
 
-    int radius;
+    int radius; 
 
     int aniState;
     int curFrame;

@@ -109,6 +109,8 @@ typedef struct{
 
 
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
+
+typedef enum {LEFT, RIGHT};
 # 2 "player.c" 2
 # 1 "player.h" 1
 
@@ -158,8 +160,8 @@ typedef enum {
 extern PLAYER player;
 
 
-void initPlayer();
-void updatePlayer();
+void initPlayer(int *hOff, int *vOff);
+void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff);
 void animatePlayer();
 void drawPlayer();
 void playerAttack();
@@ -167,15 +169,10 @@ void playerAttack();
 # 1 "game.h" 1
 
 
-typedef enum {
-    LEFT,
-    RIGHT
-};
-
 
 extern int hOff;
 extern int vOff;
-extern OBJ_ATTR shadowOAM[128];
+
 extern int remainingEnemies;
 extern int numBalloons;
 extern int direction;
@@ -303,14 +300,34 @@ void animateBalloons();
 void updateHeldBalloon();
 void updateDropBalloon();
 # 6 "player.c" 2
-# 1 "bg00CollisionMap.h" 1
-# 20 "bg00CollisionMap.h"
-extern const unsigned short bg00CollisionMapBitmap[131072];
-# 7 "player.c" 2
+
+# 1 "game1.h" 1
+
+
+
+extern int hOff;
+extern int vOff;
+
+extern int remainingEnemies;
+extern int numBalloons;
+extern int direction;
+extern int isPlayerEndL1;
+extern int playerHealth;
+
+
+
+
+
+
+
+void initGame1();
+void updateGame1();
+void drawGame1();
+# 8 "player.c" 2
 
 PLAYER player;
 
-void initPlayer() {
+void initPlayer(int *hOff, int *vOff) {
     player.height = 30;
     player.width = 20;
     player.colDelta = 2;
@@ -322,8 +339,8 @@ void initPlayer() {
     player.upLimit = player.worldRow - 100;
     player.downLimit = player.worldRow;
 
-    player.screenCol = player.worldCol - hOff;
-    player.screenRow = player.worldRow - vOff;
+    player.screenCol = player.worldCol - *hOff;
+    player.screenRow = player.worldRow - *vOff;
 
     player.jumping = 0;
     player.crouching = 0;
@@ -396,23 +413,23 @@ void drawPlayer() {
     shadowOAM[0].attr2 = ((player.curFrame * 4)*32+(player.aniState * 4)) | ((0)<<12);
 }
 
-void updatePlayer() {
+void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
     player.prevWorldCol = player.worldCol;
 
 
     if((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
         if (player.worldCol + player.width + 12 - 1 < 512) {
 
-            if (bg00CollisionMapBitmap[((player.worldRow)*(512)+(player.worldCol + player.width - 1 + 1))] &&
-                bg00CollisionMapBitmap[((player.worldRow + player.height - 1)*(512)+(player.worldCol + player.width - 1 + 1))]) {
+            if (bitmap[((player.worldRow)*(512)+(player.worldCol + player.width - 1 + 1))] &&
+                bitmap[((player.worldRow + player.height - 1)*(512)+(player.worldCol + player.width - 1 + 1))]) {
 
                 player.worldCol += player.colDelta;
 
             }
 
 
-            if (hOff + 1 < 512 - 240 && player.screenCol > 240/4) {
-                hOff += player.colDelta;
+            if (*hOff + 1 < 512 - 240 && player.screenCol > 240/4) {
+                *hOff += player.colDelta;
             }
         }
     }
@@ -420,15 +437,15 @@ void updatePlayer() {
     if((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
         if (player.worldCol >= 6) {
 
-            if (bg00CollisionMapBitmap[((player.worldRow)*(512)+(player.worldCol - 1))] &&
-                bg00CollisionMapBitmap[((player.worldRow + player.height - 1)*(512)+(player.worldCol - 1))]) {
+            if (bitmap[((player.worldRow)*(512)+(player.worldCol - 1))] &&
+                bitmap[((player.worldRow + player.height - 1)*(512)+(player.worldCol - 1))]) {
 
                 player.worldCol -= player.colDelta;
 
             }
 
-            if (hOff - 1 >= 0 && player.screenCol < 240/4) {
-                hOff -= player.colDelta;
+            if (*hOff - 1 >= 0 && player.screenCol < 240/4) {
+                *hOff -= player.colDelta;
             }
         }
     }
@@ -567,8 +584,8 @@ void updatePlayer() {
 
     if (!player.jumping) {
 
-        if (bg00CollisionMapBitmap[((player.worldRow + player.height - 1 + player.rowDelta)*(512)+(player.worldCol))] &&
-            bg00CollisionMapBitmap[((player.worldRow + player.height - 1 + player.rowDelta)*(512)+(player.worldCol + player.width - 1))]) {
+        if (bitmap[((player.worldRow + player.height - 1 + player.rowDelta)*(512)+(player.worldCol))] &&
+            bitmap[((player.worldRow + player.height - 1 + player.rowDelta)*(512)+(player.worldCol + player.width - 1))]) {
 
             player.worldRow += player.rowDelta;
 
@@ -576,16 +593,16 @@ void updatePlayer() {
     }
     if (player.jumping) {
 
-        if (bg00CollisionMapBitmap[((player.worldRow - player.rowDelta)*(512)+(player.worldCol))] &&
-            bg00CollisionMapBitmap[((player.worldRow - player.rowDelta)*(512)+(player.worldCol + player.width - 1))]) {
+        if (bitmap[((player.worldRow - player.rowDelta)*(512)+(player.worldCol))] &&
+            bitmap[((player.worldRow - player.rowDelta)*(512)+(player.worldCol + player.width - 1))]) {
 
             player.worldRow -= player.rowDelta;
         }
     }
 
 
-    player.screenCol = player.worldCol - hOff;
-    player.screenRow = player.worldRow - vOff;
+    player.screenCol = player.worldCol - *hOff;
+    player.screenRow = player.worldRow - *vOff;
 
     animatePlayer();
 }

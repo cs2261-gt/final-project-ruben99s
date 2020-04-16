@@ -109,6 +109,8 @@ typedef struct{
 
 
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
+
+typedef enum {LEFT, RIGHT};
 # 2 "main.c" 2
 # 1 "mainScreen.h" 1
 # 22 "mainScreen.h"
@@ -185,15 +187,10 @@ extern const unsigned short bg01Pal[256];
 # 1 "game.h" 1
 
 
-typedef enum {
-    LEFT,
-    RIGHT
-};
-
 
 extern int hOff;
 extern int vOff;
-extern OBJ_ATTR shadowOAM[128];
+
 extern int remainingEnemies;
 extern int numBalloons;
 extern int direction;
@@ -235,6 +232,50 @@ extern const unsigned short instructionScreenMap[1024];
 extern const unsigned short instructionScreenPal[256];
 # 15 "main.c" 2
 
+# 1 "bg00Level1.h" 1
+# 22 "bg00Level1.h"
+extern const unsigned short bg00Level1Tiles[4624];
+
+
+extern const unsigned short bg00Level1Map[2048];
+
+
+extern const unsigned short bg00Level1Pal[256];
+# 17 "main.c" 2
+# 1 "bg01Level1.h" 1
+# 22 "bg01Level1.h"
+extern const unsigned short bg01Level1Tiles[8160];
+
+
+extern const unsigned short bg01Level1Map[2048];
+
+
+extern const unsigned short bg01Level1Pal[256];
+# 18 "main.c" 2
+# 1 "game1.h" 1
+
+
+
+extern int hOff;
+extern int vOff;
+
+extern int remainingEnemies;
+extern int numBalloons;
+extern int direction;
+extern int isPlayerEndL1;
+extern int playerHealth;
+
+
+
+
+
+
+
+void initGame1();
+void updateGame1();
+void drawGame1();
+# 19 "main.c" 2
+
 
 void initialize();
 void goToStart();
@@ -258,6 +299,7 @@ void game2();
 
 enum {START, GAME, GAME1, GAME2, PAUSE, WIN, LOSE, INSTRUCTION};
 int state;
+int prevState;
 
 
 unsigned short buttons;
@@ -362,7 +404,7 @@ void start() {
 void goToGame() {
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<9) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 96;
-    (*(volatile unsigned short *)0x04000010) = hOff;
+    (*(volatile unsigned short *)0x04000010) = 0;
 
 
 
@@ -377,6 +419,7 @@ void goToGame() {
     DMANow(3, bg01Tiles, &((charblock *)0x6000000)[1], 14528/2);
     DMANow(3, bg01Map, &((screenblock *)0x6000000)[30], 4096/2);
 
+    prevState = state;
     state = GAME;
 }
 
@@ -396,6 +439,7 @@ void game() {
 
     if(remainingEnemies <= 0 && isPlayerEnd) {
 
+        initGame1();
         goToGame1();
     }
     if(playerHealth <= 0) {
@@ -408,29 +452,55 @@ void game() {
 
 
 void goToGame1() {
-
-
-
-
-
-    (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
-    (*(volatile unsigned short *)0x04000012) = 0;
+    (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<9) | (1<<12);
+    (*(volatile unsigned short *)0x04000012) = 96;
     (*(volatile unsigned short *)0x04000010) = 0;
+
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
-    DMANow(3, gameScreen2Pal, ((unsigned short *)0x5000000), 256);
-    DMANow(3, gameScreen2Tiles, &((charblock *)0x6000000)[0], 64/2);
-    DMANow(3, gameScreen2Map, &((screenblock *)0x6000000)[28], 2048/2);
 
+    DMANow(3, bg00Level1Pal, ((unsigned short *)0x5000000), 512/2);
+
+    DMANow(3, bg00Level1Tiles, &((charblock *)0x6000000)[0], 9248/2);
+    DMANow(3, bg00Level1Map, &((screenblock *)0x6000000)[28], 4096/2);
+
+    DMANow(3, bg01Level1Tiles, &((charblock *)0x6000000)[1], 16320/2);
+    DMANow(3, bg01Level1Map, &((screenblock *)0x6000000)[30], 4096/2);
+# 224 "main.c"
+    prevState = state;
     state = GAME1;
 }
 
 void game1() {
 
-    if((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0))))) {
+    updateGame1();
+    drawGame1();
+
+    if((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
+        goToPause();
+    }
+
+
+
+
+
+
+    if(isPlayerEndL1) {
 
         goToGame2();
     }
+
+
+
+
+    if(playerHealth <= 0) {
+        goToLose();
+    }
+
+
+
+
+
     if((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
         goToLose();
     }
@@ -455,6 +525,7 @@ void goToGame2() {
     DMANow(3, gameScreen2Tiles, &((charblock *)0x6000000)[0], 64/2);
     DMANow(3, gameScreen2Map, &((screenblock *)0x6000000)[28], 2048/2);
 
+    prevState = state;
     state = GAME2;
 }
 
@@ -481,12 +552,21 @@ void goToPause() {
     DMANow(3, pauseScreenPal, ((unsigned short *)0x5000000), 256);
     DMANow(3, pauseScreenTiles, &((charblock *)0x6000000)[0], 1632/2);
     DMANow(3, pauseScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
+
+    prevState = state;
     state = PAUSE;
 }
 
 void pause() {
     if((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
-        goToGame();
+        if (prevState == GAME) {
+            goToGame();
+        } else if (prevState == GAME1) {
+            goToGame1();
+        } else {
+            goToGame2();
+        }
+
     }
     if((!(~(oldButtons)&((1<<2))) && (~buttons & ((1<<2))))) {
         goToStart();
@@ -506,6 +586,8 @@ void goToWin() {
     DMANow(3, winScreenPal, ((unsigned short *)0x5000000), 256);
     DMANow(3, winScreenTiles, &((charblock *)0x6000000)[0], 1568/2);
     DMANow(3, winScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
+
+    prevState = state;
     state = WIN;
 }
 
@@ -528,6 +610,8 @@ void goToLose() {
     DMANow(3, loseScreenPal, ((unsigned short *)0x5000000), 256);
     DMANow(3, loseScreenTiles, &((charblock *)0x6000000)[0], 1600/2);
     DMANow(3, loseScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
+
+    prevState = state;
     state = LOSE;
 }
 
@@ -550,6 +634,8 @@ void goToInstruction() {
     DMANow(3, instructionScreenPal, ((unsigned short *)0x5000000), 256);
     DMANow(3, instructionScreenTiles, &((charblock *)0x6000000)[0], 2304/2);
     DMANow(3, instructionScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
+
+    prevState = state;
     state = INSTRUCTION;
 }
 
