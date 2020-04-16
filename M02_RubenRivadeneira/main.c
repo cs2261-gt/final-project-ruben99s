@@ -163,7 +163,7 @@ void game() {
     updateGame();
     drawGame();
 
-    if(BUTTON_PRESSED(BUTTON_START)) { 
+    if(BUTTON_PRESSED(BUTTON_START)) {
         goToPause();
     }
     // if(BUTTON_PRESSED(BUTTON_A)) {

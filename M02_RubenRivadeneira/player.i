@@ -303,6 +303,10 @@ void animateBalloons();
 void updateHeldBalloon();
 void updateDropBalloon();
 # 6 "player.c" 2
+# 1 "bg00CollisionMap.h" 1
+# 20 "bg00CollisionMap.h"
+extern const unsigned short bg00CollisionMapBitmap[131072];
+# 7 "player.c" 2
 
 PLAYER player;
 
@@ -397,8 +401,15 @@ void updatePlayer() {
 
 
     if((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
-        if (player.worldCol + player.width - 1 < 512) {
-            player.worldCol += player.colDelta;
+        if (player.worldCol + player.width + 12 - 1 < 512) {
+
+            if (bg00CollisionMapBitmap[((player.worldRow)*(512)+(player.worldCol + player.width - 1 + 1))] &&
+                bg00CollisionMapBitmap[((player.worldRow + player.height - 1)*(512)+(player.worldCol + player.width - 1 + 1))]) {
+
+                player.worldCol += player.colDelta;
+
+            }
+
 
             if (hOff + 1 < 512 - 240 && player.screenCol > 240/4) {
                 hOff += player.colDelta;
@@ -407,8 +418,14 @@ void updatePlayer() {
     }
 
     if((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
-        if (player.worldCol >= 0) {
-            player.worldCol -= player.colDelta;
+        if (player.worldCol >= 6) {
+
+            if (bg00CollisionMapBitmap[((player.worldRow)*(512)+(player.worldCol - 1))] &&
+                bg00CollisionMapBitmap[((player.worldRow + player.height - 1)*(512)+(player.worldCol - 1))]) {
+
+                player.worldCol -= player.colDelta;
+
+            }
 
             if (hOff - 1 >= 0 && player.screenCol < 240/4) {
                 hOff -= player.colDelta;
@@ -426,9 +443,16 @@ void updatePlayer() {
     }
 
     if((~((*(volatile unsigned short *)0x04000130)) & ((1<<6)))) {
-         if (player.worldRow >= player.downLimit) {
+        if (player.worldRow <= player.upLimit) {
+            player.jumping = 0;
+        } else {
             player.jumping = 1;
         }
+
+
+
+
+
     } else {
         player.jumping = 0;
     }
@@ -504,6 +528,7 @@ void updatePlayer() {
             allBalloons[5].active = 1;
             allBalloons[5].held = 1;
         } else if (player.balloonType == AOE) {
+
             for (int i = 5; i < 5 * 2; i++) {
                 allBalloons[i].active = 0;
                 allBalloons[i].held = 0;
@@ -532,22 +557,32 @@ void updatePlayer() {
         }
     }
 
+
     if (player.balloonType == JUMP) {
-        player.upLimit = 100;
+        player.upLimit = 90;
     } else {
         player.upLimit = 150;
     }
 
 
-    if (!player.jumping && player.worldRow < player.downLimit) {
-        player.worldRow += player.rowDelta;
-    }
-    if (player.jumping) {
-        player.worldRow -= player.rowDelta;
-        if (player.worldRow <= player.upLimit) {
-            player.jumping = 0;
+    if (!player.jumping) {
+
+        if (bg00CollisionMapBitmap[((player.worldRow + player.height - 1 + player.rowDelta)*(512)+(player.worldCol))] &&
+            bg00CollisionMapBitmap[((player.worldRow + player.height - 1 + player.rowDelta)*(512)+(player.worldCol + player.width - 1))]) {
+
+            player.worldRow += player.rowDelta;
+
         }
     }
+    if (player.jumping) {
+
+        if (bg00CollisionMapBitmap[((player.worldRow - player.rowDelta)*(512)+(player.worldCol))] &&
+            bg00CollisionMapBitmap[((player.worldRow - player.rowDelta)*(512)+(player.worldCol + player.width - 1))]) {
+
+            player.worldRow -= player.rowDelta;
+        }
+    }
+
 
     player.screenCol = player.worldCol - hOff;
     player.screenRow = player.worldRow - vOff;

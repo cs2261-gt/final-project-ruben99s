@@ -3,6 +3,7 @@
 #include "game.h"
 #include "buzz.h"
 #include "balloon.h"
+#include "bg00CollisionMap.h"
 
 PLAYER player;
  
@@ -97,8 +98,15 @@ void updatePlayer() {
 
     //change MAPWIDTH value in game.h to make map longer
     if(BUTTON_HELD(BUTTON_RIGHT)) {
-        if (player.worldCol + player.width - 1 < MAPWIDTH) {
-            player.worldCol += player.colDelta; 
+        if (player.worldCol + player.width + 12 - 1 < MAPWIDTH) {
+
+            if (bg00CollisionMapBitmap[OFFSET(player.worldCol + player.width - 1 + 1, player.worldRow, MAPWIDTH)] &&
+                bg00CollisionMapBitmap[OFFSET(player.worldCol + player.width - 1 + 1, player.worldRow + player.height - 1, MAPWIDTH)]) {
+                
+                player.worldCol += player.colDelta;
+
+            }
+             
             
             if (hOff + 1 < MAPWIDTH - SCREENWIDTH && player.screenCol > SCREENWIDTH/4) {
                 hOff += player.colDelta;
@@ -107,8 +115,14 @@ void updatePlayer() {
     }
 
     if(BUTTON_HELD(BUTTON_LEFT)) {
-        if (player.worldCol >= 0) {
-            player.worldCol -= player.colDelta;
+        if (player.worldCol >= 6) {
+
+            if (bg00CollisionMapBitmap[OFFSET(player.worldCol - 1, player.worldRow, MAPWIDTH)] &&
+                bg00CollisionMapBitmap[OFFSET(player.worldCol - 1, player.worldRow + player.height - 1, MAPWIDTH)]) {
+                
+                player.worldCol -= player.colDelta;
+
+            }
 
             if (hOff - 1 >= 0 && player.screenCol < SCREENWIDTH/4) {
                 hOff -= player.colDelta;
@@ -126,9 +140,16 @@ void updatePlayer() {
     }
    
     if(BUTTON_HELD(BUTTON_UP)) {
-         if (player.worldRow >= player.downLimit) {
+        if (player.worldRow <= player.upLimit) {
+            player.jumping = 0;
+        } else {
             player.jumping = 1;
         }
+        
+        // if (player.worldRow >= player.downLimit) {
+        //     player.jumping = 1;
+        // }
+        
     } else {
         player.jumping = 0;
     }  
@@ -204,6 +225,7 @@ void updatePlayer() {
             allBalloons[5].active = 1;
             allBalloons[5].held = 1;
         } else if (player.balloonType == AOE) {
+            //comment out if you want balloons to be live even if type isn't selected, but buggy
             for (int i = MAXBALLOONS; i < MAXBALLOONS * 2; i++) {
                 allBalloons[i].active = 0;
                 allBalloons[i].held = 0;
@@ -232,22 +254,32 @@ void updatePlayer() {
         }
     }
 
+    //allows to jump higher if balloon type is jump
     if (player.balloonType == JUMP) {
-        player.upLimit = 100;
+        player.upLimit = 90;
     } else {
         player.upLimit = 150;
     }
 
     //gravity-ish
-    if (!player.jumping && player.worldRow < player.downLimit) {
-        player.worldRow += player.rowDelta;
-    }
-    if (player.jumping) {
-        player.worldRow -= player.rowDelta;
-        if (player.worldRow <= player.upLimit) {
-            player.jumping = 0;
+    if (!player.jumping) {
+        //falling down
+        if (bg00CollisionMapBitmap[OFFSET(player.worldCol, player.worldRow + player.height - 1 + player.rowDelta, MAPWIDTH)] &&
+            bg00CollisionMapBitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow + player.height - 1 + player.rowDelta, MAPWIDTH)]) {
+            
+            player.worldRow += player.rowDelta;
+                
         }
     }
+    if (player.jumping) {
+        //going up
+        if (bg00CollisionMapBitmap[OFFSET(player.worldCol, player.worldRow - player.rowDelta, MAPWIDTH)] &&
+            bg00CollisionMapBitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow - player.rowDelta, MAPWIDTH)]) {
+                
+            player.worldRow -= player.rowDelta;
+        }
+    }
+    
 
     player.screenCol = player.worldCol - hOff;
     player.screenRow = player.worldRow - vOff;

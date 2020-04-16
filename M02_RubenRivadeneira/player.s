@@ -298,35 +298,31 @@ updatePlayer:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r3, .L121
-	push	{r4, r5, r6, lr}
-	ldr	r4, .L121+4
+	ldr	r3, .L147
+	push	{r4, r5, r6, r7, r8, lr}
+	ldr	r4, .L147+4
 	ldrh	r2, [r3, #48]
 	ldr	r3, [r4, #8]
 	tst	r2, #16
 	str	r3, [r4, #32]
-	beq	.L60
-	ldr	r5, .L121+8
+	bne	.L139
+	ldr	r2, [r4, #28]
+	add	r2, r3, r2
+	cmp	r2, #500
+	ble	.L137
+.L139:
+	ldr	r6, .L147+8
+	ldr	r5, .L147+12
 .L61:
-	ldr	r2, .L121
+	ldr	r2, .L147
 	ldrh	r2, [r2, #48]
 	tst	r2, #32
-	bne	.L64
+	bne	.L65
 	ldr	r2, [r4, #8]
-	cmp	r2, #0
-	blt	.L64
-	ldr	r0, [r4, #16]
-	ldr	r1, [r5]
-	sub	r2, r2, r0
-	cmp	r1, #0
-	str	r2, [r4, #8]
-	ble	.L64
-	ldr	r2, [r4]
-	cmp	r2, #59
-	suble	r1, r1, r0
-	strle	r1, [r5]
-.L64:
-	ldr	r2, .L121
+	cmp	r2, #5
+	bgt	.L141
+.L65:
+	ldr	r2, .L147
 	ldrh	r2, [r2, #48]
 	tst	r2, #128
 	movne	r3, #30
@@ -335,68 +331,67 @@ updatePlayer:
 	movne	r2, #0
 	streq	r3, [r4, #8]
 	strne	r3, [r4, #24]
-	ldr	r3, .L121
+	ldr	r3, .L147
 	ldrh	r3, [r3, #48]
 	streq	r1, [r4, #48]
 	streq	r2, [r4, #24]
 	strne	r2, [r4, #48]
 	tst	r3, #64
-	movne	r3, #0
-	strne	r3, [r4, #44]
-	bne	.L69
-	ldr	r3, [r4, #40]
+	bne	.L70
+	ldr	r3, [r4, #36]
 	ldr	r2, [r4, #12]
 	cmp	r2, r3
-	movge	r3, #1
-	strge	r3, [r4, #44]
-.L69:
-	ldr	r6, .L121+12
-	ldrh	r2, [r6]
+	movgt	r3, #1
+	strgt	r3, [r4, #44]
+	ble	.L70
+.L72:
+	ldr	r7, .L147+16
+	ldrh	r2, [r7]
 	tst	r2, #1
 	ldr	r3, [r4, #52]
-	beq	.L115
-	ldr	r1, .L121+16
+	beq	.L140
+	ldr	r1, .L147+20
 	ldrh	r1, [r1]
 	tst	r1, #1
-	beq	.L72
-.L115:
+	beq	.L75
+.L140:
 	add	r3, r3, #1
-.L71:
+.L74:
 	tst	r2, #2
 	str	r3, [r4, #52]
-	beq	.L77
-	ldr	r3, .L121+16
+	beq	.L80
+	ldr	r3, .L147+20
 	ldrh	r3, [r3]
 	tst	r3, #2
-	bne	.L77
+	bne	.L80
 	mov	ip, #1
-	ldr	r3, .L121+20
+	ldr	r3, .L147+24
 	add	r0, r3, #672
-.L79:
+.L82:
 	ldr	r1, [r3, #32]
 	cmp	r1, #0
-	beq	.L78
+	beq	.L81
 	ldr	r1, [r3]
 	cmp	r1, #239
 	strls	ip, [r3, #52]
-.L78:
+.L81:
 	add	r3, r3, #84
 	cmp	r3, r0
-	bne	.L79
-.L77:
+	bne	.L82
+.L80:
 	tst	r2, #512
 	ldr	r3, [r4, #56]
 	and	r2, r2, #256
-	beq	.L76
-	ldr	r1, .L121+16
+	beq	.L79
+	ldr	r1, .L147+20
 	ldrh	r1, [r1]
 	ands	ip, r1, #512
-	bne	.L76
+	bne	.L79
 	cmp	r3, #0
-	bne	.L80
+	bne	.L83
 	mov	ip, #1
 	mov	lr, #3
-	ldr	r0, .L121+24
+	ldr	r0, .L147+28
 	str	r3, [r4, #60]
 	str	lr, [r4, #56]
 	str	ip, [r0, #876]
@@ -411,50 +406,64 @@ updatePlayer:
 	str	r3, [r0, #344]
 	str	r3, [r0, #352]
 	str	ip, [r0, #884]
-.L81:
+.L84:
 	cmp	r2, #0
-	beq	.L88
+	beq	.L91
 	ands	r1, r1, #256
 	ldr	r3, [r4, #56]
-	beq	.L116
-.L86:
+	beq	.L142
+.L89:
 	cmp	r3, #2
-	beq	.L83
-.L88:
+	beq	.L86
+.L91:
 	mov	r2, #150
-.L90:
+.L93:
 	ldr	r3, [r4, #44]
 	cmp	r3, #0
 	str	r2, [r4, #36]
-	ldr	r3, [r4, #12]
-	bne	.L92
-	ldr	r2, [r4, #40]
-	cmp	r2, r3
-	ldrgt	r2, [r4, #20]
-	addgt	r3, r3, r2
-	strgt	r3, [r4, #12]
-.L93:
-	ldr	r1, .L121+28
-	ldr	r0, [r5]
+	ldr	r1, [r4, #12]
+	ldr	r0, [r4, #20]
 	ldr	r2, [r4, #8]
-	ldr	r1, [r1]
+	bne	.L95
+	ldr	r3, [r4, #24]
+	add	r3, r1, r3
+	sub	r3, r3, #1
+	add	r3, r3, r0
+	add	ip, r2, r3, lsl #9
+	lsl	ip, ip, #1
+	ldrh	ip, [r6, ip]
+	cmp	ip, #0
+	lsl	r3, r3, #9
+	beq	.L96
+	ldr	ip, [r4, #28]
+	add	r3, r3, ip
+	add	r3, r3, r2
+	add	r3, r6, r3, lsl #1
+	ldrh	r3, [r3, #-2]
+	cmp	r3, #0
+	addne	r1, r1, r0
+	strne	r1, [r4, #12]
+.L96:
+	ldr	r3, .L147+32
+	ldr	r0, [r5]
+	ldr	r3, [r3]
 	sub	r2, r2, r0
-	sub	r3, r3, r1
+	sub	r3, r1, r3
 	stm	r4, {r2, r3}
-	pop	{r4, r5, r6, lr}
+	pop	{r4, r5, r6, r7, r8, lr}
 	b	animatePlayer
-.L76:
+.L79:
 	cmp	r2, #0
-	beq	.L86
-	ldr	r2, .L121+16
+	beq	.L89
+	ldr	r2, .L147+20
 	ldrh	r1, [r2]
 	ands	r1, r1, #256
-	bne	.L86
-.L116:
+	bne	.L89
+.L142:
 	cmp	r3, #0
-	bne	.L87
+	bne	.L90
 	mov	r1, #1
-	ldr	r2, .L121+24
+	ldr	r2, .L147+28
 	str	r3, [r4, #60]
 	str	r1, [r4, #56]
 	str	r1, [r2, #420]
@@ -469,51 +478,104 @@ updatePlayer:
 	str	r3, [r2, #344]
 	str	r3, [r2, #352]
 	str	r1, [r2, #428]
-	b	.L88
-.L60:
-	ldr	r2, [r4, #28]
-	add	r2, r3, r2
-	cmp	r2, #512
-	ldr	r5, .L121+8
+	b	.L91
+.L70:
+	mov	r3, #0
+	str	r3, [r4, #44]
+	b	.L72
+.L95:
+	sub	r0, r1, r0
+	add	r3, r2, r0, lsl #9
+	lsl	r3, r3, #1
+	ldrh	r3, [r6, r3]
+	cmp	r3, #0
+	lsl	r3, r0, #9
+	beq	.L96
+	ldr	ip, [r4, #28]
+	add	r3, r3, ip
+	add	r3, r3, r2
+	add	r3, r6, r3, lsl #1
+	ldrh	r3, [r3, #-2]
+	cmp	r3, #0
+	movne	r1, r0
+	strne	r0, [r4, #12]
+	b	.L96
+.L86:
+	mov	r2, #90
+	b	.L93
+.L137:
+	ldr	r1, [r4, #12]
+	ldr	r6, .L147+8
+	add	r0, r2, r1, lsl #9
+	lsl	r0, r0, #1
+	ldrh	r0, [r6, r0]
+	cmp	r0, #0
+	beq	.L63
+	ldr	r0, [r4, #24]
+	add	r1, r1, r0
+	sub	r1, r1, #1
+	add	r2, r2, r1, lsl #9
+	lsl	r2, r2, #1
+	ldrh	r2, [r6, r2]
+	cmp	r2, #0
+	ldrne	r2, [r4, #16]
+	addne	r2, r2, r3
+	strne	r2, [r4, #8]
+.L63:
+	ldr	r5, .L147+12
+	ldr	r1, .L147+36
+	ldr	r2, [r5]
+	cmp	r2, r1
 	bgt	.L61
-	ldr	r0, .L121+32
-	ldr	r1, [r5]
-	ldr	r2, [r4, #16]
-	cmp	r1, r0
-	add	r0, r3, r2
-	str	r0, [r4, #8]
-	bgt	.L61
-	ldr	r0, [r4]
-	cmp	r0, #60
-	addgt	r2, r2, r1
+	ldr	r1, [r4]
+	cmp	r1, #60
+	ldrgt	r1, [r4, #16]
+	addgt	r2, r1, r2
 	strgt	r2, [r5]
 	b	.L61
-.L92:
-	ldr	r1, [r4, #20]
-	sub	r3, r3, r1
-	cmp	r3, r2
-	movle	r2, #0
-	str	r3, [r4, #12]
-	strle	r2, [r4, #44]
-	b	.L93
-.L83:
-	mov	r2, #100
-	b	.L90
-.L72:
+.L75:
 	cmp	r3, #9
-	ble	.L115
+	ble	.L140
 	bl	playerAttack
 	mov	r3, #1
-	ldrh	r2, [r6]
-	b	.L71
-.L80:
+	ldrh	r2, [r7]
+	b	.L74
+.L141:
+	ldr	r0, [r4, #12]
+	sub	r1, r2, #1
+	add	ip, r1, r0, lsl #9
+	lsl	ip, ip, #1
+	ldrh	ip, [r6, ip]
+	cmp	ip, #0
+	beq	.L67
+	ldr	ip, [r4, #24]
+	add	r0, r0, ip
+	sub	r0, r0, #1
+	add	r1, r1, r0, lsl #9
+	lsl	r1, r1, #1
+	ldrh	r1, [r6, r1]
+	cmp	r1, #0
+	ldrne	r1, [r4, #16]
+	subne	r2, r2, r1
+	strne	r2, [r4, #8]
+.L67:
+	ldr	r2, [r5]
+	cmp	r2, #0
+	ble	.L65
+	ldr	r1, [r4]
+	cmp	r1, #59
+	ldrle	r1, [r4, #16]
+	suble	r2, r2, r1
+	strle	r2, [r5]
+	b	.L65
+.L83:
 	cmp	r3, #3
-	beq	.L117
+	beq	.L143
 	cmp	r3, #2
-	beq	.L118
+	beq	.L144
 	cmp	r3, #1
-	bne	.L81
-	ldr	r0, .L121+24
+	bne	.L84
+	ldr	r0, .L147+28
 	str	r3, [r4, #60]
 	str	ip, [r4, #56]
 	str	ip, [r0, #420]
@@ -528,26 +590,26 @@ updatePlayer:
 	str	ip, [r0, #732]
 	str	r3, [r0, #40]
 	str	r3, [r0, #48]
-	b	.L81
-.L87:
+	b	.L84
+.L90:
 	cmp	r3, #1
-	beq	.L119
+	beq	.L145
 	cmp	r3, #2
-	beq	.L120
+	beq	.L146
 	cmp	r3, #3
-	bne	.L88
+	bne	.L91
 	mov	r0, #1
-	ldr	r2, .L121+24
+	ldr	r2, .L147+28
 	str	r3, [r4, #60]
 	str	r1, [r4, #56]
 	str	r0, [r2, #40]
 	str	r1, [r2, #876]
 	str	r1, [r2, #884]
 	str	r0, [r2, #48]
-	b	.L88
-.L119:
+	b	.L91
+.L145:
 	mov	r0, #2
-	ldr	r2, .L121+24
+	ldr	r2, .L147+28
 	str	r3, [r4, #60]
 	str	r0, [r4, #56]
 	str	r1, [r2, #420]
@@ -562,23 +624,23 @@ updatePlayer:
 	str	r1, [r2, #732]
 	str	r3, [r2, #800]
 	str	r3, [r2, #808]
-	mov	r2, #100
-	b	.L90
-.L117:
+	mov	r2, #90
+	b	.L93
+.L143:
 	mov	lr, #1
-	mov	r6, #2
-	ldr	r0, .L121+24
+	mov	r7, #2
+	ldr	r0, .L147+28
 	cmp	r2, #0
 	str	r3, [r4, #60]
-	str	r6, [r4, #56]
+	str	r7, [r4, #56]
 	str	lr, [r0, #800]
 	str	ip, [r0, #876]
 	str	ip, [r0, #884]
 	str	lr, [r0, #808]
-	beq	.L83
+	beq	.L86
 	tst	r1, #256
-	bne	.L83
-.L84:
+	bne	.L86
+.L87:
 	mov	r2, #0
 	mov	r3, #1
 	mov	ip, #2
@@ -589,25 +651,26 @@ updatePlayer:
 	str	r1, [r4, #56]
 	str	r3, [r0, #876]
 	str	r3, [r0, #884]
-	b	.L88
-.L118:
+	b	.L91
+.L144:
 	mov	lr, #1
-	ldr	r0, .L121+24
+	ldr	r0, .L147+28
 	str	r3, [r4, #60]
 	str	lr, [r4, #56]
 	str	lr, [r0, #420]
 	str	ip, [r0, #800]
 	str	ip, [r0, #808]
 	str	lr, [r0, #428]
-	b	.L81
-.L120:
-	ldr	r0, .L121+24
 	b	.L84
-.L122:
+.L146:
+	ldr	r0, .L147+28
+	b	.L87
+.L148:
 	.align	2
-.L121:
+.L147:
 	.word	67109120
 	.word	player
+	.word	bg00CollisionMapBitmap
 	.word	hOff
 	.word	oldButtons
 	.word	buttons

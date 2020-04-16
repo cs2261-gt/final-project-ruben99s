@@ -9,7 +9,7 @@ int direction;
 //global variables 
 int hOff; 
 int vOff;
-OBJ_ATTR shadowOAM[128]; 
+OBJ_ATTR shadowOAM[128];
 int remainingEnemies;
 int numBalloons;
 int isPlayerEnd;
@@ -106,7 +106,7 @@ void drawGame() {
     //updates only the balloon type that is selected or deletes the previous type selected
     if (player.balloonType == SINGLE || player.lastBalloonType == SINGLE) {
         for (int i = 0; i < MAXBALLOONS; i++) {
-            drawBalloons(&allBalloons[i]);
+            drawBalloons(&allBalloons[i]); 
         }
     }
     if (player.balloonType == AOE || player.lastBalloonType == AOE) {
