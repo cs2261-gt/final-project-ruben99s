@@ -16,6 +16,9 @@ int remainingEnemies;
 int numBalloons;
 int isPlayerEnd;
 int playerHealth;
+int secondWaveHappened;
+
+void activateSecondWave();
 
 //game functions-------------------------
 void initGame() { 
@@ -25,6 +28,7 @@ void initGame() {
     remainingEnemies = MAXBEES; 
     numBalloons = 0;
     isPlayerEnd = 0;
+    secondWaveHappened = 0;
     REG_BG0VOFF = vOff;
     REG_BG1VOFF = vOff;
     initPlayer(&hOff, &vOff);
@@ -34,6 +38,11 @@ void initGame() {
 
 void updateGame() {
     int numActiveBalloons = 0; 
+
+    if (remainingEnemies <= 5 && !secondWaveHappened) {
+        activateSecondWave();
+        secondWaveHappened = 1;
+    }
 
     updatePlayer(&bg00CollisionMapBitmap, &hOff, &vOff);
     for (int i = 0; i < MAXBEES; i++) {
@@ -100,6 +109,12 @@ void updateGame() {
         isPlayerEnd = 0;
     }
     playerHealth = player.health;
+}
+
+void activateSecondWave() {
+    for (int i = 8; i < MAXBEES; i++) {
+        bees[i].active = 1;
+    }
 }
 
 void drawGame() {

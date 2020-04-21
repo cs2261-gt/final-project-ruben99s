@@ -316,15 +316,19 @@ int remainingEnemies;
 int numBalloons;
 int isPlayerEnd;
 int playerHealth;
+int secondWaveHappened;
+
+void activateSecondWave();
 
 
 void initGame() {
     vOff = 96;
     hOff = 0;
     direction = RIGHT;
-    remainingEnemies = 8;
+    remainingEnemies = 13;
     numBalloons = 0;
     isPlayerEnd = 0;
+    secondWaveHappened = 0;
     (*(volatile unsigned short *)0x04000012) = vOff;
     (*(volatile unsigned short *)0x04000016) = vOff;
     initPlayer(&hOff, &vOff);
@@ -335,8 +339,13 @@ void initGame() {
 void updateGame() {
     int numActiveBalloons = 0;
 
+    if (remainingEnemies <= 5 && !secondWaveHappened) {
+        activateSecondWave();
+        secondWaveHappened = 1;
+    }
+
     updatePlayer(&bg00CollisionMapBitmap, &hOff, &vOff);
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 13; i++) {
         updateBuzz(&bees[i]);
     }
 
@@ -402,9 +411,15 @@ void updateGame() {
     playerHealth = player.health;
 }
 
+void activateSecondWave() {
+    for (int i = 8; i < 13; i++) {
+        bees[i].active = 1;
+    }
+}
+
 void drawGame() {
     drawPlayer();
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 13; i++) {
         drawBuzz(&bees[i]);
     }
 

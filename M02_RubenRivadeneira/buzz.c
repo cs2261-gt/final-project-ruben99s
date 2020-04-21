@@ -27,6 +27,11 @@ void initBuzz() {
         bees[i].worldRow = MAPHEIGHT - 33 - bees[i].height;
         bees[i].worldCol = SCREENWIDTH + (30 * i);
         bees[i].screenRow = bees[i].worldRow - vOff;
+        if (i > 7) {
+            bees[i].worldCol = (23 * i);
+            // bees[i].screenCol = bees[i].worldCol - hOff;
+            bees[i].state = ANGRY;
+        }
         // enemies[i].screenCol = enemies[i].worldCol - hOff;
 
         bees[i].rightLimit = bees[i].worldCol + bees[i].width + 35;
@@ -48,10 +53,12 @@ void drawBuzz(BUZZ *buzz) {
 }
 
 void updateBuzz(BUZZ *buzz) {
-    int screenCol = buzz->worldCol - hOff;
-    if (screenCol >= 0 && screenCol < 240 && !buzz->erased) {
-        buzz->screenCol = screenCol;
-        buzz->active = 1;
+    if (buzz->num < 8) {
+        int screenCol = buzz->worldCol - hOff;
+        if (screenCol >= 0 && screenCol < 240 && !buzz->erased) {
+            buzz->screenCol = screenCol;
+            buzz->active = 1;
+        } 
     } 
 
     if (buzz->active) {

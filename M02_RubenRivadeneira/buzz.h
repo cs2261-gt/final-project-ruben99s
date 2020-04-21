@@ -49,7 +49,7 @@ typedef enum {
 extern BUZZ bees[];
 
 //constants
-#define MAXBEES 8
+#define MAXBEES 13
 
 //prototypes
 void initBuzz(); 

@@ -348,12 +348,12 @@ void drawGame2();
 # 8 "buzz.c" 2
 
 
-BUZZ bees[8];
+BUZZ bees[13];
 int healthTimer;
 
 void initBuzz() {
     healthTimer = 0;
-    for (int i = 0; i < 8; i++) {
+    for (int i = 0; i < 13; i++) {
         bees[i].height = 20;
         bees[i].width = 23;
         bees[i].active = 0;
@@ -368,6 +368,11 @@ void initBuzz() {
         bees[i].worldRow = 256 - 33 - bees[i].height;
         bees[i].worldCol = 240 + (30 * i);
         bees[i].screenRow = bees[i].worldRow - vOff;
+        if (i > 7) {
+            bees[i].worldCol = (23 * i);
+
+            bees[i].state = ANGRY;
+        }
 
 
         bees[i].rightLimit = bees[i].worldCol + bees[i].width + 35;
@@ -389,10 +394,12 @@ void drawBuzz(BUZZ *buzz) {
 }
 
 void updateBuzz(BUZZ *buzz) {
-    int screenCol = buzz->worldCol - hOff;
-    if (screenCol >= 0 && screenCol < 240 && !buzz->erased) {
-        buzz->screenCol = screenCol;
-        buzz->active = 1;
+    if (buzz->num < 8) {
+        int screenCol = buzz->worldCol - hOff;
+        if (screenCol >= 0 && screenCol < 240 && !buzz->erased) {
+            buzz->screenCol = screenCol;
+            buzz->active = 1;
+        }
     }
 
     if (buzz->active) {
@@ -444,7 +451,7 @@ void updateBuzz(BUZZ *buzz) {
 
                         int rightLimit = allBalloons[i].worldCol + allBalloons[i].width + allBalloons[i].radius;
                         int leftLimit = allBalloons[i].worldCol - allBalloons[i].radius;
-                        for (int i = 0; i < 8; i++) {
+                        for (int i = 0; i < 13; i++) {
                             if (bees[i].worldCol >= leftLimit && bees[i].worldCol < rightLimit) {
                                 bees[i].health -= 34;
                             }
@@ -486,7 +493,7 @@ void updateBuzz(BUZZ *buzz) {
 
 void animateBuzz(BUZZ *buzz) {
     if (buzz->active) {
-# 156 "buzz.c"
+# 163 "buzz.c"
         if (buzz->direction == LEFT) {
             buzz->aniState = 3;
         }
