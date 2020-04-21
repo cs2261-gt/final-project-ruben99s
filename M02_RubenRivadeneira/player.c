@@ -8,6 +8,8 @@
 #include "game2.h"
 
 PLAYER player;
+HEART healthMeter[numHearts];
+int lostHearts = 0;
  
 void initPlayer(int *hOff, int *vOff) {
     player.height = 30;
@@ -34,14 +36,14 @@ void initPlayer(int *hOff, int *vOff) {
     player.lastBalloonType = 4;
     player.highJumpLimit = 0;
 
-    //change later to more health
-    player.health = 10;
 
     //player animation
     player.aniCounter = 0;
     player.curFrame = 0;
     player.numFrames = 4;
     player.aniState = PLAYERRIGHT;
+
+    initHearts();
 }
 
 void animatePlayer() {
@@ -93,6 +95,10 @@ void drawPlayer() {
     shadowOAM[0].attr0 = (ROWMASK & player.screenRow) | ATTR0_SQUARE;
     shadowOAM[0].attr1 = (COLMASK & player.screenCol) | ATTR1_MEDIUM;
     shadowOAM[0].attr2 = ATTR2_TILEID(player.aniState * 4, player.curFrame * 4) | ATTR2_PALROW(0); 
+
+    for (int i = 0; i < numHearts; i++) {
+        drawHearts(&healthMeter[i]);
+    }
 }
 
 void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
@@ -144,7 +150,7 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
 
 
 
-   
+
     if(BUTTON_HELD(BUTTON_UP)) {
         if (player.worldRow <= player.upLimit) {
             player.jumping = 0;
@@ -297,6 +303,7 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
     player.screenRow = player.worldRow - *vOff;
 
     animatePlayer();
+    // updateHearts();
 }
 
 void playerAttack() {
@@ -314,6 +321,42 @@ void playerAttack() {
                 allBalloons[i].held = 0;
                 break;
             }
+        }
+    }
+}
+
+
+void initHearts() {
+    for (int i = 0; i < numHearts; i++) {
+        healthMeter[i].num = i;
+        healthMeter[i].width = 7;
+        if (i % 2 == 0) {
+            healthMeter[i].aniState = 4;
+        } else {
+            healthMeter[i].aniState = 6;
+        }
+        healthMeter[i].screenRow = 5;
+        healthMeter[i].screenCol = 100 + (7 * i);
+        healthMeter[i].active = 1;
+    }
+}
+
+void drawHearts(HEART *heart) {
+    if (heart->active) {
+        shadowOAM[13 + heart->num].attr0 = (ROWMASK & heart->screenRow) | ATTR0_SQUARE;
+        shadowOAM[13 + heart->num].attr1 = (COLMASK & heart->screenCol) | ATTR1_SMALL;
+        shadowOAM[13 + heart->num].attr2 = ATTR2_TILEID(heart->aniState, 30) | ATTR2_PALROW(0); 
+    } else {
+        shadowOAM[13 + heart->num].attr0 = ATTR0_HIDE;
+    }
+}
+
+void updateHearts() {
+    if (player.health != 100) {
+        lostHearts = 20 - (player.health / 5);
+
+        for (int i = 0; i < lostHearts; i++) {
+            healthMeter[i].active = 0;
         }
     }
 }

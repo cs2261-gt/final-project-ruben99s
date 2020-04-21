@@ -241,7 +241,18 @@ typedef enum {
     PLAYERIDLE
 };
 
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int width;
+    int num;
+    int aniState;
+    int active;
+} HEART;
+
 extern PLAYER player;
+extern HEART healthMeter[];
+
 
 
 void initPlayer(int *hOff, int *vOff);
@@ -249,6 +260,10 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff);
 void animatePlayer();
 void drawPlayer();
 void playerAttack();
+
+void initHearts();
+void updateHearts();
+void drawHearts();
 # 6 "game2.c" 2
 # 1 "balloon.h" 1
 

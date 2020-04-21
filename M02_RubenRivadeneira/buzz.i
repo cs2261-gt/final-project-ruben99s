@@ -240,7 +240,18 @@ typedef enum {
     PLAYERIDLE
 };
 
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int width;
+    int num;
+    int aniState;
+    int active;
+} HEART;
+
 extern PLAYER player;
+extern HEART healthMeter[];
+
 
 
 void initPlayer(int *hOff, int *vOff);
@@ -248,6 +259,10 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff);
 void animatePlayer();
 void drawPlayer();
 void playerAttack();
+
+void initHearts();
+void updateHearts();
+void drawHearts();
 # 5 "buzz.c" 2
 # 1 "balloon.h" 1
 
@@ -472,9 +487,10 @@ void updateBuzz(BUZZ *buzz) {
 
         if (collision(player.worldCol, player.worldRow, player.width, player.height,
             buzz->worldCol, buzz->worldRow, buzz->width, buzz->height)) {
-                if (healthTimer % 250 == 0) {
+                if (healthTimer % 75 == 0) {
                     player.health -= 5;
                     healthTimer = 0;
+                    updateHearts();
                 }
                 healthTimer++;
         }
@@ -493,7 +509,7 @@ void updateBuzz(BUZZ *buzz) {
 
 void animateBuzz(BUZZ *buzz) {
     if (buzz->active) {
-# 163 "buzz.c"
+# 164 "buzz.c"
         if (buzz->direction == LEFT) {
             buzz->aniState = 3;
         }

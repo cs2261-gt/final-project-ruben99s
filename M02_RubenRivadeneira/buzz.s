@@ -172,7 +172,7 @@ updateBuzz:
 	ldr	r3, [r8]
 	sub	r3, r2, r3
 	cmp	r3, #239
-	bls	.L70
+	bls	.L69
 .L25:
 	ldr	r3, [r5, #32]
 	cmp	r3, #0
@@ -190,7 +190,7 @@ updateBuzz:
 	@ sp needed
 	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
 	b	animateBuzz
-.L70:
+.L69:
 	ldr	r1, [r0, #36]
 	cmp	r1, #0
 	bne	.L25
@@ -222,8 +222,8 @@ updateBuzz:
 	b	.L43
 .L35:
 	add	r4, r4, #76
-	cmp	r6, r4
-	beq	.L71
+	cmp	r4, r6
+	beq	.L70
 .L43:
 	ldr	r3, [r4, #32]
 	cmp	r3, #0
@@ -241,7 +241,7 @@ updateBuzz:
 	mov	lr, pc
 	bx	r9
 	cmp	r0, #0
-	beq	.L69
+	beq	.L68
 	ldr	r3, [r4, #36]
 	cmp	r3, #0
 	bne	.L37
@@ -250,15 +250,15 @@ updateBuzz:
 	str	r3, [r5, #60]
 .L38:
 	str	r10, [r4, #32]
-.L69:
+.L68:
 	add	r4, r4, #76
-	cmp	r6, r4
+	cmp	r4, r6
 	ldr	r2, [r5, #8]
 	ldr	r1, [r5, #12]
 	ldr	r0, [r5, #28]
 	ldr	ip, [r5, #24]
 	bne	.L43
-.L71:
+.L70:
 	ldr	r3, [r5, #60]
 	cmp	r3, #0
 	bgt	.L44
@@ -283,18 +283,17 @@ updateBuzz:
 	bx	r9
 	cmp	r0, #0
 	beq	.L45
-	ldr	r1, .L72+24
-	ldr	r0, .L72+28
-	ldr	r3, [r1]
+	ldr	r4, .L72+24
+	ldr	r1, .L72+28
 	ldr	r2, .L72+32
-	mla	r2, r3, r2, r0
-	cmp	r0, r2, ror #1
-	movcs	r3, #1
-	ldrcs	r2, [r7, #68]
-	addcc	r3, r3, #1
-	subcs	r2, r2, #5
-	strcs	r2, [r7, #68]
-	str	r3, [r1]
+	ldr	r3, [r4]
+	mla	r2, r3, r2, r1
+	ldr	r1, .L72+36
+	cmp	r2, r1
+	bls	.L71
+.L46:
+	add	r3, r3, #1
+	str	r3, [r4]
 .L45:
 	ldr	r2, [r5, #44]
 	ldr	r3, [r7, #8]
@@ -325,7 +324,7 @@ updateBuzz:
 	bne	.L38
 	ldr	ip, [r4]
 	ldr	r0, [r4, #20]
-	ldr	r3, .L72+36
+	ldr	r3, .L72+40
 	ldr	r2, [r4, #48]
 	add	r0, ip, r0
 	add	lr, r3, #1088
@@ -350,9 +349,20 @@ updateBuzz:
 .L29:
 	cmp	r3, #1
 	beq	.L32
-.L68:
+.L67:
 	ldr	r7, .L72+8
 	b	.L31
+.L71:
+	mov	r2, #0
+	ldr	r3, [r7, #68]
+	sub	r3, r3, #5
+	str	r3, [r7, #68]
+	ldr	r3, .L72+44
+	str	r2, [r4]
+	mov	lr, pc
+	bx	r3
+	ldr	r3, [r4]
+	b	.L46
 .L30:
 	mov	r3, #1
 	str	r3, [r5, #48]
@@ -362,7 +372,7 @@ updateBuzz:
 	ldrgt	r3, [r5, #16]
 	addgt	r2, r2, r3
 	strgt	r2, [r5, #8]
-	bgt	.L68
+	bgt	.L67
 .L33:
 	mov	r3, #0
 	ldr	r7, .L72+8
@@ -378,9 +388,11 @@ updateBuzz:
 	.word	collision
 	.word	remainingEnemies
 	.word	healthTimer
-	.word	17179868
-	.word	652835029
+	.word	28633115
+	.word	-1775253149
+	.word	57266230
 	.word	bees
+	.word	updateHearts
 	.size	updateBuzz, .-updateBuzz
 	.comm	healthTimer,4,4
 	.comm	bees,1092,4

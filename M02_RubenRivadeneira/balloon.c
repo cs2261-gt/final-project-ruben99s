@@ -229,7 +229,7 @@ void updateHeldBalloon(BALLOON *balloon) {
 
 void updateDropBalloon(BALLOON *balloon) {
     balloon->worldCol = balloon->prevWorldCol;
-    balloon->worldRow = balloon->prevWorldRow;
+    balloon->worldRow = balloon->prevWorldRow; 
 }
 
 void animateBalloons(BALLOON *balloon) {

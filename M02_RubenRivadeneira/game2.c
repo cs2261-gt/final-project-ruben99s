@@ -15,7 +15,7 @@ int vOff;
 OBJ_ATTR shadowOAM[128]; 
 // int remainingEnemies;
 int numBalloons;
-int isPlayerEndL2;
+int isPlayerEndL2; 
 int playerHealth;
 
 //game functions-------------------------

@@ -157,7 +157,18 @@ typedef enum {
     PLAYERIDLE
 };
 
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int width;
+    int num;
+    int aniState;
+    int active;
+} HEART;
+
 extern PLAYER player;
+extern HEART healthMeter[];
+
 
 
 void initPlayer(int *hOff, int *vOff);
@@ -165,6 +176,10 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff);
 void animatePlayer();
 void drawPlayer();
 void playerAttack();
+
+void initHearts();
+void updateHearts();
+void drawHearts();
 # 3 "player.c" 2
 # 1 "game.h" 1
 
@@ -349,6 +364,8 @@ void drawGame2();
 # 9 "player.c" 2
 
 PLAYER player;
+HEART healthMeter[20];
+int lostHearts = 0;
 
 void initPlayer(int *hOff, int *vOff) {
     player.height = 30;
@@ -376,13 +393,13 @@ void initPlayer(int *hOff, int *vOff) {
     player.highJumpLimit = 0;
 
 
-    player.health = 10;
-
 
     player.aniCounter = 0;
     player.curFrame = 0;
     player.numFrames = 4;
     player.aniState = PLAYERRIGHT;
+
+    initHearts();
 }
 
 void animatePlayer() {
@@ -434,6 +451,10 @@ void drawPlayer() {
     shadowOAM[0].attr0 = (0xFF & player.screenRow) | (0<<14);
     shadowOAM[0].attr1 = (0x1FF & player.screenCol) | (2<<14);
     shadowOAM[0].attr2 = ((player.curFrame * 4)*32+(player.aniState * 4)) | ((0)<<12);
+
+    for (int i = 0; i < 20; i++) {
+        drawHearts(&healthMeter[i]);
+    }
 }
 
 void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
@@ -541,7 +562,7 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
 
 
     if((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
-        for (int i = 0; i < 8; i++) {
+        for (int i = 0; i < 13; i++) {
             if (bees[i].active && bees[i].screenCol >= 0 && bees[i].screenCol < 240) {
                 bees[i].state = ANGRY;
             }
@@ -638,6 +659,7 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
     player.screenRow = player.worldRow - *vOff;
 
     animatePlayer();
+
 }
 
 void playerAttack() {
@@ -655,6 +677,42 @@ void playerAttack() {
                 allBalloons[i].held = 0;
                 break;
             }
+        }
+    }
+}
+
+
+void initHearts() {
+    for (int i = 0; i < 20; i++) {
+        healthMeter[i].num = i;
+        healthMeter[i].width = 7;
+        if (i % 2 == 0) {
+            healthMeter[i].aniState = 4;
+        } else {
+            healthMeter[i].aniState = 6;
+        }
+        healthMeter[i].screenRow = 5;
+        healthMeter[i].screenCol = 100 + (7 * i);
+        healthMeter[i].active = 1;
+    }
+}
+
+void drawHearts(HEART *heart) {
+    if (heart->active) {
+        shadowOAM[13 + heart->num].attr0 = (0xFF & heart->screenRow) | (0<<14);
+        shadowOAM[13 + heart->num].attr1 = (0x1FF & heart->screenCol) | (1<<14);
+        shadowOAM[13 + heart->num].attr2 = ((30)*32+(heart->aniState)) | ((0)<<12);
+    } else {
+        shadowOAM[13 + heart->num].attr0 = (2<<8);
+    }
+}
+
+void updateHearts() {
+    if (player.health != 100) {
+        lostHearts = 20 - (player.health / 5);
+
+        for (int i = 0; i < lostHearts; i++) {
+            healthMeter[i].active = 0;
         }
     }
 }

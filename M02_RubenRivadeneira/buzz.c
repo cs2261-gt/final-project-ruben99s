@@ -15,7 +15,7 @@ void initBuzz() {
     for (int i = 0; i < MAXBEES; i++) { 
         bees[i].height = 20;
         bees[i].width = 23; 
-        bees[i].active = 0;  
+        bees[i].active = 0; 
         bees[i].state = CALM;
         bees[i].direction = LEFT;
         bees[i].colDelta = 1;
@@ -131,9 +131,10 @@ void updateBuzz(BUZZ *buzz) {
         //collision with player
         if (collision(player.worldCol, player.worldRow, player.width, player.height, 
             buzz->worldCol, buzz->worldRow, buzz->width, buzz->height)) {
-                if (healthTimer % 250 == 0) {
+                if (healthTimer % 75 == 0) {
                     player.health -= 5;
                     healthTimer = 0;
+                    updateHearts();
                 }
                 healthTimer++;
         }

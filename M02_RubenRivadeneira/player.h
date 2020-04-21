@@ -42,11 +42,26 @@ typedef enum {
     PLAYERIDLE
 };
 
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int width;
+    int num;
+    int aniState;
+    int active;
+} HEART;
+
 extern PLAYER player;
-// enum {PLAYERRIGHT, PLAYERLEFT, PLAYERUP, PLAYERDOWN, PLAYERIDLE};
+extern HEART healthMeter[];
+
+#define numHearts 20
 
 void initPlayer(int *hOff, int *vOff);
 void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff);
 void animatePlayer();
 void drawPlayer();
 void playerAttack();
+
+void initHearts();
+void updateHearts();
+void drawHearts();

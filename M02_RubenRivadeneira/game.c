@@ -119,7 +119,7 @@ void activateSecondWave() {
 
 void drawGame() {
     drawPlayer();
-    for (int i = 0; i < MAXBEES; i++) {
+    for (int i = 0; i < MAXBEES; i++) { 
         drawBuzz(&bees[i]);
     }
     //updates only the balloon type that is selected or deletes the previous type selected
