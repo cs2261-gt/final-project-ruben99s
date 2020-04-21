@@ -21,49 +21,49 @@ initGame:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	mov	r3, #0
-	push	{r4, lr}
-	mov	r4, #1
-	mov	r2, #96
-	mov	lr, #13
+	mov	r2, #0
+	push	{r4, r5, r6, lr}
+	mov	r5, #1
+	mov	r3, #96
 	mov	ip, #67108864
-	ldr	r0, .L4
-	str	r3, [r0]
-	ldr	r0, .L4+4
-	str	r3, [r0]
+	mov	r4, #13
+	ldr	lr, .L4
+	str	r2, [lr]
+	ldr	lr, .L4+4
 	ldr	r0, .L4+8
-	str	r3, [r0]
-	ldr	r0, .L4+12
-	str	r3, [r0]
-	ldr	r3, .L4+16
-	ldr	r1, .L4+20
-	str	r4, [r3]
-	ldr	r3, .L4+24
-	str	r2, [r1]
-	str	lr, [r3]
-	strh	r2, [ip, #18]	@ movhi
-	ldr	r3, .L4+28
-	strh	r2, [ip, #22]	@ movhi
+	str	r2, [lr]
+	ldr	lr, .L4+12
+	str	r2, [r0]
+	str	r5, [lr]
+	ldr	r1, .L4+16
+	ldr	lr, .L4+20
+	ldr	r0, .L4+24
+	str	r4, [lr]
+	str	r3, [r1]
+	str	r2, [r0]
+	ldr	r4, .L4+28
+	strh	r3, [ip, #18]	@ movhi
+	strh	r3, [ip, #22]	@ movhi
 	mov	lr, pc
-	bx	r3
+	bx	r4
 	ldr	r3, .L4+32
 	mov	lr, pc
 	bx	r3
 	ldr	r3, .L4+36
 	mov	lr, pc
 	bx	r3
-	pop	{r4, lr}
+	pop	{r4, r5, r6, lr}
 	bx	lr
 .L5:
 	.align	2
 .L4:
 	.word	numBalloons
-	.word	isPlayerEnd
 	.word	secondWaveHappened
-	.word	hOff
+	.word	isPlayerEnd
 	.word	direction
 	.word	vOff
 	.word	remainingEnemies
+	.word	hOff
 	.word	initPlayer
 	.word	initBuzz
 	.word	initBalloons

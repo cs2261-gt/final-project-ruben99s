@@ -27,7 +27,7 @@ void initGame1() {
     isPlayerEndL1 = 0;
     REG_BG0VOFF = vOff;
     REG_BG1VOFF = vOff;
-    initPlayer(&hOff, &vOff);
+    initPlayer(&hOff, &vOff, 1); 
     // initBuzz();
     initBalloons();
 }

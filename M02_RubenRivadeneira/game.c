@@ -31,7 +31,7 @@ void initGame() {
     secondWaveHappened = 0;
     REG_BG0VOFF = vOff;
     REG_BG1VOFF = vOff;
-    initPlayer(&hOff, &vOff);
+    initPlayer(&hOff, &vOff, 0); 
     initBuzz();
     initBalloons();
 }

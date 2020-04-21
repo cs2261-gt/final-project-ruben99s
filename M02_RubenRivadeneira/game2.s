@@ -37,10 +37,11 @@ initGame2:
 	str	r3, [r1]
 	str	lr, [r2]
 	strh	r3, [ip, #18]	@ movhi
-	ldr	r2, .L4+20
+	mov	r2, #2
 	strh	r3, [ip, #22]	@ movhi
+	ldr	r3, .L4+20
 	mov	lr, pc
-	bx	r2
+	bx	r3
 	ldr	r3, .L4+24
 	mov	lr, pc
 	bx	r3

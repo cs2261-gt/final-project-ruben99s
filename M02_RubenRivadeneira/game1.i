@@ -254,7 +254,7 @@ extern HEART healthMeter[];
 
 
 
-void initPlayer(int *hOff, int *vOff);
+void initPlayer(int *hOff, int *vOff, int level);
 void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff);
 void animatePlayer();
 void drawPlayer();
@@ -342,7 +342,7 @@ void initGame1() {
     isPlayerEndL1 = 0;
     (*(volatile unsigned short *)0x04000012) = vOff;
     (*(volatile unsigned short *)0x04000016) = vOff;
-    initPlayer(&hOff, &vOff);
+    initPlayer(&hOff, &vOff, 1);
 
     initBalloons();
 }

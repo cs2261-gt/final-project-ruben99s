@@ -11,7 +11,7 @@ PLAYER player;
 HEART healthMeter[numHearts];
 int lostHearts = 0;
  
-void initPlayer(int *hOff, int *vOff) {
+void initPlayer(int *hOff, int *vOff, int level) {
     player.height = 30;
     player.width = 20; 
     player.colDelta = 2; 
@@ -29,7 +29,10 @@ void initPlayer(int *hOff, int *vOff) {
     player.jumping = 0;
     player.crouching = 0;
 
-    player.health = 100;
+    if (level == 0) {
+        player.health = 100;
+        initHearts();
+    }
 
     player.balloonTimer = 0;
     player.balloonType = SINGLE;
@@ -43,7 +46,6 @@ void initPlayer(int *hOff, int *vOff) {
     player.numFrames = 4;
     player.aniState = PLAYERRIGHT;
 
-    initHearts();
 }
 
 void animatePlayer() {

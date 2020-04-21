@@ -21,26 +21,26 @@ initGame1:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	mov	r2, #0
+	mov	ip, #0
 	push	{r4, lr}
 	mov	r3, #96
-	mov	lr, #1
-	mov	ip, #67108864
+	mov	lr, #67108864
+	mov	r2, #1
 	ldr	r0, .L4
-	str	r2, [r0]
+	str	ip, [r0]
 	ldr	r0, .L4+4
-	str	r2, [r0]
+	str	ip, [r0]
 	ldr	r0, .L4+8
 	ldr	r1, .L4+12
-	str	r2, [r0]
-	ldr	r2, .L4+16
+	str	ip, [r0]
+	ldr	ip, .L4+16
 	str	r3, [r1]
-	str	lr, [r2]
-	strh	r3, [ip, #18]	@ movhi
-	ldr	r2, .L4+20
-	strh	r3, [ip, #22]	@ movhi
+	str	r2, [ip]
+	strh	r3, [lr, #18]	@ movhi
+	strh	r3, [lr, #22]	@ movhi
+	ldr	r3, .L4+20
 	mov	lr, pc
-	bx	r2
+	bx	r3
 	ldr	r3, .L4+24
 	mov	lr, pc
 	bx	r3

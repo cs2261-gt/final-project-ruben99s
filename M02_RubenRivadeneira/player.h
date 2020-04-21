@@ -56,7 +56,7 @@ extern HEART healthMeter[];
 
 #define numHearts 20
 
-void initPlayer(int *hOff, int *vOff);
+void initPlayer(int *hOff, int *vOff, int level);
 void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff);
 void animatePlayer();
 void drawPlayer();
