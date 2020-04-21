@@ -76,14 +76,14 @@ updateGame:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r3, r4, r5, r6, r7, r8, r9, r10, fp, lr}
-	ldr	r2, .L44
-	ldr	r1, .L44+4
-	ldr	r0, .L44+8
-	ldr	r3, .L44+12
+	ldr	r2, .L43
+	ldr	r1, .L43+4
+	ldr	r0, .L43+8
+	ldr	r3, .L43+12
 	mov	lr, pc
 	bx	r3
-	ldr	r4, .L44+16
-	ldr	r6, .L44+20
+	ldr	r4, .L43+16
+	ldr	r6, .L43+20
 	add	r5, r4, #672
 .L7:
 	mov	r0, r4
@@ -92,15 +92,15 @@ updateGame:
 	bx	r6
 	cmp	r4, r5
 	bne	.L7
-	ldr	r7, .L44+24
+	ldr	r7, .L43+24
 	ldr	r5, [r7, #56]
 	cmp	r5, #0
-	bne	.L23
-	ldr	fp, .L44+28
+	bne	.L22
+	ldr	fp, .L43+28
 	mov	r6, r5
 	mov	r9, fp
 	mov	r4, fp
-	ldr	r8, .L44+32
+	ldr	r8, .L43+32
 	add	r10, fp, #380
 .L10:
 	mov	r0, r4
@@ -114,22 +114,22 @@ updateGame:
 	bne	.L10
 	cmp	r6, #4
 	ldr	r2, [r7, #56]
-	bgt	.L24
+	bgt	.L23
 .L12:
 	ldr	r3, [fp, #40]
 	cmp	r3, #0
-	beq	.L38
+	beq	.L37
 	add	r5, r5, #1
 	cmp	r5, #5
 	add	fp, fp, #76
 	bne	.L12
-.L24:
+.L23:
 	mov	r5, r2
 	cmp	r5, #1
 	bne	.L13
-.L40:
-	ldr	r4, .L44+36
-	ldr	r8, .L44+32
+.L39:
+	ldr	r4, .L43+36
+	ldr	r8, .L43+32
 	sub	r10, r4, #380
 	add	r5, r4, #380
 .L15:
@@ -149,48 +149,48 @@ updateGame:
 .L17:
 	ldr	r2, [r10, #420]
 	cmp	r2, #0
-	beq	.L39
+	beq	.L38
 	add	r3, r3, #1
 	cmp	r3, #10
 	add	r10, r10, #76
 	bne	.L17
 	cmp	r5, #2
 	bne	.L18
-.L41:
-	ldr	r0, .L44+40
-	ldr	r3, .L44+32
+.L40:
+	ldr	r0, .L43+40
+	ldr	r3, .L43+32
 	mov	lr, pc
 	bx	r3
 	ldr	r5, [r7, #56]
 	cmp	r5, #3
 	bne	.L19
-.L42:
-	ldr	r0, .L44+44
-	ldr	r3, .L44+32
+.L41:
+	ldr	r0, .L43+44
+	ldr	r3, .L43+32
 	mov	lr, pc
 	bx	r3
 	b	.L19
-.L23:
+.L22:
 	mov	r6, #0
-	ldr	r9, .L44+28
+	ldr	r9, .L43+28
 .L8:
 	cmp	r5, #1
-	beq	.L40
+	beq	.L39
 .L13:
 	cmp	r5, #2
-	beq	.L41
+	beq	.L40
 .L18:
 	cmp	r5, #3
-	beq	.L42
+	beq	.L41
 .L19:
-	ldr	r4, .L44+28
-	ldr	r6, .L44+48
+	ldr	r4, .L43+28
+	ldr	r6, .L43+48
 	add	r5, r4, #912
 	b	.L21
 .L20:
 	add	r4, r4, #76
 	cmp	r5, r4
-	beq	.L43
+	beq	.L42
 .L21:
 	ldr	r3, [r4, #40]
 	cmp	r3, #0
@@ -201,18 +201,19 @@ updateGame:
 	bx	r6
 	cmp	r5, r4
 	bne	.L21
-.L43:
+.L42:
 	ldr	r3, [r7, #8]
 	cmp	r3, #460
-	movge	r2, #1
-	ldrge	r3, .L44+52
-	strge	r2, [r3]
-	ldr	r2, [r7, #68]
-	ldr	r3, .L44+56
-	str	r2, [r3]
+	movlt	r3, #0
+	movge	r3, #1
+	ldr	r1, [r7, #68]
+	ldr	r0, .L43+52
+	ldr	r2, .L43+56
+	str	r3, [r0]
+	str	r1, [r2]
 	pop	{r3, r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	bx	lr
-.L38:
+.L37:
 	mov	r1, #1
 	add	r3, r5, r5, lsl #3
 	add	r3, r5, r3, lsl r1
@@ -221,7 +222,7 @@ updateGame:
 	str	r1, [r3, #40]
 	str	r1, [r3, #48]
 	b	.L8
-.L39:
+.L38:
 	mov	r2, #1
 	add	r1, r3, r3, lsl #3
 	add	r3, r3, r1, lsl r2
@@ -229,9 +230,9 @@ updateGame:
 	str	r2, [r3, #40]
 	str	r2, [r3, #48]
 	b	.L13
-.L45:
-	.align	2
 .L44:
+	.align	2
+.L43:
 	.word	vOff
 	.word	hOff
 	.word	bg00CollisionMapBitmap
@@ -259,57 +260,57 @@ drawGame:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, lr}
-	ldr	r3, .L73
+	ldr	r3, .L72
 	mov	lr, pc
 	bx	r3
-	ldr	r4, .L73+4
-	ldr	r6, .L73+8
+	ldr	r4, .L72+4
+	ldr	r6, .L72+8
 	add	r5, r4, #672
-.L47:
+.L46:
 	mov	r0, r4
 	add	r4, r4, #84
 	mov	lr, pc
 	bx	r6
 	cmp	r4, r5
-	bne	.L47
-	ldr	r4, .L73+12
+	bne	.L46
+	ldr	r4, .L72+12
 	ldr	r3, [r4, #56]
 	cmp	r3, #0
-	beq	.L48
+	beq	.L47
 	ldr	r2, [r4, #60]
 	cmp	r2, #0
-	beq	.L48
+	beq	.L47
 	cmp	r3, #1
-	beq	.L50
-.L70:
+	beq	.L49
+.L69:
 	ldr	r2, [r4, #60]
 	cmp	r2, #1
-	beq	.L50
+	beq	.L49
 	cmp	r3, #2
-	beq	.L52
-.L71:
+	beq	.L51
+.L70:
 	ldr	r2, [r4, #60]
 	cmp	r2, #2
-	beq	.L52
+	beq	.L51
 	cmp	r3, #3
-	beq	.L54
-.L72:
+	beq	.L53
+.L71:
 	ldr	r3, [r4, #60]
 	cmp	r3, #3
-	beq	.L54
-.L55:
-	ldr	r3, .L73+16
+	beq	.L53
+.L54:
+	ldr	r3, .L72+16
 	mov	lr, pc
 	bx	r3
-	ldr	r4, .L73+20
+	ldr	r4, .L72+20
 	mov	r3, #512
 	mov	r2, #117440512
-	ldr	r1, .L73+24
+	ldr	r1, .L72+24
 	mov	r0, #3
 	mov	lr, pc
 	bx	r4
 	mov	r1, #67108864
-	ldr	r3, .L73+28
+	ldr	r3, .L72+28
 	ldr	r2, [r3]
 	add	r3, r2, r2, lsr #31
 	asr	r3, r3, #1
@@ -321,63 +322,63 @@ drawGame:
 	pop	{r4, r5, r6, lr}
 	strh	r3, [r1, #20]	@ movhi
 	bx	lr
-.L48:
-	ldr	r5, .L73+32
-	ldr	r0, .L73+36
+.L47:
+	ldr	r5, .L72+32
+	ldr	r0, .L72+36
 	mov	lr, pc
 	bx	r5
-	ldr	r0, .L73+40
+	ldr	r0, .L72+40
 	mov	lr, pc
 	bx	r5
-	ldr	r0, .L73+44
+	ldr	r0, .L72+44
 	mov	lr, pc
 	bx	r5
-	ldr	r0, .L73+48
+	ldr	r0, .L72+48
 	mov	lr, pc
 	bx	r5
-	ldr	r0, .L73+52
+	ldr	r0, .L72+52
 	mov	lr, pc
 	bx	r5
 	ldr	r3, [r4, #56]
 	cmp	r3, #1
-	bne	.L70
-.L50:
-	ldr	r5, .L73+32
-	ldr	r0, .L73+56
+	bne	.L69
+.L49:
+	ldr	r5, .L72+32
+	ldr	r0, .L72+56
 	mov	lr, pc
 	bx	r5
-	ldr	r0, .L73+60
+	ldr	r0, .L72+60
 	mov	lr, pc
 	bx	r5
-	ldr	r0, .L73+64
+	ldr	r0, .L72+64
 	mov	lr, pc
 	bx	r5
-	ldr	r0, .L73+68
+	ldr	r0, .L72+68
 	mov	lr, pc
 	bx	r5
-	ldr	r0, .L73+72
+	ldr	r0, .L72+72
 	mov	lr, pc
 	bx	r5
 	ldr	r3, [r4, #56]
 	cmp	r3, #2
-	bne	.L71
-.L52:
-	ldr	r3, .L73+32
-	ldr	r0, .L73+76
+	bne	.L70
+.L51:
+	ldr	r3, .L72+32
+	ldr	r0, .L72+76
 	mov	lr, pc
 	bx	r3
 	ldr	r3, [r4, #56]
 	cmp	r3, #3
-	bne	.L72
-.L54:
-	ldr	r0, .L73+80
-	ldr	r3, .L73+32
+	bne	.L71
+.L53:
+	ldr	r0, .L72+80
+	ldr	r3, .L72+32
 	mov	lr, pc
 	bx	r3
-	b	.L55
-.L74:
-	.align	2
+	b	.L54
 .L73:
+	.align	2
+.L72:
 	.word	drawPlayer
 	.word	bees
 	.word	drawBuzz

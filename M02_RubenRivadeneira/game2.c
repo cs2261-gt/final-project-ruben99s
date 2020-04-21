@@ -97,6 +97,8 @@ void updateGame2() {
 
     if (player.worldCol >= 460) { 
         isPlayerEndL2 = 1;
+    } else {
+        isPlayerEndL2 = 0;
     }
     playerHealth = player.health;
 }

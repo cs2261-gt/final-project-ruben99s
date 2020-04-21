@@ -141,6 +141,10 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
         player.height = 30;
     }
    
+
+
+
+   
     if(BUTTON_HELD(BUTTON_UP)) {
         if (player.worldRow <= player.upLimit) {
             player.jumping = 0;
@@ -155,6 +159,36 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
     } else {
         player.jumping = 0;
     }  
+
+    //allows to jump higher if balloon type is jump
+    if (player.balloonType == JUMP) {
+        player.upLimit = 90;
+    } else {
+        player.upLimit = 150;
+    }
+
+    //gravity-ish
+    if (!player.jumping) {
+        //falling down
+        if (bitmap[OFFSET(player.worldCol, player.worldRow + player.height - 1 + player.rowDelta, MAPWIDTH)] &&
+            bitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow + player.height - 1 + player.rowDelta, MAPWIDTH)]) {
+            
+            player.worldRow += player.rowDelta;
+                
+        }
+    }
+    if (player.jumping) {
+        //going up
+        if (bitmap[OFFSET(player.worldCol, player.worldRow - player.rowDelta, MAPWIDTH)] &&
+            bitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow - player.rowDelta, MAPWIDTH)]) {
+                
+            player.worldRow -= player.rowDelta;
+        }
+    }
+
+
+
+
 
     //player balloon attack
     if(BUTTON_PRESSED(BUTTON_A) && player.balloonTimer >= 10) {
@@ -256,31 +290,7 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
         }
     }
 
-    //allows to jump higher if balloon type is jump
-    if (player.balloonType == JUMP) {
-        player.upLimit = 90;
-    } else {
-        player.upLimit = 150;
-    }
 
-    //gravity-ish
-    if (!player.jumping) {
-        //falling down
-        if (bitmap[OFFSET(player.worldCol, player.worldRow + player.height - 1 + player.rowDelta, MAPWIDTH)] &&
-            bitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow + player.height - 1 + player.rowDelta, MAPWIDTH)]) {
-            
-            player.worldRow += player.rowDelta;
-                
-        }
-    }
-    if (player.jumping) {
-        //going up
-        if (bitmap[OFFSET(player.worldCol, player.worldRow - player.rowDelta, MAPWIDTH)] &&
-            bitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow - player.rowDelta, MAPWIDTH)]) {
-                
-            player.worldRow -= player.rowDelta;
-        }
-    }
     
 
     player.screenCol = player.worldCol - *hOff;
