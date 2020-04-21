@@ -10,9 +10,49 @@
 	.eabi_attribute 18, 4
 	.file	"balloon.c"
 	.text
+	.global	__aeabi_idivmod
+	.align	2
+	.arch armv4t
+	.syntax unified
+	.arm
+	.fpu softvfp
+	.type	animateBalloons.part.0, %function
+animateBalloons.part.0:
+	@ Function supports interworking.
+	@ args = 0, pretend = 0, frame = 0
+	@ frame_needed = 0, uses_anonymous_args = 0
+	push	{r4, r5, r6, lr}
+	ldr	r3, .L5
+	ldr	r4, [r0, #68]
+	smull	r1, r2, r3, r4
+	asr	r3, r4, #31
+	rsb	r3, r3, r2, asr #2
+	add	r3, r3, r3, lsl #2
+	cmp	r4, r3, lsl #1
+	mov	r5, r0
+	bne	.L2
+	ldr	r0, [r0, #64]
+	ldr	r1, [r5, #72]
+	ldr	r3, .L5+4
+	sub	r0, r0, #22
+	lsl	r1, r1, #1
+	mov	lr, pc
+	bx	r3
+	add	r1, r1, #24
+	str	r1, [r5, #64]
+.L2:
+	add	r4, r4, #1
+	str	r4, [r5, #68]
+	pop	{r4, r5, r6, lr}
+	bx	lr
+.L6:
+	.align	2
+.L5:
+	.word	1717986919
+	.word	__aeabi_idivmod
+	.size	animateBalloons.part.0, .-animateBalloons.part.0
 	.align	2
 	.global	initBalloonsSingle
-	.arch armv4t
 	.syntax unified
 	.arm
 	.fpu softvfp
@@ -24,14 +64,14 @@ initBalloonsSingle:
 	mov	r1, #0
 	push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	mov	r9, #16
-	ldr	fp, .L8
+	ldr	fp, .L13
 	mov	r2, r1
 	mov	r3, fp
 	mov	r10, #12
 	mov	r8, #24
-	ldr	r5, .L8+4
-	ldr	ip, .L8+8
-	ldr	lr, .L8+12
+	ldr	r5, .L13+4
+	ldr	ip, .L13+8
+	ldr	lr, .L13+12
 	ldr	r0, [r5, #8]
 	ldr	r4, [ip]
 	ldr	lr, [lr]
@@ -41,7 +81,7 @@ initBalloonsSingle:
 	ldr	r5, [r5, #20]
 	sub	r4, r0, r4
 	sub	lr, ip, lr
-.L5:
+.L11:
 	mov	r7, #3
 	cmp	r1, #0
 	str	r7, [r3, #72]
@@ -64,19 +104,19 @@ initBalloonsSingle:
 	str	r2, [r3, #68]
 	streq	r7, [fp, #40]
 	streq	r7, [fp, #48]
-	beq	.L3
+	beq	.L9
 	cmp	r1, #4
-	beq	.L1
-.L3:
+	beq	.L7
+.L9:
 	add	r1, r1, #1
 	add	r3, r3, #76
-	b	.L5
-.L1:
+	b	.L11
+.L7:
 	pop	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	bx	lr
-.L9:
+.L14:
 	.align	2
-.L8:
+.L13:
 	.word	allBalloons
 	.word	player
 	.word	hOff
@@ -99,20 +139,20 @@ initBalloonsAOE:
 	mov	lr, #1
 	mov	r1, #0
 	mov	r9, #50
-	ldr	r6, .L17
-	ldr	r0, .L17+4
-	ldr	ip, .L17+8
+	ldr	r6, .L22
+	ldr	r0, .L22+4
+	ldr	ip, .L22+8
 	ldr	r7, [r6, #8]
 	ldr	r5, [r0]
 	ldr	r4, [ip]
 	ldr	r0, [r6, #12]
 	add	ip, r7, r10
-	ldr	r3, .L17+12
+	ldr	r3, .L22+12
 	ldr	r7, [r6, #16]
 	ldr	r6, [r6, #20]
 	sub	r5, ip, r5
 	sub	r4, r0, r4
-.L14:
+.L19:
 	mov	r8, #2
 	str	r8, [r3, #440]
 	mov	r8, #24
@@ -137,23 +177,23 @@ initBalloonsAOE:
 	str	r1, [r3, #448]
 	str	r8, [r3, #452]
 	add	r2, r2, #1
-	beq	.L16
+	beq	.L21
 	cmp	r2, #10
-	beq	.L10
-.L12:
+	beq	.L15
+.L17:
 	add	r3, r3, #76
-	b	.L14
-.L16:
-	ldr	r8, .L17+12
+	b	.L19
+.L21:
+	ldr	r8, .L22+12
 	str	lr, [r8, #420]
 	str	lr, [r8, #428]
-	b	.L12
-.L10:
+	b	.L17
+.L15:
 	pop	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	bx	lr
-.L18:
+.L23:
 	.align	2
-.L17:
+.L22:
 	.word	player
 	.word	hOff
 	.word	vOff
@@ -179,17 +219,17 @@ initJumpBalloon:
 	mov	r4, #0
 	mov	lr, #3
 	mov	ip, #1
-	ldr	r2, .L21
-	ldr	r3, .L21+4
+	ldr	r2, .L26
+	ldr	r3, .L26+4
 	ldr	r1, [r2, #8]
 	ldr	r0, [r3]
 	add	r1, r1, r9
-	ldr	r3, .L21+8
+	ldr	r3, .L26+8
 	sub	r0, r1, r0
 	str	r0, [r3, #760]
 	str	r1, [r3, #768]
 	ldr	r0, [r2, #16]
-	ldr	r1, .L21+12
+	ldr	r1, .L26+12
 	str	r0, [r3, #776]
 	ldr	r1, [r1]
 	ldr	r0, [r2, #12]
@@ -210,9 +250,9 @@ initJumpBalloon:
 	str	ip, [r3, #800]
 	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
 	bx	lr
-.L22:
+.L27:
 	.align	2
-.L21:
+.L26:
 	.word	player
 	.word	hOff
 	.word	allBalloons
@@ -237,17 +277,17 @@ initCheatBalloon:
 	mov	r5, #24
 	mov	r4, #0
 	mov	ip, #1
-	ldr	r2, .L25
-	ldr	r3, .L25+4
+	ldr	r2, .L30
+	ldr	r3, .L30+4
 	ldr	r1, [r2, #8]
 	ldr	r0, [r3]
 	add	r1, r1, r8
-	ldr	r3, .L25+8
+	ldr	r3, .L30+8
 	sub	r0, r1, r0
 	str	r0, [r3, #836]
 	str	r1, [r3, #844]
 	ldr	r0, [r2, #16]
-	ldr	r1, .L25+12
+	ldr	r1, .L30+12
 	str	r0, [r3, #852]
 	ldr	r1, [r1]
 	ldr	r0, [r2, #12]
@@ -268,9 +308,9 @@ initCheatBalloon:
 	str	ip, [r3, #876]
 	pop	{r4, r5, r6, r7, r8, r9, lr}
 	bx	lr
-.L26:
+.L31:
 	.align	2
-.L25:
+.L30:
 	.word	player
 	.word	hOff
 	.word	allBalloons
@@ -307,12 +347,12 @@ drawBalloons:
 	ldr	r3, [r0, #52]
 	cmp	r2, #0
 	add	r3, r3, #1
-	beq	.L30
+	beq	.L35
 	push	{r4, lr}
 	ldr	r2, [r0]
 	ldr	r4, [r0, #64]
 	ldr	r1, [r0, #60]
-	ldr	ip, .L36
+	ldr	ip, .L41
 	lsl	r2, r2, #23
 	ldrb	lr, [r0, #4]	@ zero_extendqisi2
 	lsr	r2, r2, #23
@@ -325,15 +365,15 @@ drawBalloons:
 	strh	r1, [r3, #4]	@ movhi
 	pop	{r4, lr}
 	bx	lr
-.L30:
+.L35:
 	mov	r1, #512
-	ldr	r2, .L36
+	ldr	r2, .L41
 	lsl	r3, r3, #3
 	strh	r1, [r2, r3]	@ movhi
 	bx	lr
-.L37:
+.L42:
 	.align	2
-.L36:
+.L41:
 	.word	shadowOAM
 	.size	drawBalloons, .-drawBalloons
 	.align	2
@@ -347,45 +387,45 @@ updateHeldBalloon:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	@ link register save eliminated.
-	ldr	r3, .L52
+	ldr	r3, .L57
 	ldr	r2, [r3, #76]
 	cmp	r2, #0
-	bne	.L39
+	bne	.L44
 	ldr	r2, [r3, #84]
 	cmp	r2, #5
 	ldrls	pc, [pc, r2, asl #2]
-	b	.L38
-.L41:
-	.word	.L43
-	.word	.L44
-	.word	.L42
-	.word	.L43
-	.word	.L42
-	.word	.L40
+	b	.L43
 .L46:
+	.word	.L48
+	.word	.L49
+	.word	.L47
+	.word	.L48
+	.word	.L47
+	.word	.L45
+.L51:
 	add	r2, r3, #8
 	ldm	r2, {r2, r3}
 	add	r2, r2, #3
 	add	r3, r3, #16
 	str	r2, [r0, #8]
 	str	r3, [r0, #12]
-.L38:
+.L43:
 	bx	lr
-.L39:
+.L44:
 	cmp	r2, #1
 	bxne	lr
 	ldr	r2, [r3, #84]
 	cmp	r2, #5
 	ldrls	pc, [pc, r2, asl #2]
-	b	.L38
+	b	.L43
+.L52:
+	.word	.L54
+	.word	.L55
+	.word	.L53
+	.word	.L54
+	.word	.L53
+	.word	.L51
 .L47:
-	.word	.L49
-	.word	.L50
-	.word	.L48
-	.word	.L49
-	.word	.L48
-	.word	.L46
-.L42:
 	add	r2, r3, #8
 	ldm	r2, {r2, r3}
 	add	r2, r2, #18
@@ -393,14 +433,14 @@ updateHeldBalloon:
 	str	r2, [r0, #8]
 	str	r3, [r0, #12]
 	bx	lr
-.L43:
+.L48:
 	ldr	r2, [r3, #8]
 	ldr	r1, [r3, #12]
 	add	r3, r2, #16
 	str	r3, [r0, #8]
 	str	r1, [r0, #12]
 	bx	lr
-.L48:
+.L53:
 	add	r2, r3, #8
 	ldm	r2, {r2, r3}
 	sub	r2, r2, #2
@@ -408,20 +448,20 @@ updateHeldBalloon:
 	str	r2, [r0, #8]
 	str	r3, [r0, #12]
 	bx	lr
-.L49:
+.L54:
 	add	r2, r3, #8
 	ldm	r2, {r2, r3}
 	str	r2, [r0, #8]
 	str	r3, [r0, #12]
 	bx	lr
-.L44:
+.L49:
 	ldr	r2, [r3, #8]
 	ldr	r1, [r3, #12]
 	add	r3, r2, #18
 	str	r3, [r0, #8]
 	str	r1, [r0, #12]
 	bx	lr
-.L40:
+.L45:
 	add	r2, r3, #8
 	ldm	r2, {r2, r3}
 	add	r2, r2, #13
@@ -429,16 +469,16 @@ updateHeldBalloon:
 	str	r2, [r0, #8]
 	str	r3, [r0, #12]
 	bx	lr
-.L50:
+.L55:
 	ldr	r2, [r3, #8]
 	ldr	r1, [r3, #12]
 	sub	r3, r2, #2
 	str	r3, [r0, #8]
 	str	r1, [r0, #12]
 	bx	lr
-.L53:
+.L58:
 	.align	2
-.L52:
+.L57:
 	.word	player
 	.size	updateHeldBalloon, .-updateHeldBalloon
 	.align	2
@@ -455,12 +495,27 @@ updateBalloons:
 	cmp	r3, #0
 	push	{r4, lr}
 	mov	r4, r0
-	beq	.L62
+	bne	.L60
+	ldr	r3, [r0, #8]
+	ldr	r2, [r0, #12]
+.L61:
+	ldr	r0, .L71
+	ldr	r1, .L71+4
+	ldr	r0, [r0]
+	ldr	r1, [r1]
+	sub	r3, r3, r0
+	sub	r2, r2, r1
+	str	r3, [r4]
+	str	r2, [r4, #4]
+.L59:
+	pop	{r4, lr}
+	bx	lr
+.L60:
 	ldr	r3, [r0]
 	cmp	r3, #239
-	bls	.L57
+	bls	.L62
 	mov	r1, #0
-	ldr	r2, .L63
+	ldr	r2, .L71+8
 	ldr	r3, [r2, #8]
 	ldr	r2, [r2, #12]
 	add	r3, r3, #16
@@ -470,36 +525,48 @@ updateBalloons:
 	str	r2, [r0, #36]
 	str	r1, [r0, #40]
 	str	r1, [r0, #48]
-	b	.L56
-.L57:
-	ldr	r1, [r0, #48]
-	ldr	r3, [r0, #8]
-	ldr	r2, [r0, #12]
-	cmp	r1, #0
-	str	r3, [r0, #32]
-	str	r2, [r0, #36]
-	beq	.L56
-	bl	updateHeldBalloon
+	b	.L61
 .L62:
-	ldr	r3, [r4, #8]
-	ldr	r2, [r4, #12]
-.L56:
-	ldr	r0, .L63+4
-	ldr	r1, .L63+8
+	ldr	r1, [r0, #48]
+	add	r2, r0, #8
+	ldm	r2, {r2, r3}
+	cmp	r1, #0
+	str	r2, [r0, #32]
+	str	r3, [r0, #36]
+	bne	.L70
+	ldr	r0, .L71
+	ldr	r1, .L71+4
 	ldr	r0, [r0]
 	ldr	r1, [r1]
-	sub	r3, r3, r0
-	sub	r2, r2, r1
-	str	r3, [r4]
-	str	r2, [r4, #4]
+	sub	r2, r2, r0
+	sub	r3, r3, r1
+	mov	r0, r4
+	stm	r4, {r2, r3}
 	pop	{r4, lr}
-	bx	lr
-.L64:
+	b	animateBalloons.part.0
+.L70:
+	bl	updateHeldBalloon
+	ldr	r2, .L71
+	ldr	r3, .L71+4
+	ldr	ip, [r2]
+	ldr	r1, [r4, #40]
+	ldr	r2, [r0, #8]
+	ldr	r0, [r3]
+	ldr	r3, [r4, #12]
+	sub	r2, r2, ip
+	sub	r3, r3, r0
+	cmp	r1, #0
+	stm	r4, {r2, r3}
+	beq	.L59
+	mov	r0, r4
+	pop	{r4, lr}
+	b	animateBalloons.part.0
+.L72:
 	.align	2
-.L63:
-	.word	player
+.L71:
 	.word	hOff
 	.word	vOff
+	.word	player
 	.size	updateBalloons, .-updateBalloons
 	.align	2
 	.global	updateDropBalloon
@@ -518,5 +585,21 @@ updateDropBalloon:
 	str	r3, [r0, #12]
 	bx	lr
 	.size	updateDropBalloon, .-updateDropBalloon
+	.align	2
+	.global	animateBalloons
+	.syntax unified
+	.arm
+	.fpu softvfp
+	.type	animateBalloons, %function
+animateBalloons:
+	@ Function supports interworking.
+	@ args = 0, pretend = 0, frame = 0
+	@ frame_needed = 0, uses_anonymous_args = 0
+	@ link register save eliminated.
+	ldr	r3, [r0, #40]
+	cmp	r3, #0
+	bxeq	lr
+	b	animateBalloons.part.0
+	.size	animateBalloons, .-animateBalloons
 	.comm	allBalloons,912,4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

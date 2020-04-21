@@ -147,6 +147,10 @@ void animateBuzz(BUZZ *buzz) {
     if (buzz->active) {
         // if (buzz->aniCounter % 20 == 0) {
         //     buzz->curFrame = (buzz->curFrame + 1) % buzz->numFrames;
+
+        //     if (buzz->state == ANGRY) {
+        //         buzz->curFrame += 3;
+        //     }
         // }
 
         if (buzz->direction == LEFT) {
@@ -155,7 +159,6 @@ void animateBuzz(BUZZ *buzz) {
         if (buzz->direction == RIGHT) {
             buzz->aniState = 2;
         }
-
         if (buzz->state == ANGRY) {
             buzz->curFrame = 3;
         }

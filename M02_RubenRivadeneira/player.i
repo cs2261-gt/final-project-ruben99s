@@ -482,6 +482,10 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
         player.height = 30;
     }
 
+
+
+
+
     if((~((*(volatile unsigned short *)0x04000130)) & ((1<<6)))) {
         if (player.worldRow <= player.upLimit) {
             player.jumping = 0;
@@ -496,6 +500,36 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
     } else {
         player.jumping = 0;
     }
+
+
+    if (player.balloonType == JUMP) {
+        player.upLimit = 90;
+    } else {
+        player.upLimit = 150;
+    }
+
+
+    if (!player.jumping) {
+
+        if (bitmap[((player.worldRow + player.height - 1 + player.rowDelta)*(512)+(player.worldCol))] &&
+            bitmap[((player.worldRow + player.height - 1 + player.rowDelta)*(512)+(player.worldCol + player.width - 1))]) {
+
+            player.worldRow += player.rowDelta;
+
+        }
+    }
+    if (player.jumping) {
+
+        if (bitmap[((player.worldRow - player.rowDelta)*(512)+(player.worldCol))] &&
+            bitmap[((player.worldRow - player.rowDelta)*(512)+(player.worldCol + player.width - 1))]) {
+
+            player.worldRow -= player.rowDelta;
+        }
+    }
+
+
+
+
 
 
     if((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0)))) && player.balloonTimer >= 10) {
@@ -598,30 +632,6 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
     }
 
 
-    if (player.balloonType == JUMP) {
-        player.upLimit = 90;
-    } else {
-        player.upLimit = 150;
-    }
-
-
-    if (!player.jumping) {
-
-        if (bitmap[((player.worldRow + player.height - 1 + player.rowDelta)*(512)+(player.worldCol))] &&
-            bitmap[((player.worldRow + player.height - 1 + player.rowDelta)*(512)+(player.worldCol + player.width - 1))]) {
-
-            player.worldRow += player.rowDelta;
-
-        }
-    }
-    if (player.jumping) {
-
-        if (bitmap[((player.worldRow - player.rowDelta)*(512)+(player.worldCol))] &&
-            bitmap[((player.worldRow - player.rowDelta)*(512)+(player.worldCol + player.width - 1))]) {
-
-            player.worldRow -= player.rowDelta;
-        }
-    }
 
 
     player.screenCol = player.worldCol - *hOff;

@@ -435,6 +435,8 @@ void updateBalloons(BALLOON *balloon) {
 
     balloon->screenCol = balloon->worldCol - hOff;
     balloon->screenRow = balloon->worldRow - vOff;
+
+    animateBalloons(balloon);
 }
 
 void drawBalloons(BALLOON *balloon) {
@@ -510,4 +512,13 @@ void updateHeldBalloon(BALLOON *balloon) {
 void updateDropBalloon(BALLOON *balloon) {
     balloon->worldCol = balloon->prevWorldCol;
     balloon->worldRow = balloon->prevWorldRow;
+}
+
+void animateBalloons(BALLOON *balloon) {
+    if (balloon->active) {
+        if (balloon->aniCounter % 10 == 0) {
+            balloon->curFrame = (balloon->curFrame - 24 + 2) % (balloon->numFrames * 2) + 24;
+        }
+        balloon->aniCounter++;
+    }
 }

@@ -294,13 +294,12 @@ updatePlayer:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r3, .L145
+	ldr	r3, .L144
 	push	{r4, r5, r6, r7, r8, lr}
-	ldr	r4, .L145+4
+	ldr	r4, .L144+4
 	ldrh	r3, [r3, #48]
 	ldr	ip, [r4, #8]
 	tst	r3, #16
-	mov	r7, r0
 	mov	r5, r1
 	mov	r6, r2
 	str	ip, [r4, #32]
@@ -308,17 +307,17 @@ updatePlayer:
 	ldr	r3, [r4, #28]
 	add	r3, ip, r3
 	cmp	r3, #500
-	ble	.L138
+	ble	.L132
 .L61:
-	ldr	r3, .L145
+	ldr	r3, .L144
 	ldrh	r3, [r3, #48]
 	tst	r3, #32
 	bne	.L65
 	ldr	r3, [r4, #8]
 	cmp	r3, #5
-	bgt	.L139
+	bgt	.L133
 .L65:
-	ldr	r3, .L145
+	ldr	r3, .L144
 	ldrh	r3, [r3, #48]
 	tst	r3, #128
 	moveq	r3, #1
@@ -329,178 +328,163 @@ updatePlayer:
 	ldreq	r3, [r4, #32]
 	strne	r3, [r4, #24]
 	streq	r3, [r4, #8]
-	ldr	r3, .L145
+	ldr	r3, .L144
 	ldrh	r3, [r3, #48]
 	streq	r2, [r4, #24]
 	strne	r2, [r4, #48]
-	tst	r3, #64
+	ands	r3, r3, #64
+	ldr	r1, [r4, #12]
 	bne	.L70
-	ldr	r3, [r4, #36]
-	ldr	r2, [r4, #12]
-	cmp	r2, r3
-	movgt	r3, #1
-	strgt	r3, [r4, #44]
-	ble	.L70
-.L72:
-	ldr	r8, .L145+8
-	ldrh	ip, [r8]
-	tst	ip, #1
+	ldr	r2, [r4, #36]
+	cmp	r2, r1
+	blt	.L71
+	ldr	r2, [r4, #56]
+	cmp	r2, #2
+	str	r3, [r4, #44]
+	beq	.L72
+.L142:
+	mov	r3, #150
+	ldr	ip, [r4, #20]
+	str	r3, [r4, #36]
+	ldr	r2, [r4, #8]
+.L77:
+	ldr	r3, [r4, #24]
+	add	r3, r1, r3
+	sub	r3, r3, #1
+	add	r3, r3, ip
+	add	lr, r2, r3, lsl #9
+	lsl	lr, lr, #1
+	ldrh	lr, [r0, lr]
+	cmp	lr, #0
+	lsl	r3, r3, #9
+	beq	.L79
+	ldr	lr, [r4, #28]
+	add	r3, r3, lr
+	add	r3, r3, r2
+	add	r3, r0, r3, lsl #1
+	ldrh	r3, [r3, #-2]
+	cmp	r3, #0
+	addne	r1, r1, ip
+	strne	r1, [r4, #12]
+.L79:
+	ldr	r7, .L144+8
+	ldrh	r1, [r7]
+	tst	r1, #1
 	ldr	r3, [r4, #52]
-	beq	.L137
-	ldr	r2, .L145+12
-	ldrh	r2, [r2]
-	tst	r2, #1
-	beq	.L75
-.L137:
+	beq	.L129
+	ldr	r0, .L144+12
+	ldrh	r0, [r0]
+	tst	r0, #1
+	bne	.L129
+	cmp	r3, #9
+	bgt	.L83
+.L129:
 	add	r3, r3, #1
-.L74:
-	tst	ip, #2
+.L81:
+	tst	r1, #2
 	str	r3, [r4, #52]
-	beq	.L80
-	ldr	r3, .L145+12
+	beq	.L87
+	ldr	r3, .L144+12
 	ldrh	r3, [r3]
 	tst	r3, #2
-	bne	.L80
-	mov	r0, #1
-	ldr	r3, .L145+16
-	add	r1, r3, #672
-.L82:
-	ldr	r2, [r3, #32]
-	cmp	r2, #0
-	beq	.L81
-	ldr	r2, [r3]
-	cmp	r2, #239
-	strls	r0, [r3, #52]
-.L81:
-	add	r3, r3, #84
-	cmp	r3, r1
-	bne	.L82
-.L80:
-	tst	ip, #512
-	ldr	r3, [r4, #56]
-	and	ip, ip, #256
-	beq	.L79
-	ldr	r2, .L145+12
-	ldrh	r2, [r2]
-	ands	r0, r2, #512
-	bne	.L79
-	cmp	r3, #0
-	bne	.L83
-	mov	r0, #1
-	mov	lr, #3
-	ldr	r1, .L145+20
-	str	r3, [r4, #60]
-	str	lr, [r4, #56]
-	str	r0, [r1, #876]
-	str	r3, [r1, #40]
-	str	r3, [r1, #48]
-	str	r3, [r1, #116]
-	str	r3, [r1, #124]
-	str	r3, [r1, #192]
-	str	r3, [r1, #200]
-	str	r3, [r1, #268]
-	str	r3, [r1, #276]
-	str	r3, [r1, #344]
-	str	r3, [r1, #352]
-	str	r0, [r1, #884]
-.L84:
-	cmp	ip, #0
-	beq	.L91
-	ands	r2, r2, #256
-	ldr	r3, [r4, #56]
-	beq	.L140
+	bne	.L87
+	mov	lr, #1
+	ldr	r3, .L144+16
+	add	ip, r3, #672
 .L89:
-	cmp	r3, #2
-	beq	.L86
-.L91:
-	mov	r2, #150
-.L93:
-	ldr	r3, [r4, #44]
-	cmp	r3, #0
-	str	r2, [r4, #36]
-	ldr	ip, [r4, #12]
-	ldr	r2, [r4, #20]
-	ldr	r1, [r4, #8]
-	bne	.L95
-	ldr	r3, [r4, #24]
-	add	r3, ip, r3
-	sub	r3, r3, #1
-	add	r3, r3, r2
-	add	r0, r1, r3, lsl #9
-	lsl	r0, r0, #1
-	ldrh	r0, [r7, r0]
+	ldr	r0, [r3, #32]
 	cmp	r0, #0
-	lsl	r3, r3, #9
-	beq	.L96
-	ldr	r0, [r4, #28]
-	add	r3, r3, r0
-	add	r3, r3, r1
-	add	r3, r7, r3, lsl #1
-	ldrh	r3, [r3, #-2]
-	cmp	r3, #0
-	addne	ip, ip, r2
-	strne	ip, [r4, #12]
-.L96:
+	beq	.L88
+	ldr	r0, [r3]
+	cmp	r0, #239
+	strls	lr, [r3, #52]
+.L88:
+	add	r3, r3, #84
+	cmp	r3, ip
+	bne	.L89
+.L87:
+	tst	r1, #512
+	beq	.L86
+	ldr	r3, .L144+12
+	ldrh	r3, [r3]
+	ands	r3, r3, #512
+	bne	.L86
+	ldr	r0, [r4, #56]
+	cmp	r0, #0
+	beq	.L134
+	cmp	r0, #3
+	beq	.L135
+	cmp	r0, #2
+	beq	.L136
+	cmp	r0, #1
+	beq	.L137
+.L86:
+	tst	r1, #256
+	beq	.L93
+	ldr	r3, .L144+12
+	ldrh	r3, [r3]
+	ands	r3, r3, #256
+	bne	.L93
+	ldr	r1, [r4, #56]
+	cmp	r1, #0
+	beq	.L138
+	cmp	r1, #1
+	beq	.L139
+	cmp	r1, #2
+	beq	.L140
+	cmp	r1, #3
+	beq	.L141
+.L93:
 	ldr	r3, [r5]
-	sub	r1, r1, r3
-	str	r1, [r4]
-	ldr	r3, [r6]
-	sub	ip, ip, r3
-	str	ip, [r4, #4]
+	sub	r2, r2, r3
+	str	r2, [r4]
+	ldr	r3, [r4, #12]
+	ldr	r2, [r6]
+	sub	r3, r3, r2
+	str	r3, [r4, #4]
 	pop	{r4, r5, r6, r7, r8, lr}
 	b	animatePlayer
-.L79:
-	cmp	ip, #0
-	beq	.L89
-	ldr	r2, .L145+12
-	ldrh	r2, [r2]
-	ands	r2, r2, #256
-	bne	.L89
-.L140:
-	cmp	r3, #0
-	bne	.L90
-	mov	r1, #1
-	ldr	r2, .L145+20
-	str	r3, [r4, #60]
-	str	r1, [r4, #56]
-	str	r1, [r2, #420]
-	str	r3, [r2, #40]
-	str	r3, [r2, #48]
-	str	r3, [r2, #116]
-	str	r3, [r2, #124]
-	str	r3, [r2, #192]
-	str	r3, [r2, #200]
-	str	r3, [r2, #268]
-	str	r3, [r2, #276]
-	str	r3, [r2, #344]
-	str	r3, [r2, #352]
-	str	r1, [r2, #428]
-	b	.L91
 .L70:
 	mov	r3, #0
+	ldr	r2, [r4, #56]
+	cmp	r2, #2
 	str	r3, [r4, #44]
-	b	.L72
-.L95:
-	sub	r2, ip, r2
-	add	r3, r1, r2, lsl #9
-	lsl	r3, r3, #1
-	ldrh	r3, [r7, r3]
+	bne	.L142
+.L72:
+	mov	r3, #90
+	ldr	ip, [r4, #20]
+	str	r3, [r4, #36]
+	ldr	r2, [r4, #8]
+	b	.L77
+.L133:
+	ldr	r1, [r4, #12]
+	sub	r2, r3, #1
+	add	ip, r2, r1, lsl #9
+	lsl	ip, ip, #1
+	ldrh	ip, [r0, ip]
+	cmp	ip, #0
+	beq	.L67
+	ldr	ip, [r4, #24]
+	add	r1, r1, ip
+	sub	r1, r1, #1
+	add	r2, r2, r1, lsl #9
+	lsl	r2, r2, #1
+	ldrh	r2, [r0, r2]
+	cmp	r2, #0
+	ldrne	r2, [r4, #16]
+	subne	r3, r3, r2
+	strne	r3, [r4, #8]
+.L67:
+	ldr	r3, [r5]
 	cmp	r3, #0
-	lsl	r3, r2, #9
-	beq	.L96
-	ldr	r0, [r4, #28]
-	add	r3, r3, r0
-	add	r3, r3, r1
-	add	r3, r7, r3, lsl #1
-	ldrh	r3, [r3, #-2]
-	cmp	r3, #0
-	movne	ip, r2
-	strne	r2, [r4, #12]
-	b	.L96
-.L86:
-	mov	r2, #90
-	b	.L93
-.L138:
+	ble	.L65
+	ldr	r2, [r4]
+	cmp	r2, #59
+	ldrle	r2, [r4, #16]
+	suble	r3, r3, r2
+	strle	r3, [r5]
+	b	.L65
+.L132:
 	ldr	r2, [r4, #12]
 	add	r1, r3, r2, lsl #9
 	lsl	r1, r1, #1
@@ -519,7 +503,7 @@ updatePlayer:
 	strne	ip, [r4, #8]
 .L63:
 	ldr	r3, [r5]
-	ldr	r2, .L145+24
+	ldr	r2, .L144+20
 	cmp	r3, r2
 	bgt	.L61
 	ldr	r2, [r4]
@@ -528,148 +512,168 @@ updatePlayer:
 	addgt	r3, r2, r3
 	strgt	r3, [r5]
 	b	.L61
-.L75:
-	cmp	r3, #9
-	ble	.L137
+.L71:
+	mov	r3, #1
+	ldr	r2, [r4, #56]
+	cmp	r2, #2
+	str	r3, [r4, #44]
+	beq	.L143
+	mov	r2, #150
+	ldr	r3, [r4, #20]
+	str	r2, [r4, #36]
+	ldr	r2, [r4, #8]
+.L78:
+	sub	r1, r1, r3
+	add	r3, r2, r1, lsl #9
+	lsl	r3, r3, #1
+	ldrh	r3, [r0, r3]
+	cmp	r3, #0
+	lsl	r3, r1, #9
+	beq	.L79
+	ldr	ip, [r4, #28]
+	add	r3, r3, ip
+	add	r3, r3, r2
+	add	r3, r0, r3, lsl #1
+	ldrh	r3, [r3, #-2]
+	cmp	r3, #0
+	strne	r1, [r4, #12]
+	b	.L79
+.L134:
+	mov	ip, #1
+	mov	lr, #3
+	ldr	r3, .L144+24
+	str	r0, [r4, #60]
+	str	lr, [r4, #56]
+	str	ip, [r3, #876]
+	str	r0, [r3, #40]
+	str	r0, [r3, #48]
+	str	r0, [r3, #116]
+	str	r0, [r3, #124]
+	str	r0, [r3, #192]
+	str	r0, [r3, #200]
+	str	r0, [r3, #268]
+	str	r0, [r3, #276]
+	str	r0, [r3, #344]
+	str	r0, [r3, #352]
+	str	ip, [r3, #884]
+	b	.L86
+.L138:
+	mov	r0, #1
+	ldr	r3, .L144+24
+	str	r1, [r4, #60]
+	str	r0, [r4, #56]
+	str	r0, [r3, #420]
+	str	r1, [r3, #40]
+	str	r1, [r3, #48]
+	str	r1, [r3, #116]
+	str	r1, [r3, #124]
+	str	r1, [r3, #192]
+	str	r1, [r3, #200]
+	str	r1, [r3, #268]
+	str	r1, [r3, #276]
+	str	r1, [r3, #344]
+	str	r1, [r3, #352]
+	str	r0, [r3, #428]
+	b	.L93
+.L143:
+	mov	r2, #90
+	ldr	r3, [r4, #20]
+	str	r2, [r4, #36]
+	ldr	r2, [r4, #8]
+	b	.L78
+.L83:
 	bl	playerAttack
 	mov	r3, #1
-	ldrh	ip, [r8]
-	b	.L74
-.L139:
-	ldr	r1, [r4, #12]
-	sub	r2, r3, #1
-	add	r0, r2, r1, lsl #9
-	lsl	r0, r0, #1
-	ldrh	r0, [r7, r0]
-	cmp	r0, #0
-	beq	.L67
-	ldr	r0, [r4, #24]
-	add	r1, r1, r0
-	sub	r1, r1, #1
-	add	r2, r2, r1, lsl #9
-	lsl	r2, r2, #1
-	ldrh	r2, [r7, r2]
-	cmp	r2, #0
-	ldrne	r2, [r4, #16]
-	subne	r3, r3, r2
-	strne	r3, [r4, #8]
-.L67:
-	ldr	r3, [r5]
-	cmp	r3, #0
-	ble	.L65
-	ldr	r2, [r4]
-	cmp	r2, #59
-	ldrle	r2, [r4, #16]
-	suble	r3, r3, r2
-	strle	r3, [r5]
-	b	.L65
-.L83:
-	cmp	r3, #3
-	beq	.L141
-	cmp	r3, #2
-	beq	.L142
-	cmp	r3, #1
-	bne	.L84
-	ldr	r1, .L145+20
-	str	r3, [r4, #60]
-	str	r0, [r4, #56]
-	str	r0, [r1, #420]
-	str	r0, [r1, #428]
-	str	r0, [r1, #496]
-	str	r0, [r1, #504]
-	str	r0, [r1, #572]
-	str	r0, [r1, #580]
-	str	r0, [r1, #648]
-	str	r0, [r1, #656]
-	str	r0, [r1, #724]
-	str	r0, [r1, #732]
-	str	r3, [r1, #40]
-	str	r3, [r1, #48]
-	b	.L84
-.L90:
-	cmp	r3, #1
-	beq	.L143
-	cmp	r3, #2
-	beq	.L144
-	cmp	r3, #3
-	bne	.L91
-	mov	r0, #1
-	ldr	r1, .L145+20
-	str	r3, [r4, #60]
-	str	r2, [r4, #56]
-	str	r0, [r1, #40]
-	str	r2, [r1, #876]
-	str	r2, [r1, #884]
-	str	r0, [r1, #48]
-	b	.L91
-.L143:
-	mov	r0, #2
-	ldr	r1, .L145+20
-	str	r3, [r4, #60]
-	str	r0, [r4, #56]
-	str	r2, [r1, #420]
-	str	r2, [r1, #428]
-	str	r2, [r1, #496]
-	str	r2, [r1, #504]
-	str	r2, [r1, #572]
-	str	r2, [r1, #580]
-	str	r2, [r1, #648]
-	str	r2, [r1, #656]
-	str	r2, [r1, #724]
-	str	r2, [r1, #732]
-	str	r3, [r1, #800]
-	mov	r2, #90
-	str	r3, [r1, #808]
-	b	.L93
+	ldrh	r1, [r7]
+	ldr	r2, [r4, #8]
+	b	.L81
 .L141:
-	mov	lr, #1
-	mov	r8, #2
-	ldr	r1, .L145+20
-	cmp	ip, #0
-	str	r3, [r4, #60]
-	str	r8, [r4, #56]
-	str	lr, [r1, #800]
-	str	r0, [r1, #876]
-	str	r0, [r1, #884]
-	str	lr, [r1, #808]
-	beq	.L86
-	tst	r2, #256
-	bne	.L86
-.L87:
-	mov	r2, #0
-	mov	r3, #1
+	mov	ip, #1
+	ldr	r0, .L144+24
+	str	r1, [r4, #60]
+	str	r3, [r4, #56]
+	str	ip, [r0, #40]
+	str	r3, [r0, #876]
+	str	r3, [r0, #884]
+	str	ip, [r0, #48]
+	b	.L93
+.L137:
+	ldr	ip, .L144+24
+	str	r0, [r4, #60]
+	str	r3, [r4, #56]
+	str	r3, [ip, #420]
+	str	r3, [ip, #428]
+	str	r3, [ip, #496]
+	str	r3, [ip, #504]
+	str	r3, [ip, #572]
+	str	r3, [ip, #580]
+	str	r3, [ip, #648]
+	str	r3, [ip, #656]
+	str	r3, [ip, #724]
+	str	r3, [ip, #732]
+	str	r0, [ip, #40]
+	str	r0, [ip, #48]
+	b	.L86
+.L139:
 	mov	ip, #2
-	mov	r0, #3
-	str	r2, [r1, #800]
-	str	r2, [r1, #808]
-	str	ip, [r4, #60]
-	str	r0, [r4, #56]
-	str	r3, [r1, #876]
-	str	r3, [r1, #884]
-	b	.L91
-.L142:
-	mov	lr, #1
-	ldr	r1, .L145+20
-	str	r3, [r4, #60]
+	ldr	r0, .L144+24
+	str	r1, [r4, #60]
+	str	ip, [r4, #56]
+	str	r3, [r0, #420]
+	str	r3, [r0, #428]
+	str	r3, [r0, #496]
+	str	r3, [r0, #504]
+	str	r3, [r0, #572]
+	str	r3, [r0, #580]
+	str	r3, [r0, #648]
+	str	r3, [r0, #656]
+	str	r3, [r0, #724]
+	str	r3, [r0, #732]
+	str	r1, [r0, #800]
+	str	r1, [r0, #808]
+	b	.L93
+.L135:
+	mov	ip, #1
+	mov	lr, #2
+	str	r0, [r4, #60]
+	ldr	r0, .L144+24
 	str	lr, [r4, #56]
-	str	lr, [r1, #420]
-	str	r0, [r1, #800]
-	str	r0, [r1, #808]
-	str	lr, [r1, #428]
-	b	.L84
-.L144:
-	ldr	r1, .L145+20
-	b	.L87
-.L146:
-	.align	2
+	str	ip, [r0, #800]
+	str	r3, [r0, #876]
+	str	r3, [r0, #884]
+	str	ip, [r0, #808]
+	b	.L86
+.L140:
+	mov	r0, #1
+	mov	ip, #3
+	str	r1, [r4, #60]
+	ldr	r1, .L144+24
+	str	ip, [r4, #56]
+	str	r0, [r1, #876]
+	str	r3, [r1, #800]
+	str	r3, [r1, #808]
+	str	r0, [r1, #884]
+	b	.L93
+.L136:
+	mov	lr, #1
+	ldr	ip, .L144+24
+	str	r0, [r4, #60]
+	str	lr, [r4, #56]
+	str	lr, [ip, #420]
+	str	r3, [ip, #800]
+	str	r3, [ip, #808]
+	str	lr, [ip, #428]
+	b	.L86
 .L145:
+	.align	2
+.L144:
 	.word	67109120
 	.word	player
 	.word	oldButtons
 	.word	buttons
 	.word	bees
-	.word	allBalloons
 	.word	270
+	.word	allBalloons
 	.size	updatePlayer, .-updatePlayer
 	.comm	player,92,4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

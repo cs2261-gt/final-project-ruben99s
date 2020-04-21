@@ -486,17 +486,13 @@ void updateBuzz(BUZZ *buzz) {
 
 void animateBuzz(BUZZ *buzz) {
     if (buzz->active) {
-
-
-
-
+# 156 "buzz.c"
         if (buzz->direction == LEFT) {
             buzz->aniState = 3;
         }
         if (buzz->direction == RIGHT) {
             buzz->aniState = 2;
         }
-
         if (buzz->state == ANGRY) {
             buzz->curFrame = 3;
         }
