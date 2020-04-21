@@ -404,18 +404,14 @@ updatePlayer:
 	ldr	r3, .L162
 	ldrh	r3, [r3, #48]
 	tst	r3, #128
-	moveq	r3, #1
-	movne	r3, #30
-	moveq	r2, #22
-	movne	r2, #0
-	streq	r3, [r4, #48]
+	movne	r3, #0
+	moveq	r2, #1
 	ldreq	r3, [r4, #32]
-	strne	r3, [r4, #24]
+	strne	r3, [r4, #48]
 	streq	r3, [r4, #8]
 	ldr	r3, .L162
 	ldrh	r3, [r3, #48]
-	streq	r2, [r4, #24]
-	strne	r2, [r4, #48]
+	streq	r2, [r4, #48]
 	ands	r3, r3, #64
 	ldr	r2, [r4, #12]
 	bne	.L88

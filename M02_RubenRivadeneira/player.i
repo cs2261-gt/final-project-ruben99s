@@ -498,11 +498,11 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
 
     if((~((*(volatile unsigned short *)0x04000130)) & ((1<<7)))) {
         player.crouching = 1;
-        player.height = 22;
+
         player.worldCol = player.prevWorldCol;
     } else {
         player.crouching = 0;
-        player.height = 30;
+
     }
 
 
