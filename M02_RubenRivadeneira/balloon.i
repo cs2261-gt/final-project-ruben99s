@@ -246,7 +246,7 @@ extern HEART healthMeter[];
 
 
 void initPlayer(int *hOff, int *vOff, int level);
-void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff);
+void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level);
 void animatePlayer();
 void drawPlayer();
 void playerAttack();
@@ -262,7 +262,7 @@ void drawHearts();
 extern int hOff;
 extern int vOff;
 
-extern int remainingEnemies;
+extern int remainingEnemiesL1;
 extern int numBalloons;
 extern int direction;
 extern int isPlayerEndL1;
@@ -455,7 +455,7 @@ void updateBalloons(BALLOON *balloon) {
 }
 
 void drawBalloons(BALLOON *balloon) {
-     if (balloon->active) {
+    if (balloon->active) {
         shadowOAM[1 + balloon->num].attr0 = (0xFF & balloon->screenRow) | (0<<14);
         shadowOAM[1 + balloon->num].attr1 = (0x1FF & balloon->screenCol) | (1<<14);
         shadowOAM[1 + balloon->num].attr2 = ((balloon->curFrame)*32+(balloon->aniState)) | ((0)<<12);

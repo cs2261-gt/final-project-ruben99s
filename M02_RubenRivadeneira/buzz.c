@@ -61,6 +61,12 @@ void updateBuzz(BUZZ *buzz) {
         } 
     } 
 
+    if (buzz->active && buzz->health <= 0) {
+        buzz->active = 0;
+        buzz->erased = 1;
+        remainingEnemies--;
+    }
+
     if (buzz->active) {
         //behavior when buzz is calm, just goes back and forth
         if (buzz->state == CALM) {
@@ -122,11 +128,7 @@ void updateBuzz(BUZZ *buzz) {
             }   
         } 
 
-        if (buzz->health <= 0) {
-            buzz->active = 0;
-            buzz->erased = 1;
-            remainingEnemies--;
-        }
+        
 
         //collision with player
         if (collision(player.worldCol, player.worldRow, player.width, player.height, 
@@ -136,7 +138,7 @@ void updateBuzz(BUZZ *buzz) {
                     healthTimer = 0;
                     updateHearts();
                 }
-                healthTimer++;
+                healthTimer++; 
         }
         //TODO: needs to be changed to damage over time instead of insta kill
 

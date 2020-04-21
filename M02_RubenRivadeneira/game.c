@@ -44,7 +44,8 @@ void updateGame() {
         secondWaveHappened = 1;
     }
 
-    updatePlayer(&bg00CollisionMapBitmap, &hOff, &vOff);
+    updatePlayer(&bg00CollisionMapBitmap, &hOff, &vOff, 0);
+    
     for (int i = 0; i < MAXBEES; i++) {
         updateBuzz(&bees[i]);
     }

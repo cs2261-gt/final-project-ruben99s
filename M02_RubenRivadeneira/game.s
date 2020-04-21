@@ -88,12 +88,13 @@ updateGame:
 	cmp	r3, #0
 	beq	.L40
 .L7:
-	ldr	r2, .L47+8
-	ldr	r1, .L47+12
-	ldr	r0, .L47+16
-	ldr	r3, .L47+20
+	ldr	r4, .L47+8
+	mov	r3, #0
+	ldr	r2, .L47+12
+	ldr	r1, .L47+16
+	ldr	r0, .L47+20
 	mov	lr, pc
-	bx	r3
+	bx	r4
 	ldr	r4, .L47+24
 	ldr	r6, .L47+28
 	add	r5, r4, #1088
@@ -258,10 +259,10 @@ updateGame:
 .L47:
 	.word	remainingEnemies
 	.word	secondWaveHappened
+	.word	updatePlayer
 	.word	vOff
 	.word	hOff
 	.word	bg00CollisionMapBitmap
-	.word	updatePlayer
 	.word	bees
 	.word	updateBuzz
 	.word	player

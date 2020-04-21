@@ -1,6 +1,6 @@
 #include "myLib.h"
 #include "game1.h"
-#include "buzz.h"
+#include "ant.h"
 #include "player.h"
 #include "balloon.h"
 
@@ -12,40 +12,46 @@ int direction;
 int hOff; 
 int vOff;
 OBJ_ATTR shadowOAM[128]; 
-// int remainingEnemies;
+// int remainingEnemies; 
 int numBalloons;
 int isPlayerEndL1;
-int playerHealth;
+int playerHealth; 
+int remainingEnemiesL1;
 
 //game functions-------------------------
 void initGame1() { 
     vOff = 96;
     hOff = 0;
     direction = RIGHT; 
-    // remainingEnemies = MAXBEES; 
+    remainingEnemiesL1 = MAXANTS; 
     numBalloons = 0;
     isPlayerEndL1 = 0;
     REG_BG0VOFF = vOff;
     REG_BG1VOFF = vOff;
     initPlayer(&hOff, &vOff, 1); 
     // initBuzz();
+    initAnts();
     initBalloons();
 }
 
 void updateGame1() {
     int numActiveBalloons = 0; 
 
-    updatePlayer(&bg00L1CollisionMapBitmap, &hOff, &vOff);
+    updatePlayer(&bg00L1CollisionMapBitmap, &hOff, &vOff, 1);
     // for (int i = 0; i < MAXBEES; i++) {
     //     updateBuzz(&bees[i]);
     // }
+
+    for (int i = 0; i < MAXANTS; i++) {
+        updateAnts(&ants[i], &bg00L1CollisionMapBitmap);
+    } 
     
     //updates only the balloon type that is selected
     if (player.balloonType == SINGLE) {
         for (int i = 0; i < MAXBALLOONS; i++) {
             updateBalloons(&allBalloons[i]);
             if (allBalloons[i].active) {
-                numActiveBalloons++;
+                numActiveBalloons++; 
             }
         }
 
@@ -123,6 +129,10 @@ void drawGame1() {
     }
     if (player.balloonType == CHEAT || player.lastBalloonType == CHEAT) {
         drawBalloons(&allBalloons[11]);
+    }
+
+    for (int i = 0; i < MAXANTS; i++) {
+        drawAnt(&ants[i]);
     }
     
     waitForVBlank();

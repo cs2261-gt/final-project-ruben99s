@@ -165,32 +165,32 @@ updateBuzz:
 	ldr	r3, [r0, #56]
 	cmp	r3, #7
 	mov	r5, r0
-	ldr	r8, .L72
+	ldr	r8, .L77
 	ldr	r2, [r0, #8]
 	sub	sp, sp, #16
 	bgt	.L25
 	ldr	r3, [r8]
 	sub	r3, r2, r3
 	cmp	r3, #239
-	bls	.L69
+	bls	.L72
 .L25:
 	ldr	r3, [r5, #32]
 	cmp	r3, #0
 	bne	.L26
-.L27:
-	ldr	r0, [r8]
-	sub	r2, r2, r0
-	mov	r0, r5
-	ldr	r3, .L72+4
-	ldr	r1, [r3]
+.L46:
+	ldr	r3, .L77+4
+	ldr	r0, [r3]
 	ldr	r3, [r5, #12]
-	sub	r3, r3, r1
+	sub	r3, r3, r0
+	mov	r0, r5
+	ldr	r1, [r8]
+	sub	r2, r2, r1
 	stm	r5, {r2, r3}
 	add	sp, sp, #16
 	@ sp needed
 	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
 	b	animateBuzz
-.L69:
+.L72:
 	ldr	r1, [r0, #36]
 	cmp	r1, #0
 	bne	.L25
@@ -198,9 +198,12 @@ updateBuzz:
 	str	r3, [r0]
 	str	r1, [r0, #32]
 .L26:
+	ldr	r3, [r5, #60]
+	cmp	r3, #0
+	ble	.L73
 	ldr	r3, [r5, #52]
 	cmp	r3, #0
-	bne	.L28
+	bne	.L74
 	ldr	r3, [r5, #48]
 	cmp	r3, #0
 	bne	.L29
@@ -210,20 +213,20 @@ updateBuzz:
 	ldr	r3, [r5, #16]
 	sub	r2, r2, r3
 	str	r2, [r5, #8]
-	ldr	r7, .L72+8
+	ldr	r7, .L77+8
 .L31:
-	ldr	r4, .L72+12
+	ldr	r4, .L77+12
 	mov	r10, #0
 	ldr	r1, [r5, #12]
 	ldr	r0, [r5, #28]
 	ldr	ip, [r5, #24]
-	ldr	r9, .L72+16
+	ldr	r9, .L77+16
 	add	r6, r4, #912
 	b	.L43
 .L35:
 	add	r4, r4, #76
-	cmp	r4, r6
-	beq	.L70
+	cmp	r6, r4
+	beq	.L75
 .L43:
 	ldr	r3, [r4, #32]
 	cmp	r3, #0
@@ -241,7 +244,7 @@ updateBuzz:
 	mov	lr, pc
 	bx	r9
 	cmp	r0, #0
-	beq	.L68
+	beq	.L71
 	ldr	r3, [r4, #36]
 	cmp	r3, #0
 	bne	.L37
@@ -250,27 +253,15 @@ updateBuzz:
 	str	r3, [r5, #60]
 .L38:
 	str	r10, [r4, #32]
-.L68:
+.L71:
 	add	r4, r4, #76
-	cmp	r4, r6
+	cmp	r6, r4
 	ldr	r2, [r5, #8]
 	ldr	r1, [r5, #12]
 	ldr	r0, [r5, #28]
 	ldr	ip, [r5, #24]
 	bne	.L43
-.L70:
-	ldr	r3, [r5, #60]
-	cmp	r3, #0
-	bgt	.L44
-	mov	r6, #0
-	mov	r4, #1
-	ldr	lr, .L72+20
-	ldr	r3, [lr]
-	sub	r3, r3, #1
-	str	r3, [lr]
-	str	r6, [r5, #32]
-	str	r4, [r5, #36]
-.L44:
+.L75:
 	str	r0, [sp, #8]
 	str	r2, [sp]
 	str	ip, [sp, #12]
@@ -282,32 +273,32 @@ updateBuzz:
 	mov	lr, pc
 	bx	r9
 	cmp	r0, #0
-	beq	.L45
-	ldr	r4, .L72+24
-	ldr	r1, .L72+28
-	ldr	r2, .L72+32
+	beq	.L44
+	ldr	r4, .L77+20
+	ldr	r1, .L77+24
+	ldr	r2, .L77+28
 	ldr	r3, [r4]
 	mla	r2, r3, r2, r1
-	ldr	r1, .L72+36
+	ldr	r1, .L77+32
 	cmp	r2, r1
-	bls	.L71
-.L46:
+	bls	.L76
+.L45:
 	add	r3, r3, #1
 	str	r3, [r4]
-.L45:
+.L44:
 	ldr	r2, [r5, #44]
 	ldr	r3, [r7, #8]
 	cmp	r3, r2
 	ldr	r2, [r5, #8]
-	blt	.L27
+	blt	.L46
 	ldr	r1, [r5, #40]
 	cmp	r3, r1
 	movle	r3, #1
 	strle	r3, [r5, #52]
-	b	.L27
-.L28:
+	b	.L46
+.L74:
 	cmp	r3, #1
-	ldr	r7, .L72+8
+	ldr	r7, .L77+8
 	bne	.L31
 	ldr	r3, [r7, #8]
 	cmp	r3, r2
@@ -319,12 +310,22 @@ updateBuzz:
 	addgt	r2, r2, r3
 	str	r2, [r5, #8]
 	b	.L31
+.L73:
+	mov	ip, #0
+	mov	r0, #1
+	ldr	r1, .L77+36
+	ldr	r3, [r1]
+	sub	r3, r3, #1
+	str	r3, [r1]
+	str	ip, [r5, #32]
+	str	r0, [r5, #36]
+	b	.L46
 .L37:
 	cmp	r3, #1
 	bne	.L38
 	ldr	ip, [r4]
 	ldr	r0, [r4, #20]
-	ldr	r3, .L72+40
+	ldr	r3, .L77+40
 	ldr	r2, [r4, #48]
 	add	r0, ip, r0
 	add	lr, r3, #1088
@@ -349,20 +350,20 @@ updateBuzz:
 .L29:
 	cmp	r3, #1
 	beq	.L32
-.L67:
-	ldr	r7, .L72+8
+.L70:
+	ldr	r7, .L77+8
 	b	.L31
-.L71:
+.L76:
 	mov	r2, #0
 	ldr	r3, [r7, #68]
 	sub	r3, r3, #5
 	str	r3, [r7, #68]
-	ldr	r3, .L72+44
+	ldr	r3, .L77+44
 	str	r2, [r4]
 	mov	lr, pc
 	bx	r3
 	ldr	r3, [r4]
-	b	.L46
+	b	.L45
 .L30:
 	mov	r3, #1
 	str	r3, [r5, #48]
@@ -372,25 +373,25 @@ updateBuzz:
 	ldrgt	r3, [r5, #16]
 	addgt	r2, r2, r3
 	strgt	r2, [r5, #8]
-	bgt	.L67
+	bgt	.L70
 .L33:
 	mov	r3, #0
-	ldr	r7, .L72+8
+	ldr	r7, .L77+8
 	str	r3, [r5, #48]
 	b	.L31
-.L73:
+.L78:
 	.align	2
-.L72:
+.L77:
 	.word	hOff
 	.word	vOff
 	.word	player
 	.word	allBalloons+8
 	.word	collision
-	.word	remainingEnemies
 	.word	healthTimer
 	.word	28633115
 	.word	-1775253149
 	.word	57266230
+	.word	remainingEnemies
 	.word	bees
 	.word	updateHearts
 	.size	updateBuzz, .-updateBuzz

@@ -255,7 +255,7 @@ extern HEART healthMeter[];
 
 
 void initPlayer(int *hOff, int *vOff, int level);
-void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff);
+void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level);
 void animatePlayer();
 void drawPlayer();
 void playerAttack();
@@ -322,7 +322,7 @@ void updateDropBalloon();
 extern int hOff;
 extern int vOff;
 
-extern int remainingEnemies;
+extern int remainingEnemiesL1;
 extern int numBalloons;
 extern int direction;
 extern int isPlayerEndL1;
@@ -417,6 +417,12 @@ void updateBuzz(BUZZ *buzz) {
         }
     }
 
+    if (buzz->active && buzz->health <= 0) {
+        buzz->active = 0;
+        buzz->erased = 1;
+        remainingEnemies--;
+    }
+
     if (buzz->active) {
 
         if (buzz->state == CALM) {
@@ -478,11 +484,7 @@ void updateBuzz(BUZZ *buzz) {
             }
         }
 
-        if (buzz->health <= 0) {
-            buzz->active = 0;
-            buzz->erased = 1;
-            remainingEnemies--;
-        }
+
 
 
         if (collision(player.worldCol, player.worldRow, player.width, player.height,
@@ -509,7 +511,7 @@ void updateBuzz(BUZZ *buzz) {
 
 void animateBuzz(BUZZ *buzz) {
     if (buzz->active) {
-# 164 "buzz.c"
+# 166 "buzz.c"
         if (buzz->direction == LEFT) {
             buzz->aniState = 3;
         }

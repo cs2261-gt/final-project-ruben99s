@@ -729,66 +729,57 @@ game1:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, lr}
-	ldr	r3, .L95
-	ldr	r4, .L95+4
+	ldr	r3, .L90
 	mov	lr, pc
 	bx	r3
-	ldr	r3, .L95+8
+	ldr	r3, .L90+4
 	mov	lr, pc
 	bx	r3
-	ldrh	r3, [r4]
+	ldr	r3, .L90+8
+	ldrh	r3, [r3]
 	tst	r3, #8
 	beq	.L77
-	ldr	r3, .L95+12
+	ldr	r3, .L90+12
 	ldrh	r3, [r3]
 	tst	r3, #8
-	beq	.L91
+	beq	.L87
 .L77:
-	ldr	r3, .L95+16
+	ldr	r3, .L90+16
 	ldr	r3, [r3]
 	cmp	r3, #0
-	bne	.L92
-	ldr	r3, .L95+20
+	beq	.L78
+	ldr	r3, .L90+20
 	ldr	r3, [r3]
 	cmp	r3, #0
-	ble	.L93
-.L79:
-	ldrh	r3, [r4]
-	tst	r3, #2
-	beq	.L76
-	ldr	r3, .L95+12
-	ldrh	r3, [r3]
-	tst	r3, #2
-	beq	.L94
-.L76:
+	ble	.L88
+.L78:
+	ldr	r3, .L90+24
+	ldr	r3, [r3]
+	cmp	r3, #0
+	ble	.L89
 	pop	{r4, lr}
 	bx	lr
-.L92:
-	ldr	r3, .L95+24
+.L89:
+	pop	{r4, lr}
+	b	goToLose
+.L87:
+	bl	goToPause
+	b	.L77
+.L88:
+	ldr	r3, .L90+28
 	mov	lr, pc
 	bx	r3
 	bl	goToGame2
-	ldr	r3, .L95+20
-	ldr	r3, [r3]
-	cmp	r3, #0
-	bgt	.L79
-.L93:
-	bl	goToLose
-	b	.L79
-.L94:
-	pop	{r4, lr}
-	b	goToLose
+	b	.L78
 .L91:
-	bl	goToPause
-	b	.L77
-.L96:
 	.align	2
-.L95:
+.L90:
 	.word	updateGame1
-	.word	oldButtons
 	.word	drawGame1
+	.word	oldButtons
 	.word	buttons
 	.word	isPlayerEndL1
+	.word	remainingEnemiesL1
 	.word	playerHealth
 	.word	initGame2
 	.size	game1, .-game1
@@ -803,61 +794,50 @@ game2:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, lr}
-	ldr	r3, .L116
-	ldr	r4, .L116+4
+	ldr	r3, .L106
 	mov	lr, pc
 	bx	r3
-	ldr	r3, .L116+8
+	ldr	r3, .L106+4
 	mov	lr, pc
 	bx	r3
-	ldrh	r3, [r4]
-	tst	r3, #8
-	beq	.L98
-	ldr	r3, .L116+12
+	ldr	r3, .L106+8
 	ldrh	r3, [r3]
 	tst	r3, #8
-	beq	.L112
-.L98:
-	ldr	r3, .L116+16
-	ldr	r3, [r3]
-	cmp	r3, #0
-	bne	.L113
-	ldr	r3, .L116+20
-	ldr	r3, [r3]
-	cmp	r3, #0
-	ble	.L114
-.L100:
-	ldrh	r3, [r4]
-	tst	r3, #2
-	beq	.L97
-	ldr	r3, .L116+12
+	beq	.L93
+	ldr	r3, .L106+12
 	ldrh	r3, [r3]
-	tst	r3, #2
-	beq	.L115
-.L97:
+	tst	r3, #8
+	beq	.L103
+.L93:
+	ldr	r3, .L106+16
+	ldr	r3, [r3]
+	cmp	r3, #0
+	bne	.L104
+	ldr	r3, .L106+20
+	ldr	r3, [r3]
+	cmp	r3, #0
+	ble	.L105
+.L92:
 	pop	{r4, lr}
 	bx	lr
-.L113:
+.L104:
 	bl	goToWin
-	ldr	r3, .L116+20
+	ldr	r3, .L106+20
 	ldr	r3, [r3]
 	cmp	r3, #0
-	bgt	.L100
-.L114:
-	bl	goToLose
-	b	.L100
-.L115:
+	bgt	.L92
+.L105:
 	pop	{r4, lr}
 	b	goToLose
-.L112:
+.L103:
 	bl	goToPause
-	b	.L98
-.L117:
+	b	.L93
+.L107:
 	.align	2
-.L116:
+.L106:
 	.word	updateGame2
-	.word	oldButtons
 	.word	drawGame2
+	.word	oldButtons
 	.word	buttons
 	.word	isPlayerEndL2
 	.word	playerHealth
@@ -892,45 +872,45 @@ goToInstruction:
 	strh	r2, [r3, #18]	@ movhi
 	strh	r1, [r3]	@ movhi
 	strh	r2, [r3, #16]	@ movhi
-	ldr	r1, .L121
+	ldr	r1, .L111
 	mov	lr, pc
 	bx	r1
-	ldr	r4, .L121+4
+	ldr	r4, .L111+4
 	mov	r3, #512
 	mov	r2, #117440512
 	mov	r0, #3
-	ldr	r1, .L121+8
+	ldr	r1, .L111+8
 	mov	lr, pc
 	bx	r4
 	mov	r3, #256
 	mov	r2, #83886080
 	mov	r0, #3
-	ldr	r1, .L121+12
+	ldr	r1, .L111+12
 	mov	lr, pc
 	bx	r4
 	mov	r3, #1152
 	mov	r2, #100663296
 	mov	r0, #3
-	ldr	r1, .L121+16
+	ldr	r1, .L111+16
 	mov	lr, pc
 	bx	r4
 	mov	r3, #1024
 	mov	r0, #3
-	ldr	r2, .L121+20
-	ldr	r1, .L121+24
+	ldr	r2, .L111+20
+	ldr	r1, .L111+24
 	mov	lr, pc
 	bx	r4
 	mov	r0, #7
-	ldr	r3, .L121+28
-	ldr	r2, .L121+32
+	ldr	r3, .L111+28
+	ldr	r2, .L111+32
 	ldr	r1, [r3]
 	pop	{r4, lr}
 	str	r0, [r3]
 	str	r1, [r2]
 	bx	lr
-.L122:
+.L112:
 	.align	2
-.L121:
+.L111:
 	.word	hideSprites
 	.word	DMANow
 	.word	shadowOAM
@@ -952,37 +932,37 @@ start:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, lr}
-	ldr	r4, .L135
+	ldr	r4, .L125
 	ldrh	r3, [r4]
 	tst	r3, #8
-	beq	.L124
-	ldr	r2, .L135+4
+	beq	.L114
+	ldr	r2, .L125+4
 	ldrh	r2, [r2]
 	tst	r2, #8
-	beq	.L133
-.L124:
-	tst	r3, #4
 	beq	.L123
-	ldr	r3, .L135+4
+.L114:
+	tst	r3, #4
+	beq	.L113
+	ldr	r3, .L125+4
 	ldrh	r3, [r3]
 	tst	r3, #4
-	beq	.L134
-.L123:
+	beq	.L124
+.L113:
 	pop	{r4, lr}
 	bx	lr
-.L134:
+.L124:
 	pop	{r4, lr}
 	b	goToInstruction
-.L133:
-	ldr	r3, .L135+8
+.L123:
+	ldr	r3, .L125+8
 	mov	lr, pc
 	bx	r3
 	bl	goToGame
 	ldrh	r3, [r4]
-	b	.L124
-.L136:
+	b	.L114
+.L126:
 	.align	2
-.L135:
+.L125:
 	.word	oldButtons
 	.word	buttons
 	.word	initGame
@@ -1000,99 +980,99 @@ main:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r7, fp, lr}
-	ldr	r6, .L155
-	ldr	r7, .L155+4
-	ldr	r3, .L155+8
+	ldr	r6, .L145
+	ldr	r7, .L145+4
+	ldr	r3, .L145+8
 	mov	lr, pc
 	bx	r3
-	ldr	r5, .L155+12
+	ldr	r5, .L145+12
 	ldr	r2, [r6]
 	ldrh	r0, [r7]
-	ldr	fp, .L155+16
-	ldr	r10, .L155+20
-	ldr	r9, .L155+24
-	ldr	r8, .L155+28
-	ldr	r4, .L155+32
-.L139:
+	ldr	fp, .L145+16
+	ldr	r10, .L145+20
+	ldr	r9, .L145+24
+	ldr	r8, .L145+28
+	ldr	r4, .L145+32
+.L129:
 	strh	r0, [r5]	@ movhi
 	ldrh	r3, [r4, #48]
 	strh	r3, [r7]	@ movhi
 	cmp	r2, #7
 	ldrls	pc, [pc, r2, asl #2]
-	b	.L150
-.L141:
-	.word	.L148
-	.word	.L147
-	.word	.L146
-	.word	.L145
-	.word	.L144
-	.word	.L143
-	.word	.L142
-	.word	.L140
-.L140:
+	b	.L140
+.L131:
+	.word	.L138
+	.word	.L137
+	.word	.L136
+	.word	.L135
+	.word	.L134
+	.word	.L133
+	.word	.L132
+	.word	.L130
+.L130:
 	tst	r0, #8
-	beq	.L150
-	ldr	r3, .L155+36
+	beq	.L140
+	ldr	r3, .L145+36
 	mov	lr, pc
 	bx	r3
 	ldr	r2, [r6]
 	ldrh	r0, [r7]
-	b	.L139
-.L142:
+	b	.L129
+.L132:
 	tst	r0, #8
-	beq	.L150
-	ldr	r3, .L155+40
+	beq	.L140
+	ldr	r3, .L145+40
 	mov	lr, pc
 	bx	r3
 	ldr	r2, [r6]
 	ldrh	r0, [r7]
-	b	.L139
-.L143:
+	b	.L129
+.L133:
 	tst	r0, #8
-	beq	.L150
-	ldr	r3, .L155+44
+	beq	.L140
+	ldr	r3, .L145+44
 	mov	lr, pc
 	bx	r3
 	ldr	r2, [r6]
 	ldrh	r0, [r7]
-	b	.L139
-.L144:
-	ldr	r3, .L155+48
+	b	.L129
+.L134:
+	ldr	r3, .L145+48
 	mov	lr, pc
 	bx	r3
 	ldr	r2, [r6]
 	ldrh	r0, [r7]
-	b	.L139
-.L145:
+	b	.L129
+.L135:
 	mov	lr, pc
 	bx	r8
 	ldr	r2, [r6]
 	ldrh	r0, [r7]
-	b	.L139
-.L146:
+	b	.L129
+.L136:
 	mov	lr, pc
 	bx	r9
 	ldr	r2, [r6]
 	ldrh	r0, [r7]
-	b	.L139
-.L147:
+	b	.L129
+.L137:
 	mov	lr, pc
 	bx	r10
 	ldr	r2, [r6]
 	ldrh	r0, [r7]
-	b	.L139
-.L148:
+	b	.L129
+.L138:
 	mov	lr, pc
 	bx	fp
 	ldr	r2, [r6]
 	ldrh	r0, [r7]
-	b	.L139
-.L150:
+	b	.L129
+.L140:
 	mov	r0, r3
-	b	.L139
-.L156:
+	b	.L129
+.L146:
 	.align	2
-.L155:
+.L145:
 	.word	state
 	.word	buttons
 	.word	initialize

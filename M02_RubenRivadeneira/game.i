@@ -255,7 +255,7 @@ extern HEART healthMeter[];
 
 
 void initPlayer(int *hOff, int *vOff, int level);
-void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff);
+void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level);
 void animatePlayer();
 void drawPlayer();
 void playerAttack();
@@ -359,7 +359,8 @@ void updateGame() {
         secondWaveHappened = 1;
     }
 
-    updatePlayer(&bg00CollisionMapBitmap, &hOff, &vOff);
+    updatePlayer(&bg00CollisionMapBitmap, &hOff, &vOff, 0);
+
     for (int i = 0; i < 13; i++) {
         updateBuzz(&bees[i]);
     }

@@ -236,7 +236,7 @@ void game1() {
         goToPause();
     }
   
-    if(isPlayerEndL1) { 
+    if(isPlayerEndL1 && remainingEnemiesL1 <= 0) { 
         // goToWin();
         initGame2();
         goToGame2();
@@ -251,9 +251,9 @@ void game1() {
         goToLose();
     }
  
-    if(BUTTON_PRESSED(BUTTON_B)) {
-        goToLose();
-    }
+    // if(BUTTON_PRESSED(BUTTON_B)) {
+    //     goToLose();
+    // }
 }
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -311,9 +311,9 @@ void game2() {
         goToLose();
     }
  
-    if(BUTTON_PRESSED(BUTTON_B)) {
-        goToLose();
-    }
+    // if(BUTTON_PRESSED(BUTTON_B)) {
+    //     goToLose();
+    // }
 }
 
 /*++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++

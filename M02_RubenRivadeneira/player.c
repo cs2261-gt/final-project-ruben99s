@@ -2,6 +2,7 @@
 #include "player.h"
 #include "game.h"
 #include "buzz.h"
+#include "ant.h"
 #include "balloon.h"
 // #include "bg00CollisionMap.h"
 #include "game1.h"
@@ -103,7 +104,7 @@ void drawPlayer() {
     }
 }
 
-void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
+void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level) {
     player.prevWorldCol = player.worldCol;
 
     //change MAPWIDTH value in game.h to make map longer
@@ -200,7 +201,7 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
 
     //player balloon attack
     if(BUTTON_PRESSED(BUTTON_A) && player.balloonTimer >= 10) {
-        playerAttack();
+        playerAttack(level);
         player.balloonTimer = 0;
     }
     player.balloonTimer++;
@@ -308,7 +309,7 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
     // updateHearts();
 }
 
-void playerAttack() {
+void playerAttack(int level) {
     if (player.balloonType == SINGLE) {
         for (int i = 0; i < MAXBALLOONS; i++) {
             if (allBalloons[i].active && allBalloons[i].held) {
@@ -325,6 +326,24 @@ void playerAttack() {
             }
         }
     }
+
+    if (player.balloonType == CHEAT) {
+        if (level == 0) {
+            for (int i = 0; i < MAXBEES; i++) {
+                if (bees[i].active && bees[i].screenCol >= 0 && bees[i].screenCol < 240) {
+                    bees[i].health = 0;
+                }
+            }
+        }
+        if (level == 1) {
+            for (int i = 0; i < MAXANTS; i++) {
+                if (ants[i].active && ants[i].screenCol >= 0 && ants[i].screenCol < 240) {
+                    ants[i].health = 0;
+                }
+            }
+        }
+    }
+
 }
 
 

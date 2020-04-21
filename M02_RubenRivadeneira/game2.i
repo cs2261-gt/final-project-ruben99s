@@ -256,7 +256,7 @@ extern HEART healthMeter[];
 
 
 void initPlayer(int *hOff, int *vOff, int level);
-void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff);
+void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level);
 void animatePlayer();
 void drawPlayer();
 void playerAttack();
@@ -351,7 +351,7 @@ void initGame2() {
 void updateGame2() {
     int numActiveBalloons = 0;
 
-    updatePlayer(&bg00L2CollisionMapBitmap, &hOff, &vOff);
+    updatePlayer(&bg00L2CollisionMapBitmap, &hOff, &vOff, 2);
 
 
 

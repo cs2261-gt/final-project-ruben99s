@@ -70,12 +70,13 @@ updateGame2:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r3, r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	ldr	r7, .L41
+	mov	r3, #2
 	ldr	r2, .L41+4
 	ldr	r1, .L41+8
 	ldr	r0, .L41+12
-	ldr	r3, .L41+16
+	ldr	r4, .L41+16
 	mov	lr, pc
-	bx	r3
+	bx	r4
 	ldr	r5, [r7, #56]
 	cmp	r5, #0
 	bne	.L21

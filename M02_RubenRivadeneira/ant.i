@@ -1,7 +1,7 @@
-# 1 "game1.c"
+# 1 "ant.c"
 # 1 "<built-in>"
 # 1 "<command-line>"
-# 1 "game1.c"
+# 1 "ant.c"
 # 1 "myLib.h" 1
 
 
@@ -111,30 +111,7 @@ typedef struct{
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
 
 typedef enum {LEFT, RIGHT};
-# 2 "game1.c" 2
-# 1 "game1.h" 1
-
-
-
-extern int hOff;
-extern int vOff;
-
-extern int remainingEnemiesL1;
-extern int numBalloons;
-extern int direction;
-extern int isPlayerEndL1;
-extern int playerHealth;
-
-
-
-
-
-
-
-void initGame1();
-void updateGame1();
-void drawGame1();
-# 3 "game1.c" 2
+# 2 "ant.c" 2
 # 1 "ant.h" 1
 
 
@@ -172,7 +149,30 @@ void initAnts();
 void updateAnts(ANT *ant, const unsigned short *bitmap);
 void animateAnts(ANT *ant);
 void drawAnt(ANT *ant);
-# 4 "game1.c" 2
+# 3 "ant.c" 2
+# 1 "game1.h" 1
+
+
+
+extern int hOff;
+extern int vOff;
+
+extern int remainingEnemiesL1;
+extern int numBalloons;
+extern int direction;
+extern int isPlayerEndL1;
+extern int playerHealth;
+
+
+
+
+
+
+
+void initGame1();
+void updateGame1();
+void drawGame1();
+# 4 "ant.c" 2
 # 1 "player.h" 1
 
 
@@ -241,7 +241,7 @@ void playerAttack();
 void initHearts();
 void updateHearts();
 void drawHearts();
-# 5 "game1.c" 2
+# 5 "ant.c" 2
 # 1 "balloon.h" 1
 
 
@@ -292,145 +292,151 @@ void drawBalloons();
 void animateBalloons();
 void updateHeldBalloon();
 void updateDropBalloon();
-# 6 "game1.c" 2
+# 6 "ant.c" 2
 
-# 1 "bg00L1CollisionMap.h" 1
-# 20 "bg00L1CollisionMap.h"
-extern const unsigned short bg00L1CollisionMapBitmap[131072];
-# 8 "game1.c" 2
+ANT ants[15];
+int healthTimer;
 
-int direction;
+void initAnts() {
+    healthTimer = 0;
+    for (int i = 0; i < 15; i++) {
+        ants[i].num = i;
+        ants[i].height = 14;
+        ants[i].width = 15;
+        ants[i].colDelta = 1;
+        ants[i].rowDelta = 2;
+        ants[i].health = 30;
+        ants[i].direction = LEFT;
+        ants[i].worldRow = 180;
+        ants[i].worldCol = 50 + ((ants[i].width + 10) * i);
 
+        ants[i].screenRow = ants[i].worldRow - vOff;
 
-int hOff;
-int vOff;
-OBJ_ATTR shadowOAM[128];
+        ants[i].active = 0;
+        ants[i].erased = 0;
 
-int numBalloons;
-int isPlayerEndL1;
-int playerHealth;
-int remainingEnemiesL1;
+        ants[i].aniCounter = 0;
+        ants[i].aniState = 10;
+        ants[i].curFrame = 24;
+        ants[i].numFrames = 3;
 
-
-void initGame1() {
-    vOff = 96;
-    hOff = 0;
-    direction = RIGHT;
-    remainingEnemiesL1 = 15;
-    numBalloons = 0;
-    isPlayerEndL1 = 0;
-    (*(volatile unsigned short *)0x04000012) = vOff;
-    (*(volatile unsigned short *)0x04000016) = vOff;
-    initPlayer(&hOff, &vOff, 1);
-
-    initAnts();
-    initBalloons();
+    }
 }
 
-void updateGame1() {
-    int numActiveBalloons = 0;
-
-    updatePlayer(&bg00L1CollisionMapBitmap, &hOff, &vOff, 1);
-
-
-
-
-    for (int i = 0; i < 15; i++) {
-        updateAnts(&ants[i], &bg00L1CollisionMapBitmap);
+void updateAnts(ANT *ant, const unsigned short *bitmap) {
+    int screenCol = ant->worldCol - hOff;
+    if (screenCol >= 0 && screenCol < 240 && !ant->erased) {
+        ant->screenCol = screenCol;
+        ant->active = 1;
     }
 
+    if (ant->active && ant->health <= 0) {
+        ant->active = 0;
+        ant->erased = 1;
+        remainingEnemiesL1--;
+    }
 
-    if (player.balloonType == SINGLE) {
-        for (int i = 0; i < 5; i++) {
-            updateBalloons(&allBalloons[i]);
-            if (allBalloons[i].active) {
-                numActiveBalloons++;
-            }
+    if (ant->active) {
+
+        if (player.worldCol <= ant->worldCol) {
+            ant->direction = LEFT;
+        } else {
+            ant->direction = RIGHT;
         }
 
-        if (numActiveBalloons < 5) {
-            for (int i = 0; i < 5 ; i++) {
-                if (!allBalloons[i].active) {
-                    allBalloons[i].active = 1;
-                    allBalloons[i].held = 1;
-                    break;
+        if (ant->direction == LEFT) {
+            if (bitmap[((ant->worldRow)*(512)+(ant->worldCol - 1))] &&
+                bitmap[((ant->worldRow + ant->height - 1)*(512)+(ant->worldCol - 1))]) {
+
+                ant->worldCol -= ant->colDelta;
+
+            }
+
+
+        }
+        if (ant->direction == RIGHT) {
+            if (bitmap[((ant->worldRow)*(512)+(ant->worldCol + ant->width - 1 + 1))] &&
+                bitmap[((ant->worldRow + ant->height - 1)*(512)+(ant->worldCol + ant->width - 1 + 1))]) {
+
+                ant->worldCol += ant->colDelta;
+
+            }
+
+        }
+
+
+        if (bitmap[((ant->worldRow + ant->height - 1 + ant->rowDelta)*(512)+(ant->worldCol))] &&
+            bitmap[((ant->worldRow + ant->height - 1 + ant->rowDelta)*(512)+(ant->worldCol + ant->width - 1))]) {
+
+            ant->worldRow += ant->rowDelta;
+
+        }
+
+
+        for (int i = 0; i < 5 * 2 + 2; i++) {
+            if (allBalloons[i].active && !allBalloons[i].held) {
+                if (collision(allBalloons[i].worldCol, allBalloons[i].worldRow, allBalloons[i].width, allBalloons[i].height,
+                ant->worldCol, ant->worldRow, ant->width, ant->height)) {
+
+                    if (allBalloons[i].type == SINGLE) {
+                        ant->health -= 100;
+                    }
+                    if (allBalloons[i].type == AOE) {
+
+                        int rightLimit = allBalloons[i].worldCol + allBalloons[i].width + allBalloons[i].radius;
+                        int leftLimit = allBalloons[i].worldCol - allBalloons[i].radius;
+                        for (int i = 0; i < 15; i++) {
+                            if (ants[i].worldCol >= leftLimit && ants[i].worldCol < rightLimit) {
+                                ants[i].health -= 34;
+                            }
+                        }
+                    }
+
+                    allBalloons[i].active = 0;
                 }
             }
         }
-    }
-    if (player.balloonType == AOE) {
-        for (int i = 5; i < 5 * 2; i++) {
-            updateBalloons(&allBalloons[i]);
-            if (allBalloons[i].active) {
-                numActiveBalloons++;
+
+        if (collision(player.worldCol, player.worldRow, player.width, player.height,
+            ant->worldCol, ant->worldRow, ant->width, ant->height)) {
+            if (healthTimer % 300 == 0) {
+                player.health -= 5;
+                healthTimer = 0;
+                updateHearts();
             }
-        }
-
-        if (numActiveBalloons < 5) {
-            for (int i = 5; i < 5 * 2; i++) {
-                if (!allBalloons[i].active) {
-                    allBalloons[i].active = 1;
-                    allBalloons[i].held = 1;
-                    break;
-                }
-            }
+            healthTimer++;
         }
     }
-    if (player.balloonType == JUMP) {
-        updateBalloons(&allBalloons[10]);
-    }
-    if (player.balloonType == CHEAT) {
-        updateBalloons(&allBalloons[11]);
-    }
 
 
-    for (int i = 0; i < 5 * 2 + 2; i++) {
-        if (!allBalloons[i].active) {
-            updateHeldBalloon(&allBalloons[i]);
+    ant->screenCol = ant->worldCol - hOff;
+    ant->screenRow = ant->worldRow - vOff;
+    animateAnts(ant);
+}
+
+void animateAnts(ANT *ant) {
+    if (ant->active) {
+
+        if (ant->aniCounter % 10 == 0) {
+            ant->curFrame = (ant->curFrame - 24 + 2) % (ant->numFrames * 2) + 24;
         }
 
-
-
+        if (ant->direction == LEFT) {
+            ant->aniState = 10;
+        }
+        if (ant->direction == RIGHT) {
+            ant->aniState = 8;
+        }
+        ant->aniCounter++;
     }
+}
 
-    if (player.worldCol >= 460) {
-        isPlayerEndL1 = 1;
+void drawAnt(ANT *ant) {
+    if (ant->active) {
+        shadowOAM[52 + ant->num].attr0 = (0xFF & ant->screenRow) | (0<<14);
+        shadowOAM[52 + ant->num].attr1 = (0x1FF & ant->screenCol) | (1<<14);
+        shadowOAM[52 + ant->num].attr2 = ((ant->curFrame)*32+(ant->aniState)) | ((0)<<12);
     } else {
-        isPlayerEndL1 = 0;
+        shadowOAM[52 + ant->num].attr0 = (2<<8);
     }
-    playerHealth = player.health;
-}
-
-void drawGame1() {
-    drawPlayer();
-
-
-
-
-    if (player.balloonType == SINGLE || player.lastBalloonType == SINGLE) {
-        for (int i = 0; i < 5; i++) {
-            drawBalloons(&allBalloons[i]);
-        }
-    }
-    if (player.balloonType == AOE || player.lastBalloonType == AOE) {
-        for (int i = 5; i < 5 * 2; i++) {
-            drawBalloons(&allBalloons[i]);
-        }
-    }
-    if (player.balloonType == JUMP || player.lastBalloonType == JUMP) {
-        drawBalloons(&allBalloons[10]);
-    }
-    if (player.balloonType == CHEAT || player.lastBalloonType == CHEAT) {
-        drawBalloons(&allBalloons[11]);
-    }
-
-    for (int i = 0; i < 15; i++) {
-        drawAnt(&ants[i]);
-    }
-
-    waitForVBlank();
-    DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
-
-    (*(volatile unsigned short *)0x04000010) = hOff;
-    (*(volatile unsigned short *)0x04000014) = hOff/2;
 }

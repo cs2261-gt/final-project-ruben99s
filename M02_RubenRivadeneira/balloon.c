@@ -3,7 +3,7 @@
 #include "game.h"
 #include "player.h"
 #include "game1.h"
-#include "game2.h"
+#include "game2.h" 
 
 
 // BALLOON balloons[MAXBALLOONS];
@@ -158,7 +158,7 @@ void updateBalloons(BALLOON *balloon) {
 }
 
 void drawBalloons(BALLOON *balloon) {
-     if (balloon->active) {
+    if (balloon->active) {
         shadowOAM[1 + balloon->num].attr0 = (ROWMASK & balloon->screenRow) | ATTR0_SQUARE;
         shadowOAM[1 + balloon->num].attr1 = (COLMASK & balloon->screenCol) | ATTR1_SMALL;
         shadowOAM[1 + balloon->num].attr2 = ATTR2_TILEID(balloon->aniState, balloon->curFrame) | ATTR2_PALROW(0); 

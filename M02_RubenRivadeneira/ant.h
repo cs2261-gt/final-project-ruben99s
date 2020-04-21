@@ -15,29 +15,23 @@ typedef struct {
     int rightLimit;
     int leftLimit;
     int direction;
-    int state;
     int num;
 
     int health;
 
     int aniCounter;
     int aniState;
-    int prevAniState;
     int curFrame;
     int numFrames;
 } ANT;
 
-typedef enum {
-    CALM,
-    ANGRY 
-};
 
 extern ANT ants[];
 
-#define MAXANTS 1;
+#define MAXANTS 15
 
 void initAnts();
-void updateAnts(ANT *ant);
+void updateAnts(ANT *ant, const unsigned short *bitmap);
 void animateAnts(ANT *ant);
 void drawAnt(ANT *ant);
 

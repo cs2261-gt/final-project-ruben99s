@@ -259,7 +259,7 @@ extern const unsigned short bg01Level1Pal[256];
 extern int hOff;
 extern int vOff;
 
-extern int remainingEnemies;
+extern int remainingEnemiesL1;
 extern int numBalloons;
 extern int direction;
 extern int isPlayerEndL1;
@@ -517,7 +517,7 @@ void game1() {
         goToPause();
     }
 
-    if(isPlayerEndL1) {
+    if(isPlayerEndL1 && remainingEnemiesL1 <= 0) {
 
         initGame2();
         goToGame2();
@@ -532,9 +532,9 @@ void game1() {
         goToLose();
     }
 
-    if((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
-        goToLose();
-    }
+
+
+
 }
 
 
@@ -583,9 +583,9 @@ void game2() {
         goToLose();
     }
 
-    if((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
-        goToLose();
-    }
+
+
+
 }
 
 

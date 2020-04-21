@@ -172,7 +172,7 @@ extern HEART healthMeter[];
 
 
 void initPlayer(int *hOff, int *vOff, int level);
-void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff);
+void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level);
 void animatePlayer();
 void drawPlayer();
 void playerAttack();
@@ -264,6 +264,44 @@ void updateBuzz(BUZZ *buzz);
 void animateBuzz(BUZZ *buzz);
 void drawBuzz(BUZZ *buzz);
 # 5 "player.c" 2
+# 1 "ant.h" 1
+
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+    int erased;
+
+    int rightLimit;
+    int leftLimit;
+    int direction;
+    int num;
+
+    int health;
+
+    int aniCounter;
+    int aniState;
+    int curFrame;
+    int numFrames;
+} ANT;
+
+
+extern ANT ants[];
+
+
+
+void initAnts();
+void updateAnts(ANT *ant, const unsigned short *bitmap);
+void animateAnts(ANT *ant);
+void drawAnt(ANT *ant);
+# 6 "player.c" 2
 # 1 "balloon.h" 1
 
 
@@ -314,7 +352,7 @@ void drawBalloons();
 void animateBalloons();
 void updateHeldBalloon();
 void updateDropBalloon();
-# 6 "player.c" 2
+# 7 "player.c" 2
 
 # 1 "game1.h" 1
 
@@ -323,7 +361,7 @@ void updateDropBalloon();
 extern int hOff;
 extern int vOff;
 
-extern int remainingEnemies;
+extern int remainingEnemiesL1;
 extern int numBalloons;
 extern int direction;
 extern int isPlayerEndL1;
@@ -338,7 +376,7 @@ extern int playerHealth;
 void initGame1();
 void updateGame1();
 void drawGame1();
-# 8 "player.c" 2
+# 9 "player.c" 2
 # 1 "game2.h" 1
 
 
@@ -361,7 +399,7 @@ extern int playerHealth;
 void initGame2();
 void updateGame2();
 void drawGame2();
-# 9 "player.c" 2
+# 10 "player.c" 2
 
 PLAYER player;
 HEART healthMeter[20];
@@ -459,7 +497,7 @@ void drawPlayer() {
     }
 }
 
-void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
+void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level) {
     player.prevWorldCol = player.worldCol;
 
 
@@ -556,7 +594,7 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
 
 
     if((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0)))) && player.balloonTimer >= 10) {
-        playerAttack();
+        playerAttack(level);
         player.balloonTimer = 0;
     }
     player.balloonTimer++;
@@ -664,7 +702,7 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff) {
 
 }
 
-void playerAttack() {
+void playerAttack(int level) {
     if (player.balloonType == SINGLE) {
         for (int i = 0; i < 5; i++) {
             if (allBalloons[i].active && allBalloons[i].held) {
@@ -681,6 +719,24 @@ void playerAttack() {
             }
         }
     }
+
+    if (player.balloonType == CHEAT) {
+        if (level == 0) {
+            for (int i = 0; i < 13; i++) {
+                if (bees[i].active && bees[i].screenCol >= 0 && bees[i].screenCol < 240) {
+                    bees[i].health = 0;
+                }
+            }
+        }
+        if (level == 1) {
+            for (int i = 0; i < 15; i++) {
+                if (ants[i].active && ants[i].screenCol >= 0 && ants[i].screenCol < 240) {
+                    ants[i].health = 0;
+                }
+            }
+        }
+    }
+
 }
 
 
