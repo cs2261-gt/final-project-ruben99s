@@ -389,7 +389,7 @@ void initGame2() {
     vOff = 96;
     hOff = 0;
     direction = RIGHT;
-    remainingEnemiesL2 = 13 - 6;
+    remainingEnemiesL2 = 13 - 7;
     numBalloons = 0;
     isPlayerEndL2 = 0;
     (*(volatile unsigned short *)0x04000012) = vOff;

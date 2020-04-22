@@ -24,7 +24,7 @@ initGame2:
 	mov	r2, #0
 	push	{r4, lr}
 	mov	r4, #1
-	mov	lr, #7
+	mov	lr, #6
 	mov	ip, #67108864
 	mov	r3, #96
 	ldr	r0, .L4
