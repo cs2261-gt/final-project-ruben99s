@@ -24,7 +24,7 @@ initGame2:
 	mov	r2, #0
 	push	{r4, lr}
 	mov	r4, #1
-	mov	lr, #6
+	mov	lr, #7
 	mov	ip, #67108864
 	mov	r3, #96
 	ldr	r0, .L4
@@ -51,6 +51,9 @@ initGame2:
 	ldr	r3, .L4+32
 	mov	lr, pc
 	bx	r3
+	ldr	r3, .L4+36
+	mov	lr, pc
+	bx	r3
 	pop	{r4, lr}
 	bx	lr
 .L5:
@@ -65,6 +68,7 @@ initGame2:
 	.word	initPlayer
 	.word	initBuzz
 	.word	initBalloons
+	.word	initQueenBee
 	.size	initGame2, .-initGame2
 	.align	2
 	.global	updateGame2
@@ -78,14 +82,18 @@ updateGame2:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r3, r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	ldr	r2, .L43
-	ldr	r4, .L43+4
 	mov	r3, #2
-	ldr	r1, .L43+8
-	ldr	r0, .L43+12
+	ldr	r1, .L43+4
+	ldr	r0, .L43+8
+	ldr	r4, .L43+12
 	mov	lr, pc
 	bx	r4
-	ldr	r4, .L43+16
-	ldr	r6, .L43+20
+	ldr	r0, .L43+8
+	ldr	r3, .L43+16
+	mov	lr, pc
+	bx	r3
+	ldr	r4, .L43+20
+	ldr	r6, .L43+24
 	add	r5, r4, #1088
 	add	r5, r5, #4
 .L7:
@@ -96,15 +104,15 @@ updateGame2:
 	bx	r6
 	cmp	r4, r5
 	bne	.L7
-	ldr	r7, .L43+24
+	ldr	r7, .L43+28
 	ldr	r5, [r7, #56]
 	cmp	r5, #0
 	bne	.L22
-	ldr	fp, .L43+28
+	ldr	fp, .L43+32
 	mov	r6, r5
 	mov	r9, fp
 	mov	r4, fp
-	ldr	r8, .L43+32
+	ldr	r8, .L43+36
 	add	r10, fp, #380
 .L10:
 	mov	r0, r4
@@ -132,8 +140,8 @@ updateGame2:
 	cmp	r5, #1
 	bne	.L13
 .L39:
-	ldr	r4, .L43+36
-	ldr	r8, .L43+32
+	ldr	r4, .L43+40
+	ldr	r8, .L43+36
 	sub	r10, r4, #380
 	add	r5, r4, #380
 .L15:
@@ -161,22 +169,22 @@ updateGame2:
 	cmp	r5, #2
 	bne	.L18
 .L40:
-	ldr	r0, .L43+40
-	ldr	r3, .L43+32
+	ldr	r0, .L43+44
+	ldr	r3, .L43+36
 	mov	lr, pc
 	bx	r3
 	ldr	r5, [r7, #56]
 	cmp	r5, #3
 	bne	.L19
 .L41:
-	ldr	r0, .L43+44
-	ldr	r3, .L43+32
+	ldr	r0, .L43+48
+	ldr	r3, .L43+36
 	mov	lr, pc
 	bx	r3
 	b	.L19
 .L22:
 	mov	r6, #0
-	ldr	r9, .L43+28
+	ldr	r9, .L43+32
 .L8:
 	cmp	r5, #1
 	beq	.L39
@@ -187,8 +195,8 @@ updateGame2:
 	cmp	r5, #3
 	beq	.L41
 .L19:
-	ldr	r4, .L43+28
-	ldr	r6, .L43+48
+	ldr	r4, .L43+32
+	ldr	r6, .L43+52
 	add	r5, r4, #912
 	b	.L21
 .L20:
@@ -211,8 +219,8 @@ updateGame2:
 	movlt	r3, #0
 	movge	r3, #1
 	ldr	r1, [r7, #68]
-	ldr	r0, .L43+52
-	ldr	r2, .L43+56
+	ldr	r0, .L43+56
+	ldr	r2, .L43+60
 	str	r3, [r0]
 	str	r1, [r2]
 	pop	{r3, r4, r5, r6, r7, r8, r9, r10, fp, lr}
@@ -238,9 +246,10 @@ updateGame2:
 	.align	2
 .L43:
 	.word	vOff
-	.word	updatePlayer
 	.word	hOff
 	.word	bg00L2CollisionMapBitmap
+	.word	updatePlayer
+	.word	updateQueenBee
 	.word	bees
 	.word	updateBuzz
 	.word	player
@@ -267,8 +276,11 @@ drawGame2:
 	ldr	r3, .L72
 	mov	lr, pc
 	bx	r3
-	ldr	r4, .L72+4
-	ldr	r6, .L72+8
+	ldr	r3, .L72+4
+	mov	lr, pc
+	bx	r3
+	ldr	r4, .L72+8
+	ldr	r6, .L72+12
 	add	r5, r4, #1088
 	add	r5, r5, #4
 .L46:
@@ -278,7 +290,7 @@ drawGame2:
 	bx	r6
 	cmp	r4, r5
 	bne	.L46
-	ldr	r4, .L72+12
+	ldr	r4, .L72+16
 	ldr	r3, [r4, #56]
 	cmp	r3, #0
 	beq	.L47
@@ -304,18 +316,18 @@ drawGame2:
 	cmp	r3, #3
 	beq	.L53
 .L54:
-	ldr	r3, .L72+16
+	ldr	r3, .L72+20
 	mov	lr, pc
 	bx	r3
-	ldr	r4, .L72+20
+	ldr	r4, .L72+24
 	mov	r3, #512
 	mov	r2, #117440512
-	ldr	r1, .L72+24
+	ldr	r1, .L72+28
 	mov	r0, #3
 	mov	lr, pc
 	bx	r4
 	mov	r1, #67108864
-	ldr	r3, .L72+28
+	ldr	r3, .L72+32
 	ldr	r2, [r3]
 	add	r3, r2, r2, lsr #31
 	asr	r3, r3, #1
@@ -328,10 +340,7 @@ drawGame2:
 	strh	r3, [r1, #20]	@ movhi
 	bx	lr
 .L47:
-	ldr	r5, .L72+32
-	ldr	r0, .L72+36
-	mov	lr, pc
-	bx	r5
+	ldr	r5, .L72+36
 	ldr	r0, .L72+40
 	mov	lr, pc
 	bx	r5
@@ -344,14 +353,14 @@ drawGame2:
 	ldr	r0, .L72+52
 	mov	lr, pc
 	bx	r5
+	ldr	r0, .L72+56
+	mov	lr, pc
+	bx	r5
 	ldr	r3, [r4, #56]
 	cmp	r3, #1
 	bne	.L69
 .L49:
-	ldr	r5, .L72+32
-	ldr	r0, .L72+56
-	mov	lr, pc
-	bx	r5
+	ldr	r5, .L72+36
 	ldr	r0, .L72+60
 	mov	lr, pc
 	bx	r5
@@ -364,20 +373,23 @@ drawGame2:
 	ldr	r0, .L72+72
 	mov	lr, pc
 	bx	r5
+	ldr	r0, .L72+76
+	mov	lr, pc
+	bx	r5
 	ldr	r3, [r4, #56]
 	cmp	r3, #2
 	bne	.L70
 .L51:
-	ldr	r3, .L72+32
-	ldr	r0, .L72+76
+	ldr	r3, .L72+36
+	ldr	r0, .L72+80
 	mov	lr, pc
 	bx	r3
 	ldr	r3, [r4, #56]
 	cmp	r3, #3
 	bne	.L71
 .L53:
-	ldr	r0, .L72+80
-	ldr	r3, .L72+32
+	ldr	r0, .L72+84
+	ldr	r3, .L72+36
 	mov	lr, pc
 	bx	r3
 	b	.L54
@@ -385,6 +397,7 @@ drawGame2:
 	.align	2
 .L72:
 	.word	drawPlayer
+	.word	drawQueenBee
 	.word	bees
 	.word	drawBuzz
 	.word	player

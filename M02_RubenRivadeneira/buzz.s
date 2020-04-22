@@ -161,13 +161,13 @@ updateBuzz:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, r5, r6, r7, r8, r9, r10, lr}
+	push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	ldr	r3, [r0, #56]
 	cmp	r3, #7
 	mov	r5, r0
 	ldr	r8, .L80
 	ldr	r2, [r0, #8]
-	sub	sp, sp, #16
+	sub	sp, sp, #20
 	bgt	.L25
 	ldr	r3, [r8]
 	sub	r3, r2, r3
@@ -186,9 +186,9 @@ updateBuzz:
 	ldr	r1, [r8]
 	sub	r2, r2, r1
 	stm	r5, {r2, r3}
-	add	sp, sp, #16
+	add	sp, sp, #20
 	@ sp needed
-	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
+	pop	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	b	animateBuzz
 .L74:
 	ldr	r0, [r0, #36]
@@ -216,11 +216,12 @@ updateBuzz:
 	ldr	r7, .L80+8
 .L33:
 	ldr	r4, .L80+12
-	mov	r10, #0
 	ldr	r1, [r5, #12]
 	ldr	r0, [r5, #28]
 	ldr	ip, [r5, #24]
 	ldr	r9, .L80+16
+	ldr	fp, .L80+20
+	ldr	r10, .L80+24
 	add	r6, r4, #912
 	b	.L45
 .L37:
@@ -252,7 +253,13 @@ updateBuzz:
 	sub	r3, r3, #100
 	str	r3, [r5, #60]
 .L40:
-	str	r10, [r4, #32]
+	mov	r2, #0
+	mov	r1, fp
+	mov	r0, r10
+	str	r2, [r4, #32]
+	ldr	r3, .L80+28
+	mov	lr, pc
+	bx	r3
 .L73:
 	add	r4, r4, #76
 	cmp	r6, r4
@@ -274,12 +281,12 @@ updateBuzz:
 	bx	r9
 	cmp	r0, #0
 	beq	.L46
-	ldr	r4, .L80+20
-	ldr	r1, .L80+24
-	ldr	r2, .L80+28
+	ldr	r4, .L80+32
+	ldr	r1, .L80+36
+	ldr	r2, .L80+40
 	ldr	r3, [r4]
 	mla	r2, r3, r2, r1
-	ldr	r1, .L80+32
+	ldr	r1, .L80+44
 	cmp	r2, r1
 	bls	.L78
 .L47:
@@ -318,7 +325,7 @@ updateBuzz:
 	str	r3, [r5, #36]
 	beq	.L79
 	cmp	r1, #2
-	ldreq	r1, .L80+36
+	ldreq	r1, .L80+48
 	ldreq	r3, [r1]
 	subeq	r3, r3, #1
 	streq	r3, [r1]
@@ -328,7 +335,7 @@ updateBuzz:
 	bne	.L40
 	ldr	ip, [r4]
 	ldr	r0, [r4, #20]
-	ldr	r3, .L80+40
+	ldr	r3, .L80+52
 	ldr	r2, [r4, #48]
 	add	r0, ip, r0
 	add	lr, r3, #1088
@@ -357,7 +364,7 @@ updateBuzz:
 	ldr	r7, .L80+8
 	b	.L33
 .L79:
-	ldr	r1, .L80+44
+	ldr	r1, .L80+56
 	ldr	r3, [r1]
 	sub	r3, r3, #1
 	str	r3, [r1]
@@ -367,7 +374,7 @@ updateBuzz:
 	ldr	r3, [r7, #68]
 	sub	r3, r3, #5
 	str	r3, [r7, #68]
-	ldr	r3, .L80+48
+	ldr	r3, .L80+60
 	str	r2, [r4]
 	mov	lr, pc
 	bx	r3
@@ -396,6 +403,9 @@ updateBuzz:
 	.word	player
 	.word	allBalloons+8
 	.word	collision
+	.word	8997
+	.word	pop
+	.word	playSoundB
 	.word	healthTimer
 	.word	28633115
 	.word	-1775253149
@@ -407,4 +417,6 @@ updateBuzz:
 	.size	updateBuzz, .-updateBuzz
 	.comm	healthTimer,4,4
 	.comm	bees,1092,4
+	.comm	soundB,32,4
+	.comm	soundA,32,4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

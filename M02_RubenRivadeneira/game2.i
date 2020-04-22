@@ -316,11 +316,62 @@ void animateBalloons();
 void updateHeldBalloon();
 void updateDropBalloon();
 # 7 "game2.c" 2
+# 1 "queenBee.h" 1
+
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+    int erased;
+
+    int health;
+    int direction;
+
+    int aniCounter;
+    int aniState;
+    int curFrame;
+    int numFrame;
+} QUEENBEE;
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+    int num;
+
+    int curFrame;
+} STINGER;
+
+extern QUEENBEE queenBee;
+extern STINGER stingers[];
+
+
+
+void initQueenBee();
+void initStingers();
+void updateQueenBee(const unsigned short *bitmap);
+void updateStingers(STINGER *stinger);
+void drawQueenBee();
+void drawStingers(STINGER *stinger);
+# 8 "game2.c" 2
 
 # 1 "bg00L2CollisionMap.h" 1
 # 20 "bg00L2CollisionMap.h"
 extern const unsigned short bg00L2CollisionMapBitmap[131072];
-# 9 "game2.c" 2
+# 10 "game2.c" 2
 
 int direction;
 
@@ -338,7 +389,7 @@ void initGame2() {
     vOff = 96;
     hOff = 0;
     direction = RIGHT;
-    remainingEnemiesL2 = 13 - 7;
+    remainingEnemiesL2 = 13 - 6;
     numBalloons = 0;
     isPlayerEndL2 = 0;
     (*(volatile unsigned short *)0x04000012) = vOff;
@@ -346,12 +397,15 @@ void initGame2() {
     initPlayer(&hOff, &vOff, 2);
     initBuzz();
     initBalloons();
+    initQueenBee();
 }
 
 void updateGame2() {
     int numActiveBalloons = 0;
 
     updatePlayer(&bg00L2CollisionMapBitmap, &hOff, &vOff, 2);
+    updateQueenBee(&bg00L2CollisionMapBitmap);
+
     for (int i = 0; i < 13; i++) {
         updateBuzz(&bees[i], 2);
     }
@@ -420,6 +474,8 @@ void updateGame2() {
 
 void drawGame2() {
     drawPlayer();
+    drawQueenBee();
+
     for (int i = 0; i < 13; i++) {
         drawBuzz(&bees[i]);
     }

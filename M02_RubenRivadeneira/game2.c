@@ -4,6 +4,7 @@
 #include "buzz.h"
 #include "player.h"
 #include "balloon.h"
+#include "queenBee.h"
 
 #include "bg00L2CollisionMap.h"
 
@@ -31,12 +32,15 @@ void initGame2() {
     initPlayer(&hOff, &vOff, 2); 
     initBuzz();
     initBalloons();
+    initQueenBee();
 }
 
 void updateGame2() {
     int numActiveBalloons = 0; 
 
     updatePlayer(&bg00L2CollisionMapBitmap, &hOff, &vOff, 2);
+    updateQueenBee(&bg00L2CollisionMapBitmap);
+
     for (int i = 0; i < MAXBEES; i++) {
         updateBuzz(&bees[i], 2);
     }
@@ -105,6 +109,8 @@ void updateGame2() {
 
 void drawGame2() {
     drawPlayer();
+    drawQueenBee();
+
     for (int i = 0; i < MAXBEES; i++) {
         drawBuzz(&bees[i]);
     }

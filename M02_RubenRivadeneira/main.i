@@ -320,8 +320,38 @@ void updateGame2();
 void drawGame2();
 # 23 "main.c" 2
 
+# 1 "sound.h" 1
+SOUND soundA;
+SOUND soundB;
 
 
+
+void setupSounds();
+void playSoundA(const signed char* sound, int length, int loops);
+void playSoundB(const signed char* sound, int length, int loops);
+
+void setupInterrupts();
+void interruptHandler();
+
+void pauseSound();
+void unpauseSound();
+void stopSound();
+# 25 "main.c" 2
+# 1 "News_Room_News.h" 1
+
+
+
+
+extern const signed char gameSong[1045440];
+# 26 "main.c" 2
+# 1 "Pop.h" 1
+
+
+
+
+extern const signed char pop[8189];
+# 27 "main.c" 2
+# 35 "main.c"
 void initialize();
 void goToStart();
 void start();
@@ -345,6 +375,10 @@ void game2();
 enum {START, GAME, GAME1, GAME2, PAUSE, WIN, LOSE, INSTRUCTION};
 int state;
 int prevState;
+
+
+SOUND soundA;
+SOUND soundB;
 
 
 unsigned short buttons;
@@ -412,6 +446,10 @@ void initialize() {
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
 
 
+    setupInterrupts();
+    setupSounds();
+
+
     goToStart();
 }
 
@@ -431,6 +469,7 @@ void goToStart() {
     DMANow(3, mainScreenTiles, &((charblock *)0x6000000)[0], 1920/2);
     DMANow(3, mainScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
 
+    playSoundA(gameSong, 1045440, 1);
     state = START;
 }
 
@@ -468,6 +507,7 @@ void goToGame() {
     DMANow(3, bg01Tiles, &((charblock *)0x6000000)[1], 14528/2);
     DMANow(3, bg01Map, &((screenblock *)0x6000000)[30], 4096/2);
 
+
     prevState = state;
     state = GAME;
 }
@@ -501,7 +541,7 @@ void game() {
 
 
 void goToGame1() {
-# 215 "main.c"
+# 234 "main.c"
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<9) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 96;
     (*(volatile unsigned short *)0x04000010) = 0;
@@ -556,7 +596,7 @@ void game1() {
 
 
 void goToGame2() {
-# 279 "main.c"
+# 298 "main.c"
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 96;
     (*(volatile unsigned short *)0x04000010) = 0;

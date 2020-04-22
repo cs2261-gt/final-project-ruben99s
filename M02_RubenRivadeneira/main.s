@@ -57,6 +57,12 @@ goToStart:
 	mov	lr, pc
 	bx	r4
 	ldr	r3, .L4+28
+	mov	r2, #1
+	ldr	r1, .L4+32
+	ldr	r0, .L4+36
+	mov	lr, pc
+	bx	r3
+	ldr	r3, .L4+40
 	str	r5, [r3]
 	pop	{r4, r5, r6, lr}
 	bx	lr
@@ -70,6 +76,9 @@ goToStart:
 	.word	mainScreenTiles
 	.word	100720640
 	.word	mainScreenMap
+	.word	playSoundA
+	.word	1045440
+	.word	gameSong
 	.word	state
 	.size	goToStart, .-goToStart
 	.align	2
@@ -104,12 +113,18 @@ initialize:
 	ldr	r3, .L8+24
 	mov	lr, pc
 	bx	r3
-	mov	r3, #512
 	mov	r2, #117440512
 	mov	r0, #3
 	ldr	r1, .L8+28
+	mov	r3, #512
 	mov	lr, pc
 	bx	r4
+	ldr	r3, .L8+32
+	mov	lr, pc
+	bx	r3
+	ldr	r3, .L8+36
+	mov	lr, pc
+	bx	r3
 	pop	{r4, lr}
 	b	goToStart
 .L9:
@@ -123,6 +138,8 @@ initialize:
 	.word	finalSpriteSheetTiles
 	.word	hideSprites
 	.word	shadowOAM
+	.word	setupInterrupts
+	.word	setupSounds
 	.size	initialize, .-initialize
 	.align	2
 	.syntax unified
@@ -1172,6 +1189,8 @@ main:
 	.comm	buttons,2,2
 	.comm	prevState,4,4
 	.comm	state,4,4
+	.comm	soundB,32,4
+	.comm	soundA,32,4
 	.bss
 	.align	2
 	.set	.LANCHOR0,. + 0

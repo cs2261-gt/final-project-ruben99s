@@ -260,7 +260,7 @@ extern BUZZ bees[];
 
 
 void initBuzz();
-void updateBuzz(BUZZ *buzz);
+void updateBuzz(BUZZ *buzz, int level);
 void animateBuzz(BUZZ *buzz);
 void drawBuzz(BUZZ *buzz);
 # 5 "player.c" 2
@@ -400,6 +400,57 @@ void initGame2();
 void updateGame2();
 void drawGame2();
 # 10 "player.c" 2
+# 1 "queenBee.h" 1
+
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+    int erased;
+
+    int health;
+    int direction;
+
+    int aniCounter;
+    int aniState;
+    int curFrame;
+    int numFrame;
+} QUEENBEE;
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+    int num;
+
+    int curFrame;
+} STINGER;
+
+extern QUEENBEE queenBee;
+extern STINGER stingers[];
+
+
+
+void initQueenBee();
+void initStingers();
+void updateQueenBee(const unsigned short *bitmap);
+void updateStingers(STINGER *stinger);
+void drawQueenBee();
+void drawStingers(STINGER *stinger);
+# 11 "player.c" 2
 
 PLAYER player;
 HEART healthMeter[20];
@@ -734,6 +785,9 @@ void playerAttack(int level) {
                     ants[i].health = 0;
                 }
             }
+        }
+        if (level == 2) {
+            queenBee.health = 0;
         }
     }
 

@@ -5,6 +5,8 @@
 #include "balloon.h"
 #include "game1.h"
 #include "game2.h"
+#include "sound.h"
+#include "Pop.h"
 
 //global variables
 BUZZ bees[MAXBEES];
@@ -130,6 +132,7 @@ void updateBuzz(BUZZ *buzz, int level) {
                     }
                     
                     allBalloons[i].active = 0; 
+                    playSoundB(pop, POPLEN, 0);
                 }
             }   
         } 

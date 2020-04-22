@@ -21,6 +21,15 @@
 #include "bg00Level2.h"
 #include "game2.h"
 
+#include "sound.h"
+#include "News_Room_News.h"
+#include "Pop.h"
+
+/*Different sounds need to be added and there is a bug with
+the gravity that needs to be fixed as well. The instruction screen
+should have all the instructions to play the game and the artwork for 
+all the game levels is finished but the main menu might change before
+final submission :)*/
 
 //Function prototypes
 void initialize(); 
@@ -46,6 +55,10 @@ void game2();
 enum {START, GAME, GAME1, GAME2, PAUSE, WIN, LOSE, INSTRUCTION};
 int state;
 int prevState;
+
+//sound
+SOUND soundA;
+SOUND soundB;
 
 //button inputs
 unsigned short buttons;
@@ -112,6 +125,10 @@ void initialize() {
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
 
+    //sound
+    setupInterrupts();
+    setupSounds();
+
     //sets state to start
     goToStart();
 }
@@ -132,6 +149,7 @@ void goToStart() {
     DMANow(3, mainScreenTiles, &CHARBLOCK[0], mainScreenTilesLen/2);
     DMANow(3, mainScreenMap, &SCREENBLOCK[28], mainScreenMapLen/2);
 
+    playSoundA(gameSong, GAMESONGLEN, 1);
     state = START;
 }
 
@@ -168,7 +186,8 @@ void goToGame() {
 
     DMANow(3, bg01Tiles, &CHARBLOCK[1], bg01TilesLen/2);
     DMANow(3, bg01Map, &SCREENBLOCK[30], bg01MapLen/2);
-  
+    
+    // playSoundB(pop, POPLEN, 0);
     prevState = state;
     state = GAME;
 }

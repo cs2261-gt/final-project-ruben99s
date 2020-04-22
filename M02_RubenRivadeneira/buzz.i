@@ -361,6 +361,30 @@ void initGame2();
 void updateGame2();
 void drawGame2();
 # 8 "buzz.c" 2
+# 1 "sound.h" 1
+SOUND soundA;
+SOUND soundB;
+
+
+
+void setupSounds();
+void playSoundA(const signed char* sound, int length, int loops);
+void playSoundB(const signed char* sound, int length, int loops);
+
+void setupInterrupts();
+void interruptHandler();
+
+void pauseSound();
+void unpauseSound();
+void stopSound();
+# 9 "buzz.c" 2
+# 1 "Pop.h" 1
+
+
+
+
+extern const signed char pop[8997];
+# 10 "buzz.c" 2
 
 
 BUZZ bees[13];
@@ -486,6 +510,7 @@ void updateBuzz(BUZZ *buzz, int level) {
                     }
 
                     allBalloons[i].active = 0;
+                    playSoundB(pop, 8997, 0);
                 }
             }
         }
@@ -517,7 +542,7 @@ void updateBuzz(BUZZ *buzz, int level) {
 
 void animateBuzz(BUZZ *buzz) {
     if (buzz->active) {
-# 172 "buzz.c"
+# 175 "buzz.c"
         if (buzz->direction == LEFT) {
             buzz->aniState = 3;
         }
