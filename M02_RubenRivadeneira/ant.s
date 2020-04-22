@@ -73,7 +73,7 @@ initAnts:
 	mov	r3, #0
 	push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	mov	r6, #180
-	mov	r0, #50
+	mov	r0, #110
 	mov	fp, #14
 	mov	r10, #15
 	mov	r9, #1
@@ -316,8 +316,7 @@ updateAnts:
 	ldr	r2, .L73+32
 	ldr	r3, [r4]
 	mla	r2, r3, r2, r1
-	ldr	r1, .L73+36
-	cmp	r1, r2, ror #2
+	cmp	r1, r2, ror #1
 	bcs	.L72
 .L34:
 	ldr	r1, [r8]
@@ -333,7 +332,7 @@ updateAnts:
 	bne	.L26
 	ldr	ip, [r4]
 	ldr	r0, [r4, #20]
-	ldr	r3, .L73+40
+	ldr	r3, .L73+36
 	ldr	r2, [r4, #48]
 	add	r0, ip, r0
 	add	lr, r3, #1136
@@ -358,9 +357,9 @@ updateAnts:
 .L72:
 	mov	r2, #0
 	ldr	r3, [r7, #68]
-	sub	r3, r3, #5
+	sub	r3, r3, #2
 	str	r3, [r7, #68]
-	ldr	r3, .L73+44
+	ldr	r3, .L73+40
 	str	r2, [r4]
 	mov	lr, pc
 	bx	r3
@@ -376,9 +375,8 @@ updateAnts:
 	.word	collision
 	.word	remainingEnemiesL1
 	.word	healthTimer
-	.word	28633112
+	.word	28633114
 	.word	-1775253149
-	.word	14316556
 	.word	ants
 	.word	updateHearts
 	.size	updateAnts, .-updateAnts

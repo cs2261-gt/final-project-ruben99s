@@ -308,7 +308,7 @@ void initAnts() {
         ants[i].health = 30;
         ants[i].direction = LEFT;
         ants[i].worldRow = 180;
-        ants[i].worldCol = 50 + ((ants[i].width + 10) * i);
+        ants[i].worldCol = 110 + ((ants[i].width + 10) * i);
 
         ants[i].screenRow = ants[i].worldRow - vOff;
 
@@ -399,8 +399,8 @@ void updateAnts(ANT *ant, const unsigned short *bitmap) {
 
         if (collision(player.worldCol, player.worldRow, player.width, player.height,
             ant->worldCol, ant->worldRow, ant->width, ant->height)) {
-            if (healthTimer % 300 == 0) {
-                player.health -= 5;
+            if (healthTimer % 150 == 0) {
+                player.health -= 2;
                 healthTimer = 0;
                 updateHearts();
             }

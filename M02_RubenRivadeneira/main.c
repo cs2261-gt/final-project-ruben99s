@@ -53,6 +53,9 @@ unsigned short oldButtons;
 //random seed
 // int seed;
 
+int hOffInstruction = 0;
+int vOffInstruction = 0;
+
 int main() {
     initialize();
 
@@ -127,6 +130,7 @@ void goToStart() {
     DMANow(3, mainScreenPal, PALETTE, 256);
     DMANow(3, mainScreenTiles, &CHARBLOCK[0], mainScreenTilesLen/2);
     DMANow(3, mainScreenMap, &SCREENBLOCK[28], mainScreenMapLen/2);
+
     state = START;
 }
 
@@ -406,6 +410,8 @@ void goToInstruction() {
     REG_DISPCTL = MODE0 | BG0_ENABLE | SPRITE_ENABLE;
     REG_BG0VOFF = 0;
     REG_BG0HOFF = 0;
+    hOffInstruction = 0;
+    vOffInstruction = 0;
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
     DMANow(3, instructionScreenPal, PALETTE, 256);
@@ -417,7 +423,33 @@ void goToInstruction() {
 }
 
 void instruction() {
-    if(BUTTON_PRESSED(BUTTON_START)) {
+    if(BUTTON_HELD(BUTTON_START)) {
+        vOffInstruction = 0;
+        hOffInstruction = 0;
         goToStart();
     }
+    if(BUTTON_HELD(BUTTON_DOWN)) {
+        if (vOffInstruction < 96) {
+            vOffInstruction++;
+        }
+    }
+    if(BUTTON_HELD(BUTTON_UP)) {
+        if (vOffInstruction > 0) {
+            vOffInstruction--;
+        }
+    }
+    if(BUTTON_HELD(BUTTON_LEFT)) {
+        if (hOffInstruction > 0) {
+            hOffInstruction--;
+        }
+    }
+    if(BUTTON_HELD(BUTTON_RIGHT)) {
+        if (hOffInstruction < 16) {
+            hOffInstruction++;
+        }
+    }
+    
+    waitForVBlank();
+    REG_BG0VOFF = vOffInstruction;
+    REG_BG0HOFF = hOffInstruction;
 }

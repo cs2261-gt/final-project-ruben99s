@@ -343,6 +343,9 @@ unsigned short oldButtons;
 
 
 
+int hOffInstruction = 0;
+int vOffInstruction = 0;
+
 int main() {
     initialize();
 
@@ -417,6 +420,7 @@ void goToStart() {
     DMANow(3, mainScreenPal, ((unsigned short *)0x5000000), 256);
     DMANow(3, mainScreenTiles, &((charblock *)0x6000000)[0], 1920/2);
     DMANow(3, mainScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
+
     state = START;
 }
 
@@ -487,7 +491,7 @@ void game() {
 
 
 void goToGame1() {
-# 210 "main.c"
+# 214 "main.c"
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<9) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 96;
     (*(volatile unsigned short *)0x04000010) = 0;
@@ -542,7 +546,7 @@ void game1() {
 
 
 void goToGame2() {
-# 274 "main.c"
+# 278 "main.c"
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 96;
     (*(volatile unsigned short *)0x04000010) = 0;
@@ -678,6 +682,8 @@ void goToInstruction() {
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 0;
     (*(volatile unsigned short *)0x04000010) = 0;
+    hOffInstruction = 0;
+    vOffInstruction = 0;
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
     DMANow(3, instructionScreenPal, ((unsigned short *)0x5000000), 256);
@@ -689,7 +695,33 @@ void goToInstruction() {
 }
 
 void instruction() {
-    if((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
+    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<3)))) {
+        vOffInstruction = 0;
+        hOffInstruction = 0;
         goToStart();
     }
+    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<7)))) {
+        if (vOffInstruction < 96) {
+            vOffInstruction++;
+        }
+    }
+    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<6)))) {
+        if (vOffInstruction > 0) {
+            vOffInstruction--;
+        }
+    }
+    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
+        if (hOffInstruction > 0) {
+            hOffInstruction--;
+        }
+    }
+    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
+        if (hOffInstruction < 16) {
+            hOffInstruction++;
+        }
+    }
+
+    waitForVBlank();
+    (*(volatile unsigned short *)0x04000012) = vOffInstruction;
+    (*(volatile unsigned short *)0x04000010) = hOffInstruction;
 }
