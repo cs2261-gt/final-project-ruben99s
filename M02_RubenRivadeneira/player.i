@@ -384,7 +384,7 @@ void drawGame1();
 extern int hOff;
 extern int vOff;
 
-extern int remainingEnemies;
+extern int remainingEnemiesL2;
 extern int numBalloons;
 extern int direction;
 extern int isPlayerEndL2;
@@ -721,7 +721,7 @@ void playerAttack(int level) {
     }
 
     if (player.balloonType == CHEAT) {
-        if (level == 0) {
+        if (level == 0 || level == 2) {
             for (int i = 0; i < 13; i++) {
                 if (bees[i].active && bees[i].screenCol >= 0 && bees[i].screenCol < 240) {
                     bees[i].health = 0;

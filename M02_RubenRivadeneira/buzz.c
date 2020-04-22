@@ -52,7 +52,7 @@ void drawBuzz(BUZZ *buzz) {
     }
 }
 
-void updateBuzz(BUZZ *buzz) {
+void updateBuzz(BUZZ *buzz, int level) {
     if (buzz->num < 8) {
         int screenCol = buzz->worldCol - hOff;
         if (screenCol >= 0 && screenCol < 240 && !buzz->erased) {
@@ -64,7 +64,13 @@ void updateBuzz(BUZZ *buzz) {
     if (buzz->active && buzz->health <= 0) {
         buzz->active = 0;
         buzz->erased = 1;
-        remainingEnemies--;
+        if (level == 0) {
+            remainingEnemies--;
+        }
+        if (level == 2) {
+            remainingEnemiesL2--;
+        }
+        
     }
 
     if (buzz->active) {

@@ -4,7 +4,7 @@
 extern int hOff;
 extern int vOff;
 // extern OBJ_ATTR shadowOAM[128];
-extern int remainingEnemies;
+extern int remainingEnemiesL2;
 extern int numBalloons;
 extern int direction;
 extern int isPlayerEndL2;

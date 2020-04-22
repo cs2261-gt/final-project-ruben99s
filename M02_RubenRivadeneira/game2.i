@@ -118,7 +118,7 @@ typedef enum {LEFT, RIGHT};
 extern int hOff;
 extern int vOff;
 
-extern int remainingEnemies;
+extern int remainingEnemiesL2;
 extern int numBalloons;
 extern int direction;
 extern int isPlayerEndL2;
@@ -192,7 +192,7 @@ extern BUZZ bees[];
 
 
 void initBuzz();
-void updateBuzz(BUZZ *buzz);
+void updateBuzz(BUZZ *buzz, int level);
 void animateBuzz(BUZZ *buzz);
 void drawBuzz(BUZZ *buzz);
 # 5 "game2.c" 2
@@ -328,7 +328,7 @@ int direction;
 int hOff;
 int vOff;
 OBJ_ATTR shadowOAM[128];
-
+int remainingEnemiesL2;
 int numBalloons;
 int isPlayerEndL2;
 int playerHealth;
@@ -338,13 +338,13 @@ void initGame2() {
     vOff = 96;
     hOff = 0;
     direction = RIGHT;
-
+    remainingEnemiesL2 = 13 - 7;
     numBalloons = 0;
     isPlayerEndL2 = 0;
     (*(volatile unsigned short *)0x04000012) = vOff;
     (*(volatile unsigned short *)0x04000016) = vOff;
     initPlayer(&hOff, &vOff, 2);
-
+    initBuzz();
     initBalloons();
 }
 
@@ -352,9 +352,9 @@ void updateGame2() {
     int numActiveBalloons = 0;
 
     updatePlayer(&bg00L2CollisionMapBitmap, &hOff, &vOff, 2);
-
-
-
+    for (int i = 0; i < 13; i++) {
+        updateBuzz(&bees[i], 2);
+    }
 
 
     if (player.balloonType == SINGLE) {
@@ -420,9 +420,9 @@ void updateGame2() {
 
 void drawGame2() {
     drawPlayer();
-
-
-
+    for (int i = 0; i < 13; i++) {
+        drawBuzz(&bees[i]);
+    }
 
     if (player.balloonType == SINGLE || player.lastBalloonType == SINGLE) {
         for (int i = 0; i < 5; i++) {

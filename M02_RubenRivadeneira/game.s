@@ -101,6 +101,7 @@ updateGame:
 	add	r5, r5, #4
 .L8:
 	mov	r0, r4
+	mov	r1, #0
 	add	r4, r4, #84
 	mov	lr, pc
 	bx	r6

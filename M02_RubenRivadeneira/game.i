@@ -191,7 +191,7 @@ extern BUZZ bees[];
 
 
 void initBuzz();
-void updateBuzz(BUZZ *buzz);
+void updateBuzz(BUZZ *buzz, int level);
 void animateBuzz(BUZZ *buzz);
 void drawBuzz(BUZZ *buzz);
 # 4 "game.c" 2
@@ -362,7 +362,7 @@ void updateGame() {
     updatePlayer(&bg00CollisionMapBitmap, &hOff, &vOff, 0);
 
     for (int i = 0; i < 13; i++) {
-        updateBuzz(&bees[i]);
+        updateBuzz(&bees[i], 0);
     }
 
 

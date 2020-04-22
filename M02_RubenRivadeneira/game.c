@@ -45,9 +45,9 @@ void updateGame() {
     }
 
     updatePlayer(&bg00CollisionMapBitmap, &hOff, &vOff, 0);
-    
+
     for (int i = 0; i < MAXBEES; i++) {
-        updateBuzz(&bees[i]);
+        updateBuzz(&bees[i], 0);
     }
     
     //updates only the balloon type that is selected

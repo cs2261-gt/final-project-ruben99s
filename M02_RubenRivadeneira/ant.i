@@ -308,7 +308,7 @@ void initAnts() {
         ants[i].health = 30;
         ants[i].direction = LEFT;
         ants[i].worldRow = 180;
-        ants[i].worldCol = 110 + ((ants[i].width + 10) * i);
+        ants[i].worldCol = 110 + (ants[i].width * i);
 
         ants[i].screenRow = ants[i].worldRow - vOff;
 

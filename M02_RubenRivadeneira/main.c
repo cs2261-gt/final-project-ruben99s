@@ -12,6 +12,7 @@
 #include "spriteSheetTest.h"
 #include "finalSpriteSheet.h"
 #include "instructionScreen.h"
+#include "FinalInstructionScreen.h"
 
 #include "bg00Level1.h"
 #include "bg01Level1.h"
@@ -300,7 +301,7 @@ void game2() {
         goToPause();
     }
   
-    if(isPlayerEndL2) { 
+    if(isPlayerEndL2 && remainingEnemiesL2 <= 0) { 
         goToWin();
         // initGame2();
         // goToGame2();
@@ -414,9 +415,9 @@ void goToInstruction() {
     vOffInstruction = 0;
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
-    DMANow(3, instructionScreenPal, PALETTE, 256);
-    DMANow(3, instructionScreenTiles, &CHARBLOCK[0], instructionScreenTilesLen/2);
-    DMANow(3, instructionScreenMap, &SCREENBLOCK[28], instructionScreenMapLen/2);
+    DMANow(3, FinalInstructionScreenPal, PALETTE, 256);
+    DMANow(3, FinalInstructionScreenTiles, &CHARBLOCK[0], FinalInstructionScreenTilesLen/2);
+    DMANow(3, FinalInstructionScreenMap, &SCREENBLOCK[28], FinalInstructionScreenMapLen/2);
 
     prevState = state;
     state = INSTRUCTION;

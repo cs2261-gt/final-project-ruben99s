@@ -13,9 +13,9 @@ int direction;
 int hOff; 
 int vOff;
 OBJ_ATTR shadowOAM[128]; 
-// int remainingEnemies;
+int remainingEnemiesL2;
 int numBalloons;
-int isPlayerEndL2; 
+int isPlayerEndL2;
 int playerHealth;
 
 //game functions-------------------------
@@ -23,13 +23,13 @@ void initGame2() {
     vOff = 96;
     hOff = 0;
     direction = RIGHT; 
-    // remainingEnemies = MAXBEES; 
+    remainingEnemiesL2 = MAXBEES - 7; 
     numBalloons = 0;
     isPlayerEndL2 = 0;
     REG_BG0VOFF = vOff;
     REG_BG1VOFF = vOff;
     initPlayer(&hOff, &vOff, 2); 
-    // initBuzz();
+    initBuzz();
     initBalloons();
 }
 
@@ -37,9 +37,9 @@ void updateGame2() {
     int numActiveBalloons = 0; 
 
     updatePlayer(&bg00L2CollisionMapBitmap, &hOff, &vOff, 2);
-    // for (int i = 0; i < MAXBEES; i++) {
-    //     updateBuzz(&bees[i]);
-    // }
+    for (int i = 0; i < MAXBEES; i++) {
+        updateBuzz(&bees[i], 2);
+    }
     
     //updates only the balloon type that is selected
     if (player.balloonType == SINGLE) {
@@ -105,9 +105,9 @@ void updateGame2() {
 
 void drawGame2() {
     drawPlayer();
-    // for (int i = 0; i < MAXBEES; i++) {
-    //     drawBuzz(&bees[i]);
-    // }
+    for (int i = 0; i < MAXBEES; i++) {
+        drawBuzz(&bees[i]);
+    }
     //updates only the balloon type that is selected or deletes the previous type selected
     if (player.balloonType == SINGLE || player.lastBalloonType == SINGLE) {
         for (int i = 0; i < MAXBALLOONS; i++) {
@@ -132,3 +132,4 @@ void drawGame2() {
     REG_BG0HOFF = hOff;
     REG_BG1HOFF = hOff/2;
 }
+

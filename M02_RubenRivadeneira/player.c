@@ -328,7 +328,7 @@ void playerAttack(int level) {
     }
 
     if (player.balloonType == CHEAT) {
-        if (level == 0) {
+        if (level == 0 || level == 2) {
             for (int i = 0; i < MAXBEES; i++) {
                 if (bees[i].active && bees[i].screenCol >= 0 && bees[i].screenCol < 240) {
                     bees[i].health = 0;

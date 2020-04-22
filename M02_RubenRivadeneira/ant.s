@@ -109,7 +109,7 @@ initAnts:
 	str	r5, [r3, #64]
 	str	r4, [r3, #68]
 	str	ip, [r3, #72]
-	add	r0, r0, #25
+	add	r0, r0, #15
 	add	r3, r3, #76
 	bne	.L10
 	pop	{r4, r5, r6, r7, r8, r9, r10, fp, lr}

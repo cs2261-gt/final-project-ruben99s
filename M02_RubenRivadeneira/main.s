@@ -811,26 +811,27 @@ game2:
 	ldr	r3, .L106+16
 	ldr	r3, [r3]
 	cmp	r3, #0
-	bne	.L104
+	beq	.L94
 	ldr	r3, .L106+20
+	ldr	r3, [r3]
+	cmp	r3, #0
+	ble	.L104
+.L94:
+	ldr	r3, .L106+24
 	ldr	r3, [r3]
 	cmp	r3, #0
 	ble	.L105
-.L92:
 	pop	{r4, lr}
 	bx	lr
-.L104:
-	bl	goToWin
-	ldr	r3, .L106+20
-	ldr	r3, [r3]
-	cmp	r3, #0
-	bgt	.L92
 .L105:
 	pop	{r4, lr}
 	b	goToLose
 .L103:
 	bl	goToPause
 	b	.L93
+.L104:
+	bl	goToWin
+	b	.L94
 .L107:
 	.align	2
 .L106:
@@ -839,6 +840,7 @@ game2:
 	.word	oldButtons
 	.word	buttons
 	.word	isPlayerEndL2
+	.word	remainingEnemiesL2
 	.word	playerHealth
 	.size	game2, .-game2
 	.align	2
@@ -890,21 +892,21 @@ goToInstruction:
 	ldr	r1, .L111+16
 	mov	lr, pc
 	bx	r4
-	mov	r3, #1152
 	mov	r2, #100663296
 	mov	r0, #3
-	ldr	r1, .L111+20
+	ldr	r3, .L111+20
+	ldr	r1, .L111+24
 	mov	lr, pc
 	bx	r4
 	mov	r3, #1024
 	mov	r0, #3
-	ldr	r2, .L111+24
-	ldr	r1, .L111+28
+	ldr	r2, .L111+28
+	ldr	r1, .L111+32
 	mov	lr, pc
 	bx	r4
 	mov	r0, #7
-	ldr	r3, .L111+32
-	ldr	r2, .L111+36
+	ldr	r3, .L111+36
+	ldr	r2, .L111+40
 	ldr	r1, [r3]
 	pop	{r4, lr}
 	str	r0, [r3]
@@ -917,10 +919,11 @@ goToInstruction:
 	.word	hideSprites
 	.word	DMANow
 	.word	shadowOAM
-	.word	instructionScreenPal
-	.word	instructionScreenTiles
+	.word	FinalInstructionScreenPal
+	.word	5616
+	.word	FinalInstructionScreenTiles
 	.word	100720640
-	.word	instructionScreenMap
+	.word	FinalInstructionScreenMap
 	.word	state
 	.word	prevState
 	.size	goToInstruction, .-goToInstruction

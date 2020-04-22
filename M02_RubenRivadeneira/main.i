@@ -231,6 +231,16 @@ extern const unsigned short instructionScreenMap[1024];
 
 extern const unsigned short instructionScreenPal[256];
 # 15 "main.c" 2
+# 1 "FinalInstructionScreen.h" 1
+# 22 "FinalInstructionScreen.h"
+extern const unsigned short FinalInstructionScreenTiles[5616];
+
+
+extern const unsigned short FinalInstructionScreenMap[1024];
+
+
+extern const unsigned short FinalInstructionScreenPal[256];
+# 16 "main.c" 2
 
 # 1 "bg00Level1.h" 1
 # 22 "bg00Level1.h"
@@ -241,7 +251,7 @@ extern const unsigned short bg00Level1Map[2048];
 
 
 extern const unsigned short bg00Level1Pal[256];
-# 17 "main.c" 2
+# 18 "main.c" 2
 # 1 "bg01Level1.h" 1
 # 22 "bg01Level1.h"
 extern const unsigned short bg01Level1Tiles[8160];
@@ -251,7 +261,7 @@ extern const unsigned short bg01Level1Map[2048];
 
 
 extern const unsigned short bg01Level1Pal[256];
-# 18 "main.c" 2
+# 19 "main.c" 2
 # 1 "game1.h" 1
 
 
@@ -274,7 +284,7 @@ extern int playerHealth;
 void initGame1();
 void updateGame1();
 void drawGame1();
-# 19 "main.c" 2
+# 20 "main.c" 2
 
 # 1 "bg00Level2.h" 1
 # 22 "bg00Level2.h"
@@ -285,7 +295,7 @@ extern const unsigned short bg00Level2Map[2048];
 
 
 extern const unsigned short bg00Level2Pal[256];
-# 21 "main.c" 2
+# 22 "main.c" 2
 # 1 "game2.h" 1
 
 
@@ -293,7 +303,7 @@ extern const unsigned short bg00Level2Pal[256];
 extern int hOff;
 extern int vOff;
 
-extern int remainingEnemies;
+extern int remainingEnemiesL2;
 extern int numBalloons;
 extern int direction;
 extern int isPlayerEndL2;
@@ -308,7 +318,7 @@ extern int playerHealth;
 void initGame2();
 void updateGame2();
 void drawGame2();
-# 22 "main.c" 2
+# 23 "main.c" 2
 
 
 
@@ -491,7 +501,7 @@ void game() {
 
 
 void goToGame1() {
-# 214 "main.c"
+# 215 "main.c"
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<9) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 96;
     (*(volatile unsigned short *)0x04000010) = 0;
@@ -546,7 +556,7 @@ void game1() {
 
 
 void goToGame2() {
-# 278 "main.c"
+# 279 "main.c"
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 96;
     (*(volatile unsigned short *)0x04000010) = 0;
@@ -572,7 +582,7 @@ void game2() {
         goToPause();
     }
 
-    if(isPlayerEndL2) {
+    if(isPlayerEndL2 && remainingEnemiesL2 <= 0) {
         goToWin();
 
 
@@ -686,9 +696,9 @@ void goToInstruction() {
     vOffInstruction = 0;
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
-    DMANow(3, instructionScreenPal, ((unsigned short *)0x5000000), 256);
-    DMANow(3, instructionScreenTiles, &((charblock *)0x6000000)[0], 2304/2);
-    DMANow(3, instructionScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
+    DMANow(3, FinalInstructionScreenPal, ((unsigned short *)0x5000000), 256);
+    DMANow(3, FinalInstructionScreenTiles, &((charblock *)0x6000000)[0], 11232/2);
+    DMANow(3, FinalInstructionScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
 
     prevState = state;
     state = INSTRUCTION;

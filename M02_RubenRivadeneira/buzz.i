@@ -168,7 +168,7 @@ extern BUZZ bees[];
 
 
 void initBuzz();
-void updateBuzz(BUZZ *buzz);
+void updateBuzz(BUZZ *buzz, int level);
 void animateBuzz(BUZZ *buzz);
 void drawBuzz(BUZZ *buzz);
 # 3 "buzz.c" 2
@@ -345,7 +345,7 @@ void drawGame1();
 extern int hOff;
 extern int vOff;
 
-extern int remainingEnemies;
+extern int remainingEnemiesL2;
 extern int numBalloons;
 extern int direction;
 extern int isPlayerEndL2;
@@ -408,7 +408,7 @@ void drawBuzz(BUZZ *buzz) {
     }
 }
 
-void updateBuzz(BUZZ *buzz) {
+void updateBuzz(BUZZ *buzz, int level) {
     if (buzz->num < 8) {
         int screenCol = buzz->worldCol - hOff;
         if (screenCol >= 0 && screenCol < 240 && !buzz->erased) {
@@ -420,7 +420,13 @@ void updateBuzz(BUZZ *buzz) {
     if (buzz->active && buzz->health <= 0) {
         buzz->active = 0;
         buzz->erased = 1;
-        remainingEnemies--;
+        if (level == 0) {
+            remainingEnemies--;
+        }
+        if (level == 2) {
+            remainingEnemiesL2--;
+        }
+
     }
 
     if (buzz->active) {
@@ -511,7 +517,7 @@ void updateBuzz(BUZZ *buzz) {
 
 void animateBuzz(BUZZ *buzz) {
     if (buzz->active) {
-# 166 "buzz.c"
+# 172 "buzz.c"
         if (buzz->direction == LEFT) {
             buzz->aniState = 3;
         }

@@ -53,7 +53,7 @@ extern BUZZ bees[];
 
 //prototypes
 void initBuzz(); 
-void updateBuzz(BUZZ *buzz);
+void updateBuzz(BUZZ *buzz, int level);
 void animateBuzz(BUZZ *buzz);
 void drawBuzz(BUZZ *buzz);
 // void buzzAttack(BUZZ *buzz);
