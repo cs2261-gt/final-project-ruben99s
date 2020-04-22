@@ -397,7 +397,7 @@ void updateAnts(ANT *ant, const unsigned short *bitmap) {
             }
         }
 
-        if (collision(player.worldCol, player.worldRow, player.width, player.height,
+        if (collision(player.worldCol, ((player.worldRow) >> 8), player.width, player.height,
             ant->worldCol, ant->worldRow, ant->width, ant->height)) {
             if (healthTimer % 150 == 0) {
                 player.health -= 2;

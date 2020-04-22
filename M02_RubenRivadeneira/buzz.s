@@ -216,9 +216,9 @@ updateBuzz:
 	ldr	r7, .L80+8
 .L33:
 	ldr	r4, .L80+12
-	ldr	r1, [r5, #12]
-	ldr	r0, [r5, #28]
-	ldr	ip, [r5, #24]
+	ldr	r0, [r5, #12]
+	ldr	ip, [r5, #28]
+	ldr	lr, [r5, #24]
 	ldr	r9, .L80+16
 	ldr	fp, .L80+20
 	ldr	r10, .L80+24
@@ -235,9 +235,7 @@ updateBuzz:
 	ldr	r3, [r4, #40]
 	cmp	r3, #0
 	bne	.L37
-	str	ip, [sp, #12]
-	str	r0, [sp, #8]
-	str	r1, [sp, #4]
+	stmib	sp, {r0, ip, lr}
 	str	r2, [sp]
 	ldr	r3, [r4, #16]
 	ldr	r2, [r4, #20]
@@ -264,19 +262,18 @@ updateBuzz:
 	add	r4, r4, #76
 	cmp	r6, r4
 	ldr	r2, [r5, #8]
-	ldr	r1, [r5, #12]
-	ldr	r0, [r5, #28]
-	ldr	ip, [r5, #24]
+	ldr	r0, [r5, #12]
+	ldr	ip, [r5, #28]
+	ldr	lr, [r5, #24]
 	bne	.L45
 .L77:
-	str	r0, [sp, #8]
+	ldr	r1, [r7, #12]
+	stmib	sp, {r0, ip, lr}
 	str	r2, [sp]
-	str	ip, [sp, #12]
-	str	r1, [sp, #4]
-	add	r0, r7, #8
 	ldr	r3, [r7, #24]
 	ldr	r2, [r7, #28]
-	ldm	r0, {r0, r1}
+	ldr	r0, [r7, #8]
+	asr	r1, r1, #8
 	mov	lr, pc
 	bx	r9
 	cmp	r0, #0
@@ -403,7 +400,7 @@ updateBuzz:
 	.word	player
 	.word	allBalloons+8
 	.word	collision
-	.word	8997
+	.word	8189
 	.word	pop
 	.word	playSoundB
 	.word	healthTimer

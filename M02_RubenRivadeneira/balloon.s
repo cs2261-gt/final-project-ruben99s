@@ -69,18 +69,19 @@ initBalloonsSingle:
 	mov	r3, fp
 	mov	r10, #12
 	mov	r8, #24
-	ldr	r5, .L13+4
-	ldr	ip, .L13+8
+	ldr	ip, .L13+4
+	ldr	r4, .L13+8
 	ldr	lr, .L13+12
-	ldr	r0, [r5, #8]
-	ldr	r4, [ip]
+	ldr	r0, [ip, #8]
+	ldr	r7, [ip, #12]
+	ldr	r4, [r4]
 	ldr	lr, [lr]
-	ldr	ip, [r5, #12]
-	ldr	r6, [r5, #16]
 	add	r0, r0, r9
-	ldr	r5, [r5, #20]
+	ldr	r6, [ip, #16]
+	ldr	r5, [ip, #20]
 	sub	r4, r0, r4
-	sub	lr, ip, lr
+	asr	ip, r7, #8
+	rsb	lr, lr, r7, asr #8
 .L11:
 	mov	r7, #3
 	cmp	r1, #0
@@ -133,49 +134,50 @@ initBalloonsAOE:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
-	mov	r10, #16
+	mov	r9, #16
 	mov	r2, #5
-	mov	fp, #12
+	mov	r10, #12
 	mov	lr, #1
 	mov	r1, #0
-	mov	r9, #50
-	ldr	r6, .L22
-	ldr	r0, .L22+4
-	ldr	ip, .L22+8
-	ldr	r7, [r6, #8]
-	ldr	r5, [r0]
-	ldr	r4, [ip]
-	ldr	r0, [r6, #12]
-	add	ip, r7, r10
+	mov	fp, #3
+	ldr	ip, .L22
+	ldr	r4, .L22+4
+	ldr	r0, .L22+8
+	ldr	r6, [ip, #8]
+	ldr	r5, [r4]
+	ldr	r8, [ip, #12]
+	ldr	r4, [r0]
 	ldr	r3, .L22+12
-	ldr	r7, [r6, #16]
-	ldr	r6, [r6, #20]
-	sub	r5, ip, r5
-	sub	r4, r0, r4
+	add	r0, r6, r9
+	ldr	r7, [ip, #16]
+	ldr	r6, [ip, #20]
+	sub	r5, r0, r5
+	asr	ip, r8, #8
+	rsb	r4, r4, r8, asr #8
 .L19:
+	mov	r8, #50
+	str	r8, [r3, #436]
 	mov	r8, #2
 	str	r8, [r3, #440]
 	mov	r8, #24
-	str	r8, [r3, #444]
-	mov	r8, #3
 	cmp	r2, #5
 	str	r2, [r3, #432]
-	str	fp, [r3, #408]
-	str	r10, [r3, #404]
+	str	r10, [r3, #408]
+	str	r9, [r3, #404]
 	str	lr, [r3, #424]
 	str	r7, [r3, #396]
 	str	r6, [r3, #400]
 	str	r1, [r3, #428]
 	str	r1, [r3, #420]
-	str	r9, [r3, #436]
-	str	ip, [r3, #388]
-	str	r0, [r3, #392]
+	str	r0, [r3, #388]
+	str	ip, [r3, #392]
 	str	r5, [r3, #380]
 	str	r4, [r3, #384]
-	str	ip, [r3, #412]
-	str	r0, [r3, #416]
+	str	r0, [r3, #412]
+	str	ip, [r3, #416]
+	str	r8, [r3, #444]
 	str	r1, [r3, #448]
-	str	r8, [r3, #452]
+	str	fp, [r3, #452]
 	add	r2, r2, #1
 	beq	.L21
 	cmp	r2, #10
@@ -211,9 +213,9 @@ initJumpBalloon:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, r7, r8, r9, r10, lr}
 	mov	r9, #16
-	mov	r7, #10
 	mov	r10, #12
 	mov	r8, #2
+	mov	r7, #10
 	mov	r6, #4
 	mov	r5, #24
 	mov	r4, #0
@@ -227,25 +229,26 @@ initJumpBalloon:
 	ldr	r3, .L26+8
 	sub	r0, r1, r0
 	str	r0, [r3, #760]
-	str	r1, [r3, #768]
 	ldr	r0, [r2, #16]
+	str	r1, [r3, #768]
 	ldr	r1, .L26+12
 	str	r0, [r3, #776]
+	ldr	r0, [r2, #20]
+	ldr	r2, [r2, #12]
 	ldr	r1, [r1]
-	ldr	r0, [r2, #12]
-	str	r7, [r3, #812]
-	ldr	r7, [r2, #20]
-	sub	r2, r0, r1
+	asr	r2, r2, #8
+	sub	r1, r2, r1
 	str	r10, [r3, #788]
 	str	r9, [r3, #784]
 	str	r8, [r3, #804]
-	str	r7, [r3, #780]
+	str	r7, [r3, #812]
 	str	r6, [r3, #820]
 	str	r5, [r3, #824]
 	str	r4, [r3, #828]
 	str	lr, [r3, #832]
-	str	r0, [r3, #772]
-	str	r2, [r3, #764]
+	str	r0, [r3, #780]
+	str	r2, [r3, #772]
+	str	r1, [r3, #764]
 	str	ip, [r3, #808]
 	str	ip, [r3, #800]
 	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
@@ -270,9 +273,9 @@ initCheatBalloon:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, r7, r8, r9, lr}
 	mov	r8, #16
-	mov	r7, #11
 	mov	lr, #3
 	mov	r9, #12
+	mov	r7, #11
 	mov	r6, #6
 	mov	r5, #24
 	mov	r4, #0
@@ -285,25 +288,26 @@ initCheatBalloon:
 	ldr	r3, .L30+8
 	sub	r0, r1, r0
 	str	r0, [r3, #836]
-	str	r1, [r3, #844]
 	ldr	r0, [r2, #16]
+	str	r1, [r3, #844]
 	ldr	r1, .L30+12
 	str	r0, [r3, #852]
+	ldr	r0, [r2, #20]
+	ldr	r2, [r2, #12]
 	ldr	r1, [r1]
-	ldr	r0, [r2, #12]
-	str	r7, [r3, #888]
-	ldr	r7, [r2, #20]
-	sub	r2, r0, r1
+	asr	r2, r2, #8
+	sub	r1, r2, r1
 	str	r9, [r3, #864]
 	str	r8, [r3, #860]
-	str	r7, [r3, #856]
+	str	r7, [r3, #888]
 	str	r6, [r3, #896]
 	str	r5, [r3, #900]
 	str	r4, [r3, #904]
 	str	lr, [r3, #880]
 	str	lr, [r3, #908]
-	str	r0, [r3, #848]
-	str	r2, [r3, #840]
+	str	r0, [r3, #856]
+	str	r2, [r3, #848]
+	str	r1, [r3, #840]
 	str	ip, [r3, #884]
 	str	ip, [r3, #876]
 	pop	{r4, r5, r6, r7, r8, r9, lr}
@@ -403,12 +407,13 @@ updateHeldBalloon:
 	.word	.L47
 	.word	.L45
 .L51:
-	add	r2, r3, #8
-	ldm	r2, {r2, r3}
-	add	r2, r2, #3
+	add	r1, r3, #8
+	ldm	r1, {r1, r2}
+	asr	r3, r2, #8
 	add	r3, r3, #16
-	str	r2, [r0, #8]
+	add	r2, r1, #3
 	str	r3, [r0, #12]
+	str	r2, [r0, #8]
 .L43:
 	bx	lr
 .L44:
@@ -426,55 +431,62 @@ updateHeldBalloon:
 	.word	.L53
 	.word	.L51
 .L47:
+	add	r1, r3, #8
+	ldm	r1, {r1, r2}
+	asr	r3, r2, #8
+	sub	r3, r3, #6
+	add	r2, r1, #18
+	str	r3, [r0, #12]
+	str	r2, [r0, #8]
+	bx	lr
+.L48:
+	add	r2, r3, #8
+	ldm	r2, {r2, r3}
+	add	r2, r2, #16
+	asr	r3, r3, #8
+	str	r2, [r0, #8]
+	str	r3, [r0, #12]
+	bx	lr
+.L53:
+	add	r1, r3, #8
+	ldm	r1, {r1, r2}
+	asr	r3, r2, #8
+	sub	r3, r3, #6
+	sub	r2, r1, #2
+	str	r3, [r0, #12]
+	str	r2, [r0, #8]
+	bx	lr
+.L54:
+	add	r1, r3, #8
+	ldm	r1, {r1, r2}
+	asr	r3, r2, #8
+	str	r3, [r0, #12]
+	str	r1, [r0, #8]
+	bx	lr
+.L49:
 	add	r2, r3, #8
 	ldm	r2, {r2, r3}
 	add	r2, r2, #18
-	sub	r3, r3, #6
+	asr	r3, r3, #8
 	str	r2, [r0, #8]
 	str	r3, [r0, #12]
 	bx	lr
-.L48:
-	ldr	r2, [r3, #8]
-	ldr	r1, [r3, #12]
-	add	r3, r2, #16
-	str	r3, [r0, #8]
-	str	r1, [r0, #12]
+.L45:
+	add	r1, r3, #8
+	ldm	r1, {r1, r2}
+	asr	r3, r2, #8
+	add	r3, r3, #16
+	add	r2, r1, #13
+	str	r3, [r0, #12]
+	str	r2, [r0, #8]
 	bx	lr
-.L53:
+.L55:
 	add	r2, r3, #8
 	ldm	r2, {r2, r3}
 	sub	r2, r2, #2
-	sub	r3, r3, #6
+	asr	r3, r3, #8
 	str	r2, [r0, #8]
 	str	r3, [r0, #12]
-	bx	lr
-.L54:
-	add	r2, r3, #8
-	ldm	r2, {r2, r3}
-	str	r2, [r0, #8]
-	str	r3, [r0, #12]
-	bx	lr
-.L49:
-	ldr	r2, [r3, #8]
-	ldr	r1, [r3, #12]
-	add	r3, r2, #18
-	str	r3, [r0, #8]
-	str	r1, [r0, #12]
-	bx	lr
-.L45:
-	add	r2, r3, #8
-	ldm	r2, {r2, r3}
-	add	r2, r2, #13
-	add	r3, r3, #16
-	str	r2, [r0, #8]
-	str	r3, [r0, #12]
-	bx	lr
-.L55:
-	ldr	r2, [r3, #8]
-	ldr	r1, [r3, #12]
-	sub	r3, r2, #2
-	str	r3, [r0, #8]
-	str	r1, [r0, #12]
 	bx	lr
 .L58:
 	.align	2
@@ -496,17 +508,16 @@ updateBalloons:
 	push	{r4, lr}
 	mov	r4, r0
 	bne	.L60
-	ldr	r3, [r0, #8]
-	ldr	r2, [r0, #12]
+	add	r2, r0, #8
+	ldm	r2, {r2, r3}
 .L61:
 	ldr	r0, .L71
 	ldr	r1, .L71+4
 	ldr	r0, [r0]
 	ldr	r1, [r1]
-	sub	r3, r3, r0
-	sub	r2, r2, r1
-	str	r3, [r4]
-	str	r2, [r4, #4]
+	sub	r2, r2, r0
+	sub	r3, r3, r1
+	stm	r4, {r2, r3}
 .L59:
 	pop	{r4, lr}
 	bx	lr
@@ -515,14 +526,15 @@ updateBalloons:
 	cmp	r3, #239
 	bls	.L62
 	mov	r1, #0
-	ldr	r2, .L71+8
-	ldr	r3, [r2, #8]
-	ldr	r2, [r2, #12]
-	add	r3, r3, #16
-	str	r3, [r0, #8]
-	str	r3, [r0, #32]
-	str	r2, [r0, #12]
-	str	r2, [r0, #36]
+	ldr	r3, .L71+8
+	add	r2, r3, #8
+	ldm	r2, {r2, r3}
+	add	r2, r2, #16
+	asr	r3, r3, #8
+	str	r2, [r0, #8]
+	str	r2, [r0, #32]
+	str	r3, [r0, #12]
+	str	r3, [r0, #36]
 	str	r1, [r0, #40]
 	str	r1, [r0, #48]
 	b	.L61

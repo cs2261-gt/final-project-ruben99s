@@ -356,4 +356,9 @@ typedef struct{
 int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, int widthB, int heightB);
 
 typedef enum {LEFT, RIGHT};
+
+#define GRAVITY 100
+#define JUMPPOWER 1500
+#define SHIFTUP(num)    ((num) << 8)
+#define SHIFTDOWN(num)  ((num) >> 8)
 #endif

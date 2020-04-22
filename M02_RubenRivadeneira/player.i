@@ -455,6 +455,7 @@ void drawStingers(STINGER *stinger);
 PLAYER player;
 HEART healthMeter[20];
 int lostHearts = 0;
+int jumpPower = 1500;
 
 void initPlayer(int *hOff, int *vOff, int level) {
     player.height = 30;
@@ -462,16 +463,16 @@ void initPlayer(int *hOff, int *vOff, int level) {
     player.colDelta = 2;
     player.rowDelta = 2;
     player.worldCol = 10;
-    player.worldRow = 256 - player.height - 14;
+    player.worldRow = ((256 - player.height - 18) << 8);
     player.prevWorldCol = player.worldCol;
 
-    player.upLimit = player.worldRow - 100;
-    player.downLimit = player.worldRow;
+    player.upLimit = ((player.worldRow) >> 8) - 100;
+    player.downLimit = ((player.worldRow) >> 8);
 
     player.screenCol = player.worldCol - *hOff;
-    player.screenRow = player.worldRow - *vOff;
+    player.screenRow = ((player.worldRow) >> 8) - *vOff;
 
-    player.jumping = 0;
+    player.jumping = 1;
     player.crouching = 0;
 
     if (level == 0) {
@@ -555,8 +556,8 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level)
     if((~((*(volatile unsigned short *)0x04000130)) & ((1<<4)))) {
         if (player.worldCol + player.width + 12 - 1 < 512) {
 
-            if (bitmap[((player.worldRow)*(512)+(player.worldCol + player.width - 1 + 1))] &&
-                bitmap[((player.worldRow + player.height - 1)*(512)+(player.worldCol + player.width - 1 + 1))]) {
+            if (bitmap[((((player.worldRow) >> 8))*(512)+(player.worldCol + player.width - 1 + 1))] &&
+                bitmap[((((player.worldRow) >> 8) + player.height - 1)*(512)+(player.worldCol + player.width - 1 + 1))]) {
 
                 player.worldCol += player.colDelta;
 
@@ -572,8 +573,8 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level)
     if((~((*(volatile unsigned short *)0x04000130)) & ((1<<5)))) {
         if (player.worldCol >= 6) {
 
-            if (bitmap[((player.worldRow)*(512)+(player.worldCol - 1))] &&
-                bitmap[((player.worldRow + player.height - 1)*(512)+(player.worldCol - 1))]) {
+            if (bitmap[((((player.worldRow) >> 8))*(512)+(player.worldCol - 1))] &&
+                bitmap[((((player.worldRow) >> 8) + player.height - 1)*(512)+(player.worldCol - 1))]) {
 
                 player.worldCol -= player.colDelta;
 
@@ -595,55 +596,43 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level)
     }
 
 
+    if (player.rowDelta < 500) {
+        player.rowDelta += 100;
+    }
 
 
-
-    if((~((*(volatile unsigned short *)0x04000130)) & ((1<<6)))) {
-        if (player.worldRow <= player.upLimit) {
-            player.jumping = 0;
-        } else {
-            player.jumping = 1;
-        }
+    if (bitmap[((((player.worldRow + player.rowDelta) >> 8) + player.height - 1)*(512)+(player.worldCol))] &&
+        bitmap[((((player.worldRow + player.rowDelta) >> 8) + player.height - 1)*(512)+(player.worldCol + player.width - 1))]) {
 
 
 
 
-
+        player.worldRow += player.rowDelta;
     } else {
+        player.rowDelta = 0;
         player.jumping = 0;
     }
 
 
-    if (player.balloonType == JUMP) {
-        player.upLimit = 90;
+    if ((!(~(oldButtons)&((1<<6))) && (~buttons & ((1<<6)))) && !player.jumping) {
+        player.rowDelta -= jumpPower;
+        player.jumping = 1;
+    }
+
+
+
+
+
+
+
+    if (player.balloonType == JUMP || player.balloonType == CHEAT) {
+
+        jumpPower = 1500 + 700;
     } else {
-        player.upLimit = 150;
+
+        jumpPower = 1500;
     }
-
-
-    if (!player.jumping) {
-
-        if (bitmap[((player.worldRow + player.height - 1 + player.rowDelta)*(512)+(player.worldCol))] &&
-            bitmap[((player.worldRow + player.height - 1 + player.rowDelta)*(512)+(player.worldCol + player.width - 1))]) {
-
-            player.worldRow += player.rowDelta;
-
-        }
-    }
-    if (player.jumping) {
-
-        if (bitmap[((player.worldRow - player.rowDelta)*(512)+(player.worldCol))] &&
-            bitmap[((player.worldRow - player.rowDelta)*(512)+(player.worldCol + player.width - 1))]) {
-
-            player.worldRow -= player.rowDelta;
-        }
-    }
-
-
-
-
-
-
+# 217 "player.c"
     if((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0)))) && player.balloonTimer >= 10) {
         playerAttack(level);
         player.balloonTimer = 0;
@@ -747,7 +736,7 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level)
 
 
     player.screenCol = player.worldCol - *hOff;
-    player.screenRow = player.worldRow - *vOff;
+    player.screenRow = ((player.worldRow) >> 8) - *vOff;
 
     animatePlayer();
 
