@@ -12,6 +12,7 @@
 PLAYER player;
 HEART healthMeter[numHearts];
 int lostHearts = 0;
+int jumpPower = JUMPPOWER;
  
 void initPlayer(int *hOff, int *vOff, int level) {
     player.height = 30;
@@ -19,16 +20,16 @@ void initPlayer(int *hOff, int *vOff, int level) {
     player.colDelta = 2; 
     player.rowDelta = 2;
     player.worldCol = 10;
-    player.worldRow = MAPHEIGHT - player.height - 14; 
+    player.worldRow = SHIFTUP(MAPHEIGHT - player.height - 18); 
     player.prevWorldCol = player.worldCol;
 
-    player.upLimit = player.worldRow - 100;
-    player.downLimit = player.worldRow;
+    player.upLimit = SHIFTDOWN(player.worldRow) - 100;
+    player.downLimit = SHIFTDOWN(player.worldRow);
 
     player.screenCol = player.worldCol - *hOff;
-    player.screenRow = player.worldRow - *vOff;
+    player.screenRow = SHIFTDOWN(player.worldRow) - *vOff;
 
-    player.jumping = 0;
+    player.jumping = 1;
     player.crouching = 0;
 
     if (level == 0) {
@@ -112,8 +113,8 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level)
     if(BUTTON_HELD(BUTTON_RIGHT)) {
         if (player.worldCol + player.width + 12 - 1 < MAPWIDTH) {
 
-            if (bitmap[OFFSET(player.worldCol + player.width - 1 + 1, player.worldRow, MAPWIDTH)] &&
-                bitmap[OFFSET(player.worldCol + player.width - 1 + 1, player.worldRow + player.height - 1, MAPWIDTH)]) {
+            if (bitmap[OFFSET(player.worldCol + player.width - 1 + 1, SHIFTDOWN(player.worldRow), MAPWIDTH)] &&
+                bitmap[OFFSET(player.worldCol + player.width - 1 + 1, SHIFTDOWN(player.worldRow) + player.height - 1, MAPWIDTH)]) {
                 
                 player.worldCol += player.colDelta;
 
@@ -129,8 +130,8 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level)
     if(BUTTON_HELD(BUTTON_LEFT)) {
         if (player.worldCol >= 6) {
 
-            if (bitmap[OFFSET(player.worldCol - 1, player.worldRow, MAPWIDTH)] &&
-                bitmap[OFFSET(player.worldCol - 1, player.worldRow + player.height - 1, MAPWIDTH)]) {
+            if (bitmap[OFFSET(player.worldCol - 1, SHIFTDOWN(player.worldRow), MAPWIDTH)] &&
+                bitmap[OFFSET(player.worldCol - 1, SHIFTDOWN(player.worldRow) + player.height - 1, MAPWIDTH)]) {
                 
                 player.worldCol -= player.colDelta;
 
@@ -151,50 +152,62 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level)
         // player.height = 30;
     }
    
+    //new gravity
+    if (player.rowDelta < 500) {
+        player.rowDelta += GRAVITY;
+    }
+    
 
-
-
-
-    if(BUTTON_HELD(BUTTON_UP)) {
-        if (player.worldRow <= player.upLimit) {
-            player.jumping = 0;
-        } else {
-            player.jumping = 1;
-        }
+    if (bitmap[OFFSET(player.worldCol, SHIFTDOWN(player.worldRow + player.rowDelta) + player.height - 1, MAPWIDTH)] &&
+        bitmap[OFFSET(player.worldCol + player.width - 1, SHIFTDOWN(player.worldRow + player.rowDelta) + player.height - 1 , MAPWIDTH)]) {
         
-        // if (player.worldRow >= player.downLimit) {
-        //     player.jumping = 1;
+        // if (SHIFTDOWN(player.worldRow + player.rowDelta) > 14) {
+        //     player.worldRow += player.rowDelta;
         // }
-        
+        player.worldRow += player.rowDelta;
     } else {
+        player.rowDelta = 0;
         player.jumping = 0;
-    }  
+    }
+
+
+    if (BUTTON_PRESSED(BUTTON_UP) && !player.jumping) {
+        player.rowDelta -= jumpPower;
+        player.jumping = 1;
+    }
+
+    // player.rowDelta += GRAVITY;
+
+
+
 
     //allows to jump higher if balloon type is jump
-    if (player.balloonType == JUMP) {
-        player.upLimit = 90;
+    if (player.balloonType == JUMP || player.balloonType == CHEAT) {
+        // player.upLimit = 90;
+        jumpPower = JUMPPOWER + 700;
     } else {
-        player.upLimit = 150;
+        // player.upLimit = 150;
+        jumpPower = JUMPPOWER;
     }
 
-    //gravity-ish
-    if (!player.jumping) {
-        //falling down
-        if (bitmap[OFFSET(player.worldCol, player.worldRow + player.height - 1 + player.rowDelta, MAPWIDTH)] &&
-            bitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow + player.height - 1 + player.rowDelta, MAPWIDTH)]) {
+    // //gravity-ish
+    // if (!player.jumping) {
+    //     //falling down
+    //     if (bitmap[OFFSET(player.worldCol, player.worldRow + player.height - 1 + player.rowDelta, MAPWIDTH)] &&
+    //         bitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow + player.height - 1 + player.rowDelta, MAPWIDTH)]) {
             
-            player.worldRow += player.rowDelta;
+    //         player.worldRow += player.rowDelta;
                 
-        }
-    }
-    if (player.jumping) {
-        //going up
-        if (bitmap[OFFSET(player.worldCol, player.worldRow - player.rowDelta, MAPWIDTH)] &&
-            bitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow - player.rowDelta, MAPWIDTH)]) {
+    //     }
+    // }
+    // if (player.jumping) {
+    //     //going up
+    //     if (bitmap[OFFSET(player.worldCol, player.worldRow - player.rowDelta, MAPWIDTH)] &&
+    //         bitmap[OFFSET(player.worldCol + player.width - 1, player.worldRow - player.rowDelta, MAPWIDTH)]) {
                 
-            player.worldRow -= player.rowDelta;
-        }
-    }
+    //         player.worldRow -= player.rowDelta;
+    //     }
+    // }
 
 
 
@@ -304,7 +317,7 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level)
     
 
     player.screenCol = player.worldCol - *hOff;
-    player.screenRow = player.worldRow - *vOff;
+    player.screenRow = SHIFTDOWN(player.worldRow) - *vOff;
 
     animatePlayer();
     // updateHearts();

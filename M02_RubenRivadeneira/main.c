@@ -149,7 +149,7 @@ void goToStart() {
     DMANow(3, mainScreenTiles, &CHARBLOCK[0], mainScreenTilesLen/2);
     DMANow(3, mainScreenMap, &SCREENBLOCK[28], mainScreenMapLen/2);
 
-    playSoundA(gameSong, GAMESONGLEN, 1);
+    // playSoundA(gameSong, GAMESONGLEN, 1);
     state = START;
 }
 

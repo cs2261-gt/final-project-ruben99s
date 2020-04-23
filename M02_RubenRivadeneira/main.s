@@ -57,12 +57,6 @@ goToStart:
 	mov	lr, pc
 	bx	r4
 	ldr	r3, .L4+28
-	mov	r2, #1
-	ldr	r1, .L4+32
-	ldr	r0, .L4+36
-	mov	lr, pc
-	bx	r3
-	ldr	r3, .L4+40
 	str	r5, [r3]
 	pop	{r4, r5, r6, lr}
 	bx	lr
@@ -76,9 +70,6 @@ goToStart:
 	.word	mainScreenTiles
 	.word	100720640
 	.word	mainScreenMap
-	.word	playSoundA
-	.word	1045440
-	.word	gameSong
 	.word	state
 	.size	goToStart, .-goToStart
 	.align	2

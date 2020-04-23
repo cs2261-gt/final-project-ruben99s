@@ -383,7 +383,7 @@ void stopSound();
 
 
 
-extern const signed char pop[8997];
+extern const signed char pop[8189];
 # 10 "buzz.c" 2
 
 
@@ -510,7 +510,7 @@ void updateBuzz(BUZZ *buzz, int level) {
                     }
 
                     allBalloons[i].active = 0;
-                    playSoundB(pop, 8997, 0);
+                    playSoundB(pop, 8189, 0);
                 }
             }
         }
@@ -518,7 +518,7 @@ void updateBuzz(BUZZ *buzz, int level) {
 
 
 
-        if (collision(player.worldCol, player.worldRow, player.width, player.height,
+        if (collision(player.worldCol, ((player.worldRow) >> 8), player.width, player.height,
             buzz->worldCol, buzz->worldRow, buzz->width, buzz->height)) {
                 if (healthTimer % 75 == 0) {
                     player.health -= 5;

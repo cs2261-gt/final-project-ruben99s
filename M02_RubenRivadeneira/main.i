@@ -469,7 +469,7 @@ void goToStart() {
     DMANow(3, mainScreenTiles, &((charblock *)0x6000000)[0], 1920/2);
     DMANow(3, mainScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
 
-    playSoundA(gameSong, 1045440, 1);
+
     state = START;
 }
 

@@ -285,7 +285,7 @@ void drawGame1();
 extern int hOff;
 extern int vOff;
 
-extern int remainingEnemies;
+extern int remainingEnemiesL2;
 extern int numBalloons;
 extern int direction;
 extern int isPlayerEndL2;
@@ -331,7 +331,7 @@ void initBalloonsSingle() {
         allBalloons[i].num = i;
 
         allBalloons[i].worldCol = player.worldCol + 16;
-        allBalloons[i].worldRow = player.worldRow;
+        allBalloons[i].worldRow = ((player.worldRow) >> 8);
         allBalloons[i].screenCol = allBalloons[i].worldCol - hOff;
         allBalloons[i].screenRow = allBalloons[i].worldRow - vOff;
 
@@ -364,7 +364,7 @@ void initBalloonsAOE() {
         allBalloons[i].radius = 50;
 
         allBalloons[i].worldCol = player.worldCol + 16;
-        allBalloons[i].worldRow = player.worldRow;
+        allBalloons[i].worldRow = ((player.worldRow) >> 8);
         allBalloons[i].screenCol = allBalloons[i].worldCol - hOff;
         allBalloons[i].screenRow = allBalloons[i].worldRow - vOff;
 
@@ -394,7 +394,7 @@ void initJumpBalloon() {
     allBalloons[10].num = 10;
 
     allBalloons[10].worldCol = player.worldCol + 16;
-    allBalloons[10].worldRow = player.worldRow;
+    allBalloons[10].worldRow = ((player.worldRow) >> 8);
     allBalloons[10].screenCol = allBalloons[10].worldCol - hOff;
     allBalloons[10].screenRow = allBalloons[10].worldRow - vOff;
 
@@ -415,7 +415,7 @@ void initCheatBalloon() {
     allBalloons[11].num = 11;
 
     allBalloons[11].worldCol = player.worldCol + 16;
-    allBalloons[11].worldRow = player.worldRow;
+    allBalloons[11].worldRow = ((player.worldRow) >> 8);
     allBalloons[11].screenCol = allBalloons[11].worldCol - hOff;
     allBalloons[11].screenRow = allBalloons[11].worldRow - vOff;
 
@@ -431,7 +431,7 @@ void updateBalloons(BALLOON *balloon) {
             balloon->active = 0;
             balloon->held = 0;
             balloon->worldCol = player.worldCol + 16;
-            balloon->worldRow = player.worldRow;
+            balloon->worldRow = ((player.worldRow) >> 8);
             balloon->prevWorldCol = balloon->worldCol;
             balloon->prevWorldRow = balloon->worldRow;
         } else {
@@ -469,27 +469,27 @@ void updateHeldBalloon(BALLOON *balloon) {
         switch(player.curFrame) {
             case 0:
                 balloon->worldCol = player.worldCol + 16;
-                balloon->worldRow = player.worldRow;
+                balloon->worldRow = ((player.worldRow) >> 8);
                 break;
             case 1:
                 balloon->worldCol = player.worldCol + 18;
-                balloon->worldRow = player.worldRow;
+                balloon->worldRow = ((player.worldRow) >> 8);
                 break;
             case 2:
                 balloon->worldCol = player.worldCol + 18;
-                balloon->worldRow = player.worldRow - 6;
+                balloon->worldRow = ((player.worldRow) >> 8) - 6;
                 break;
             case 3:
                 balloon->worldCol = player.worldCol + 16;
-                balloon->worldRow = player.worldRow;
+                balloon->worldRow = ((player.worldRow) >> 8);
                 break;
             case 4:
                 balloon->worldCol = player.worldCol + 18;
-                balloon->worldRow = player.worldRow - 6;
+                balloon->worldRow = ((player.worldRow) >> 8) - 6;
                 break;
             case 5:
                 balloon->worldCol = player.worldCol + 13;
-                balloon->worldRow = player.worldRow + 16;
+                balloon->worldRow = ((player.worldRow) >> 8) + 16;
                 break;
         }
     }
@@ -498,27 +498,27 @@ void updateHeldBalloon(BALLOON *balloon) {
         switch(player.curFrame) {
             case 0:
                 balloon->worldCol = player.worldCol;
-                balloon->worldRow = player.worldRow;
+                balloon->worldRow = ((player.worldRow) >> 8);
                 break;
             case 1:
                 balloon->worldCol = player.worldCol - 2;
-                balloon->worldRow = player.worldRow;
+                balloon->worldRow = ((player.worldRow) >> 8);
                 break;
             case 2:
                 balloon->worldCol = player.worldCol - 2;
-                balloon->worldRow = player.worldRow - 6;
+                balloon->worldRow = ((player.worldRow) >> 8) - 6;
                 break;
             case 3:
                 balloon->worldCol = player.worldCol;
-                balloon->worldRow = player.worldRow;
+                balloon->worldRow = ((player.worldRow) >> 8);
                 break;
             case 4:
                 balloon->worldCol = player.worldCol - 2;
-                balloon->worldRow = player.worldRow - 6;
+                balloon->worldRow = ((player.worldRow) >> 8) - 6;
                 break;
             case 5:
                 balloon->worldCol = player.worldCol + 3;
-                balloon->worldRow = player.worldRow + 16;
+                balloon->worldRow = ((player.worldRow) >> 8) + 16;
                 break;
         }
     }

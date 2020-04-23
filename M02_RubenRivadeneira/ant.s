@@ -249,13 +249,14 @@ updateAnts:
 	ldm	ip, {ip, lr}
 	bne	.L31
 .L71:
+	ldr	r1, [r7, #12]
 	stmib	sp, {r0, lr}
 	str	r2, [sp]
 	str	ip, [sp, #12]
-	add	r0, r7, #8
 	ldr	r3, [r7, #24]
 	ldr	r2, [r7, #28]
-	ldm	r0, {r0, r1}
+	ldr	r0, [r7, #8]
+	asr	r1, r1, #8
 	mov	lr, pc
 	bx	r9
 	cmp	r0, #0

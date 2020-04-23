@@ -140,7 +140,7 @@ void updateBuzz(BUZZ *buzz, int level) {
         
 
         //collision with player
-        if (collision(player.worldCol, player.worldRow, player.width, player.height, 
+        if (collision(player.worldCol, SHIFTDOWN(player.worldRow), player.width, player.height, 
             buzz->worldCol, buzz->worldRow, buzz->width, buzz->height)) {
                 if (healthTimer % 75 == 0) {
                     player.health -= 5;
