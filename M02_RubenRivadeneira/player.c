@@ -10,6 +10,7 @@
 #include "queenBee.h"
 #include "sound.h"
 #include "Pop.h"
+#include "dadWhistle1.h"
 
 PLAYER player;
 HEART healthMeter[numHearts];
@@ -218,13 +219,14 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level)
     //player balloon attack
     if(BUTTON_PRESSED(BUTTON_A) && player.balloonTimer >= 10) {
         playerAttack(level);
-        player.balloonTimer = 0;
+        player.balloonTimer = 0; 
     }
     player.balloonTimer++;
  
 
     //player taunts
     if(BUTTON_PRESSED(BUTTON_B)) {
+        playSoundB(dadWhistle, DADWHISTLELEN, 0);
         for (int i = 0; i < MAXBEES; i++) {
             if (bees[i].active && bees[i].screenCol >= 0 && bees[i].screenCol < 240) {
                 bees[i].state = ANGRY;

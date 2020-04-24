@@ -444,9 +444,9 @@ updatePlayer:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	ip, .L184
+	ldr	ip, .L189
 	push	{r4, r5, r6, r7, r8, lr}
-	ldr	r4, .L184+4
+	ldr	r4, .L189+4
 	ldrh	ip, [ip, #48]
 	ldr	lr, [r4, #8]
 	tst	ip, #16
@@ -457,123 +457,108 @@ updatePlayer:
 	ldr	r2, [r4, #28]
 	add	r2, lr, r2
 	cmp	r2, #500
-	ble	.L174
+	ble	.L178
 .L106:
-	ldr	r2, .L184
+	ldr	r2, .L189
 	ldrh	r2, [r2, #48]
 	tst	r2, #32
 	bne	.L110
 	ldr	lr, [r4, #8]
 	cmp	lr, #5
-	bgt	.L175
+	bgt	.L179
 .L110:
-	ldr	r2, .L184
+	ldr	r2, .L189
 	ldrh	r2, [r2, #48]
 	tst	r2, #128
-	moveq	r2, #1
+	moveq	r1, #1
 	movne	r2, #0
-	ldreq	lr, [r4, #32]
-	streq	r2, [r4, #48]
+	ldreq	r2, [r4, #32]
+	streq	r1, [r4, #48]
+	ldr	r1, [r4, #20]
 	strne	r2, [r4, #48]
-	ldr	r2, [r4, #20]
-	ldrne	lr, [r4, #8]
-	ldr	r1, [r4, #12]
-	streq	lr, [r4, #8]
-	cmp	r2, #500
-	addlt	r2, r2, #100
+	ldr	lr, [r4, #12]
+	ldrne	r2, [r4, #8]
+	streq	r2, [r4, #8]
+	cmp	r1, #500
+	addlt	r1, r1, #100
 	ldr	ip, [r4, #24]
-	strlt	r2, [r4, #20]
-	add	r2, r2, r1
-	add	ip, ip, r2, asr #8
+	strlt	r1, [r4, #20]
+	add	r1, r1, lr
+	add	ip, ip, r1, asr #8
 	sub	ip, ip, #1
-	add	r1, lr, ip, lsl #9
-	lsl	r1, r1, #1
-	ldrh	r1, [r0, r1]
-	cmp	r1, #0
+	add	lr, r2, ip, lsl #9
+	lsl	lr, lr, #1
+	ldrh	lr, [r0, lr]
+	cmp	lr, #0
 	lsl	ip, ip, #9
 	beq	.L116
-	ldr	r1, [r4, #28]
-	add	lr, lr, r1
-	add	ip, lr, ip
+	ldr	lr, [r4, #28]
+	add	r2, r2, lr
+	add	ip, r2, ip
 	add	ip, r0, ip, lsl #1
-	ldrh	r1, [ip, #-2]
-	cmp	r1, #0
-	strne	r2, [r4, #12]
+	ldrh	r2, [ip, #-2]
+	cmp	r2, #0
+	strne	r1, [r4, #12]
 	beq	.L116
 .L117:
-	ldr	r7, .L184+8
+	ldr	r7, .L189+8
 	ldrh	ip, [r7]
 	tst	ip, #64
-	beq	.L172
-	ldr	r2, .L184+12
+	beq	.L176
+	ldr	r2, .L189+12
 	ldrh	r2, [r2]
 	tst	r2, #64
-	beq	.L168
-.L172:
-	ldr	lr, .L184+16
+	beq	.L172
+.L176:
+	ldr	lr, .L189+16
 .L118:
 	ldr	r0, [r4, #56]
-	ldr	r1, .L184+20
+	ldr	r1, .L189+20
 	cmp	r0, #2
-	ldr	r2, .L184+24
+	ldr	r2, .L189+24
 	movne	r2, r1
 	tst	ip, #1
 	str	r2, [lr]
 	ldr	r2, [r4, #52]
-	beq	.L173
-	ldr	r1, .L184+12
+	beq	.L177
+	ldr	r1, .L189+12
 	ldrh	r1, [r1]
 	tst	r1, #1
 	beq	.L122
-.L173:
+.L177:
 	add	r2, r2, #1
 .L121:
 	tst	ip, #2
 	str	r2, [r4, #52]
-	beq	.L127
-	ldr	r3, .L184+12
-	ldrh	r3, [r3]
-	tst	r3, #2
-	bne	.L127
-	mov	lr, #1
-	ldr	r3, .L184+28
-	add	r2, r3, #1088
-	add	r2, r2, #4
-.L129:
-	ldr	r0, [r3, #32]
-	cmp	r0, #0
-	beq	.L128
-	ldr	r1, [r3]
-	cmp	r1, #239
-	strls	lr, [r3, #52]
-.L128:
-	add	r3, r3, #84
-	cmp	r3, r2
-	bne	.L129
-.L127:
+	beq	.L124
+	ldr	r3, .L189+12
+	ldrh	r2, [r3]
+	ands	r2, r2, #2
+	beq	.L180
+.L124:
 	tst	ip, #512
-	beq	.L126
-	ldr	r3, .L184+12
+	beq	.L127
+	ldr	r3, .L189+12
 	ldrh	r3, [r3]
 	ands	r3, r3, #512
-	beq	.L176
-.L126:
+	beq	.L181
+.L127:
 	tst	ip, #256
-	beq	.L133
-	ldr	r3, .L184+12
+	beq	.L131
+	ldr	r3, .L189+12
 	ldrh	r3, [r3]
 	ands	r3, r3, #256
-	bne	.L133
+	bne	.L131
 	ldr	r2, [r4, #56]
 	cmp	r2, #0
-	beq	.L177
+	beq	.L182
 	cmp	r2, #1
-	beq	.L178
+	beq	.L183
 	cmp	r2, #2
-	beq	.L179
+	beq	.L184
 	cmp	r2, #3
-	beq	.L180
-.L133:
+	beq	.L185
+.L131:
 	ldr	r2, [r5]
 	ldr	r3, [r4, #8]
 	sub	r3, r3, r2
@@ -589,17 +574,17 @@ updatePlayer:
 	str	r2, [r4, #20]
 	str	r2, [r4, #44]
 	b	.L117
-.L176:
+.L181:
 	ldr	r2, [r4, #56]
 	cmp	r2, #0
-	beq	.L181
+	beq	.L186
 	cmp	r2, #3
-	beq	.L182
+	beq	.L187
 	cmp	r2, #2
-	beq	.L183
+	beq	.L188
 	cmp	r2, #1
-	bne	.L126
-	ldr	r1, .L184+32
+	bne	.L127
+	ldr	r1, .L189+28
 	str	r2, [r4, #60]
 	str	r3, [r4, #56]
 	str	r3, [r1, #420]
@@ -614,28 +599,28 @@ updatePlayer:
 	str	r3, [r1, #732]
 	str	r2, [r1, #40]
 	str	r2, [r1, #48]
-	b	.L126
+	b	.L127
 .L122:
 	cmp	r2, #9
-	ble	.L173
+	ble	.L177
 	mov	r0, r3
 	bl	playerAttack
 	mov	r2, #1
 	ldrh	ip, [r7]
 	b	.L121
-.L168:
+.L172:
 	ldr	r2, [r4, #44]
 	cmp	r2, #0
-	bne	.L172
+	bne	.L176
 	mov	r1, #1
-	ldr	lr, .L184+16
+	ldr	lr, .L189+16
 	ldr	r2, [r4, #20]
 	ldr	r0, [lr]
 	sub	r2, r2, r0
 	str	r2, [r4, #20]
 	str	r1, [r4, #44]
 	b	.L118
-.L175:
+.L179:
 	ldr	r2, [r4, #12]
 	sub	r1, lr, #1
 	asr	r2, r2, #8
@@ -664,7 +649,7 @@ updatePlayer:
 	suble	r2, r2, r1
 	strle	r2, [r5]
 	b	.L110
-.L174:
+.L178:
 	ldr	r1, [r4, #12]
 	asr	r1, r1, #8
 	add	ip, r2, r1, lsl #9
@@ -684,7 +669,7 @@ updatePlayer:
 	strne	lr, [r4, #8]
 .L108:
 	ldr	r2, [r5]
-	ldr	r1, .L184+36
+	ldr	r1, .L189+32
 	cmp	r2, r1
 	bgt	.L106
 	ldr	r1, [r4]
@@ -693,28 +678,32 @@ updatePlayer:
 	addgt	r2, r1, r2
 	strgt	r2, [r5]
 	b	.L106
-.L181:
+.L180:
+	ldr	r1, .L189+36
+	ldr	r0, .L189+40
+	ldr	r3, .L189+44
+	mov	lr, pc
+	bx	r3
+	mov	r0, #1
+	ldr	r3, .L189+48
+	add	r1, r3, #1088
+	add	r1, r1, #4
+.L126:
+	ldr	r2, [r3, #32]
+	cmp	r2, #0
+	beq	.L125
+	ldr	r2, [r3]
+	cmp	r2, #239
+	strls	r0, [r3, #52]
+.L125:
+	add	r3, r3, #84
+	cmp	r3, r1
+	bne	.L126
+	ldrh	ip, [r7]
+	b	.L124
+.L182:
 	mov	r1, #1
-	mov	r0, #3
-	ldr	r3, .L184+32
-	str	r2, [r4, #60]
-	str	r0, [r4, #56]
-	str	r1, [r3, #876]
-	str	r2, [r3, #40]
-	str	r2, [r3, #48]
-	str	r2, [r3, #116]
-	str	r2, [r3, #124]
-	str	r2, [r3, #192]
-	str	r2, [r3, #200]
-	str	r2, [r3, #268]
-	str	r2, [r3, #276]
-	str	r2, [r3, #344]
-	str	r2, [r3, #352]
-	str	r1, [r3, #884]
-	b	.L126
-.L177:
-	mov	r1, #1
-	ldr	r3, .L184+32
+	ldr	r3, .L189+28
 	str	r2, [r4, #60]
 	str	r1, [r4, #56]
 	str	r1, [r3, #420]
@@ -729,20 +718,50 @@ updatePlayer:
 	str	r2, [r3, #344]
 	str	r2, [r3, #352]
 	str	r1, [r3, #428]
-	b	.L133
-.L180:
+	b	.L131
+.L186:
+	mov	r1, #1
+	mov	r0, #3
+	ldr	r3, .L189+28
+	str	r2, [r4, #60]
+	str	r0, [r4, #56]
+	str	r1, [r3, #876]
+	str	r2, [r3, #40]
+	str	r2, [r3, #48]
+	str	r2, [r3, #116]
+	str	r2, [r3, #124]
+	str	r2, [r3, #192]
+	str	r2, [r3, #200]
+	str	r2, [r3, #268]
+	str	r2, [r3, #276]
+	str	r2, [r3, #344]
+	str	r2, [r3, #352]
+	str	r1, [r3, #884]
+	b	.L127
+.L185:
 	mov	r0, #1
-	ldr	r1, .L184+32
+	ldr	r1, .L189+28
 	str	r2, [r4, #60]
 	str	r3, [r4, #56]
 	str	r0, [r1, #40]
 	str	r3, [r1, #876]
 	str	r3, [r1, #884]
 	str	r0, [r1, #48]
-	b	.L133
-.L178:
+	b	.L131
+.L187:
+	mov	r1, #1
 	mov	r0, #2
-	ldr	r1, .L184+32
+	str	r2, [r4, #60]
+	ldr	r2, .L189+28
+	str	r0, [r4, #56]
+	str	r1, [r2, #800]
+	str	r3, [r2, #876]
+	str	r3, [r2, #884]
+	str	r1, [r2, #808]
+	b	.L127
+.L183:
+	mov	r0, #2
+	ldr	r1, .L189+28
 	str	r2, [r4, #60]
 	str	r0, [r4, #56]
 	str	r3, [r1, #420]
@@ -757,42 +776,31 @@ updatePlayer:
 	str	r3, [r1, #732]
 	str	r2, [r1, #800]
 	str	r2, [r1, #808]
-	b	.L133
-.L182:
-	mov	r1, #1
-	mov	r0, #2
-	str	r2, [r4, #60]
-	ldr	r2, .L184+32
-	str	r0, [r4, #56]
-	str	r1, [r2, #800]
-	str	r3, [r2, #876]
-	str	r3, [r2, #884]
-	str	r1, [r2, #808]
-	b	.L126
-.L179:
-	mov	r1, #1
-	mov	r0, #3
-	str	r2, [r4, #60]
-	ldr	r2, .L184+32
-	str	r0, [r4, #56]
-	str	r1, [r2, #876]
-	str	r3, [r2, #800]
-	str	r3, [r2, #808]
-	str	r1, [r2, #884]
-	b	.L133
-.L183:
+	b	.L131
+.L188:
 	mov	r0, #1
-	ldr	r1, .L184+32
+	ldr	r1, .L189+28
 	str	r2, [r4, #60]
 	str	r0, [r4, #56]
 	str	r0, [r1, #420]
 	str	r3, [r1, #800]
 	str	r3, [r1, #808]
 	str	r0, [r1, #428]
-	b	.L126
-.L185:
-	.align	2
+	b	.L127
 .L184:
+	mov	r1, #1
+	mov	r0, #3
+	str	r2, [r4, #60]
+	ldr	r2, .L189+28
+	str	r0, [r4, #56]
+	str	r1, [r2, #876]
+	str	r3, [r2, #800]
+	str	r3, [r2, #808]
+	str	r1, [r2, #884]
+	b	.L131
+.L190:
+	.align	2
+.L189:
 	.word	67109120
 	.word	player
 	.word	oldButtons
@@ -800,9 +808,12 @@ updatePlayer:
 	.word	.LANCHOR0
 	.word	1500
 	.word	2200
-	.word	bees
 	.word	allBalloons
 	.word	270
+	.word	21227
+	.word	dadWhistle
+	.word	playSoundB
+	.word	bees
 	.size	updatePlayer, .-updatePlayer
 	.align	2
 	.global	initHearts
@@ -816,7 +827,7 @@ initHearts:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	mov	r1, #0
 	mov	ip, #7
-	ldr	r3, .L192
+	ldr	r3, .L197
 	push	{r4, lr}
 	mov	r2, r1
 	str	r1, [r3, #12]
@@ -825,8 +836,8 @@ initHearts:
 	mov	r4, #5
 	mov	lr, #1
 	str	ip, [r3, #8]
-	b	.L187
-.L189:
+	b	.L192
+.L194:
 	tst	r2, #1
 	movne	r0, #6
 	moveq	r0, #4
@@ -834,18 +845,18 @@ initHearts:
 	str	ip, [r3, #32]
 	add	r1, r1, #7
 	add	r3, r3, #24
-.L187:
+.L192:
 	add	r2, r2, #1
 	cmp	r2, #20
 	stm	r3, {r1, r4}
 	str	r0, [r3, #16]
 	str	lr, [r3, #20]
-	bne	.L189
+	bne	.L194
 	pop	{r4, lr}
 	bx	lr
-.L193:
+.L198:
 	.align	2
-.L192:
+.L197:
 	.word	healthMeter
 	.size	initHearts, .-initHearts
 	.align	2
@@ -862,16 +873,16 @@ drawHearts:
 	ldr	r2, [r0, #20]
 	cmp	r2, #0
 	bne	drawHearts.part.0
-.L195:
+.L200:
 	mov	r2, #512
 	ldr	r1, [r0, #12]
-	ldr	r3, .L196
+	ldr	r3, .L201
 	add	r3, r3, r1, lsl #3
 	strh	r2, [r3, #104]	@ movhi
 	bx	lr
-.L197:
+.L202:
 	.align	2
-.L196:
+.L201:
 	.word	shadowOAM
 	.size	drawHearts, .-drawHearts
 	.align	2
@@ -885,33 +896,33 @@ updateHearts:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	@ link register save eliminated.
-	ldr	r3, .L205
+	ldr	r3, .L210
 	ldr	r3, [r3, #68]
 	cmp	r3, #100
 	bxeq	lr
-	ldr	r2, .L205+4
+	ldr	r2, .L210+4
 	smull	r1, r2, r3, r2
 	asr	r3, r3, #31
 	sub	r2, r3, r2, asr #1
 	add	r3, r2, #20
-	ldr	r1, .L205+8
+	ldr	r1, .L210+8
 	cmp	r3, #0
 	str	r3, [r1]
 	bxle	lr
 	mov	r0, #0
-	ldr	r3, .L205+12
+	ldr	r3, .L210+12
 	add	r2, r2, r2, lsl #1
 	add	r1, r3, #480
 	add	r2, r1, r2, lsl #3
-.L200:
+.L205:
 	str	r0, [r3, #20]
 	add	r3, r3, #24
 	cmp	r3, r2
-	bne	.L200
+	bne	.L205
 	bx	lr
-.L206:
+.L211:
 	.align	2
-.L205:
+.L210:
 	.word	player
 	.word	1717986919
 	.word	.LANCHOR1

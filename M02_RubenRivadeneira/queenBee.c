@@ -168,13 +168,13 @@ void attackQueenBee() {
 void updateStingers(STINGER *stinger) {
     if (stinger->active) {
         if (stinger->direction == LEFT) {
-            if ((stinger->origWorldCol - stinger->worldCol) <= 100) {
+            if ((stinger->origWorldCol - stinger->worldCol) <= 150) {
                 stinger->worldCol += stinger->colDelta;
             } else {
                 stinger->active = 0;
             }
         } else if (stinger->direction == RIGHT) {
-            if ((stinger->worldCol - stinger->origWorldCol) <= 100) {
+            if ((stinger->worldCol - stinger->origWorldCol) <= 150) {
                 stinger->worldCol += stinger->colDelta;
             } else if (stinger->worldCol > 512) {
                 stinger->active = 0;

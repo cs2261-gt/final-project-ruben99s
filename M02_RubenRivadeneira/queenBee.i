@@ -480,7 +480,7 @@ void updateStingers(STINGER *stinger) {
         if (collision(stinger->worldCol, stinger->worldRow, stinger->width, stinger->height,
             player.worldCol, ((player.worldRow) >> 8), player.width, player.height)) {
             stinger->active = 0;
-            player.health -= 10;
+            player.health -= 15;
             updateHearts();
         }
 

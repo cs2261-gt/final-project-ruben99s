@@ -155,7 +155,7 @@ initBalloonsAOE:
 	asr	ip, r8, #8
 	rsb	r4, r4, r8, asr #8
 .L19:
-	mov	r8, #50
+	mov	r8, #35
 	str	r8, [r3, #436]
 	mov	r8, #2
 	str	r8, [r3, #440]

@@ -488,6 +488,13 @@ void stopSoundB();
 
 extern const signed char pop[3248];
 # 13 "player.c" 2
+# 1 "dadWhistle1.h" 1
+
+
+
+
+extern const signed char dadWhistle[21227];
+# 14 "player.c" 2
 
 PLAYER player;
 HEART healthMeter[20];
@@ -669,7 +676,7 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level)
 
         jumpPower = 1500;
     }
-# 219 "player.c"
+# 220 "player.c"
     if((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0)))) && player.balloonTimer >= 10) {
         playerAttack(level);
         player.balloonTimer = 0;
@@ -679,6 +686,7 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level)
 
 
     if((!(~(oldButtons)&((1<<1))) && (~buttons & ((1<<1))))) {
+        playSoundB(dadWhistle, 21227, 0);
         for (int i = 0; i < 13; i++) {
             if (bees[i].active && bees[i].screenCol >= 0 && bees[i].screenCol < 240) {
                 bees[i].state = ANGRY;

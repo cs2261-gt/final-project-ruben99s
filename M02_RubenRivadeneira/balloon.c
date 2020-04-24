@@ -64,7 +64,7 @@ void initBalloonsAOE() {
         allBalloons[i].active = 0;
         allBalloons[i].num = i;
 
-        allBalloons[i].radius = 50;
+        allBalloons[i].radius = 35;
 
         allBalloons[i].worldCol = player.worldCol + 16;
         allBalloons[i].worldRow = SHIFTDOWN(player.worldRow);

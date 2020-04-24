@@ -337,7 +337,7 @@ updateStingers:
 	mov	r2, #0
 	ldr	r3, [r5, #68]
 	str	r2, [r4, #32]
-	sub	r3, r3, #10
+	sub	r3, r3, #15
 	ldr	r2, .L55+16
 	str	r3, [r5, #68]
 	mov	lr, pc
