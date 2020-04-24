@@ -105,25 +105,27 @@ initQueenBee:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, r5, lr}
-	mov	r5, #167
-	mov	r4, #500
-	mov	lr, #16
+	push	{r4, lr}
+	mov	lr, #167
 	mov	r2, #0
+	mov	r4, #16
 	mov	ip, #64
 	mov	r0, #1
 	ldr	r3, .L14
 	ldr	r1, [r3]
 	ldr	r3, .L14+4
-	sub	r1, r5, r1
+	sub	r1, lr, r1
 	str	r1, [r3, #4]
+	str	lr, [r3, #12]
 	ldr	r1, .L14+8
-	str	r1, [r3, #8]
-	ldr	r1, .L14+12
-	str	r5, [r3, #12]
-	str	r4, [r3, #40]
-	str	lr, [r3, #52]
-	pop	{r4, r5, lr}
+	add	lr, lr, #227
+	str	lr, [r3, #8]
+	ldr	lr, .L14+12
+	str	r1, [r3, #40]
+	ldr	r1, .L14+16
+	str	r4, [r3, #52]
+	str	r2, [lr]
+	pop	{r4, lr}
 	str	ip, [r3, #24]
 	str	ip, [r3, #28]
 	str	r0, [r3, #16]
@@ -139,8 +141,9 @@ initQueenBee:
 .L14:
 	.word	vOff
 	.word	queenBee
-	.word	394
+	.word	1500
 	.word	attackTimer
+	.word	healthTimer
 	.size	initQueenBee, .-initQueenBee
 	.align	2
 	.global	drawQueenBee
@@ -274,80 +277,123 @@ updateStingers:
 	ldr	r3, [r0, #32]
 	cmp	r3, #0
 	bxeq	lr
-	push	{r4, r5, r6, lr}
+	push	{r4, r5, r6, r7, r8, r9, r10, lr}
 	ldr	r3, [r0, #48]
 	cmp	r3, #0
-	mov	r4, r0
+	mov	r5, r0
 	sub	sp, sp, #16
 	ldr	r0, [r0, #8]
 	bne	.L37
-	ldr	r2, [r4, #40]
+	ldr	r2, [r5, #40]
 	sub	r2, r2, r0
-	cmp	r2, #150
-	strgt	r3, [r4, #32]
-	ble	.L53
+	cmp	r2, #300
+	strgt	r3, [r5, #32]
+	ble	.L60
 .L39:
-	ldr	r5, .L55
-	ldr	r3, [r5, #12]
-	ldr	r1, [r5, #28]
-	ldr	r2, [r5, #8]
-	ldr	ip, [r5, #24]
+	ldr	r4, .L64
+	ldr	r3, [r4, #12]
+	ldr	r1, [r4, #28]
+	ldr	r2, [r4, #8]
+	ldr	ip, [r4, #24]
 	asr	r3, r3, #8
 	str	r3, [sp, #4]
 	str	ip, [sp, #12]
 	str	r1, [sp, #8]
 	str	r2, [sp]
-	ldr	r6, .L55+4
-	ldr	r3, [r4, #24]
-	ldr	r2, [r4, #28]
-	ldr	r1, [r4, #12]
+	ldr	r7, .L64+4
+	ldr	r3, [r5, #24]
+	ldr	r2, [r5, #28]
+	ldr	r1, [r5, #12]
 	mov	lr, pc
-	bx	r6
+	bx	r7
 	cmp	r0, #0
-	bne	.L54
+	bne	.L62
 .L42:
-	ldr	r2, .L55+8
-	ldr	r3, .L55+12
-	ldr	r0, [r2]
-	ldr	r1, [r3]
-	ldr	r2, [r4, #8]
-	ldr	r3, [r4, #12]
-	sub	r2, r2, r0
-	sub	r3, r3, r1
-	stm	r4, {r2, r3}
+	mov	r8, #0
+	ldr	r4, .L64+8
+	add	r0, r5, #8
+	ldm	r0, {r0, r1}
+	ldr	r10, .L64+12
+	ldr	r9, .L64+16
+	add	r6, r4, #380
+.L45:
+	ldr	r3, [r4, #40]
+	cmp	r3, #0
+	bne	.L63
+.L43:
+	add	r4, r4, #76
+	cmp	r6, r4
+	bne	.L45
+	ldr	r2, .L64+20
+	ldr	r3, .L64+24
+	ldr	r2, [r2]
+	ldr	r3, [r3]
+	sub	r0, r0, r2
+	sub	r1, r1, r3
+	stm	r5, {r0, r1}
 	add	sp, sp, #16
 	@ sp needed
-	pop	{r4, r5, r6, lr}
+	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
 	bx	lr
 .L37:
 	cmp	r3, #1
 	bne	.L39
-	ldr	r3, [r4, #40]
+	ldr	r3, [r5, #40]
 	sub	r3, r0, r3
-	cmp	r3, #150
+	cmp	r3, #300
 	movgt	r3, #0
-	strgt	r3, [r4, #32]
+	strgt	r3, [r5, #32]
 	bgt	.L39
-.L53:
-	ldr	r3, [r4, #16]
+.L60:
+	ldr	r3, [r5, #16]
 	add	r0, r0, r3
-	str	r0, [r4, #8]
+	str	r0, [r5, #8]
 	b	.L39
-.L54:
+.L63:
+	add	r3, r4, #24
+	ldm	r3, {r3, ip}
+	ldr	r2, [r4, #12]
+	str	r3, [sp, #12]
+	ldr	r3, [r4, #8]
+	stmib	sp, {r2, ip}
+	str	r3, [sp]
+	ldr	r3, [r5, #24]
+	ldr	r2, [r5, #28]
+	mov	lr, pc
+	bx	r7
+	cmp	r0, #0
+	bne	.L44
+.L61:
+	add	r0, r5, #8
+	ldm	r0, {r0, r1}
+	b	.L43
+.L44:
+	str	r8, [r4, #40]
 	mov	r2, #0
-	ldr	r3, [r5, #68]
-	str	r2, [r4, #32]
-	sub	r3, r3, #10
-	ldr	r2, .L55+16
-	str	r3, [r5, #68]
+	mov	r1, #3248
+	mov	r0, r10
+	str	r8, [r5, #32]
+	mov	lr, pc
+	bx	r9
+	b	.L61
+.L62:
+	mov	r2, #0
+	ldr	r3, [r4, #68]
+	str	r2, [r5, #32]
+	sub	r3, r3, #15
+	ldr	r2, .L64+28
+	str	r3, [r4, #68]
 	mov	lr, pc
 	bx	r2
 	b	.L42
-.L56:
+.L65:
 	.align	2
-.L55:
+.L64:
 	.word	player
 	.word	collision
+	.word	allBalloons
+	.word	pop
+	.word	playSoundB
 	.word	hOff
 	.word	vOff
 	.word	updateHearts
@@ -362,11 +408,11 @@ updateStingerPosition:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r2, .L62
+	ldr	r2, .L71
 	ldr	r1, [r2, #44]
 	cmp	r1, #0
 	push	{r4, lr}
-	bne	.L58
+	bne	.L67
 	mvn	lr, #1
 	mov	ip, #30
 	add	r2, r2, #8
@@ -381,16 +427,16 @@ updateStingerPosition:
 	str	r3, [r0, #44]
 	pop	{r4, lr}
 	bx	lr
-.L58:
+.L67:
 	cmp	r1, #1
-	beq	.L60
+	beq	.L69
 	add	r2, r0, #8
 	ldm	r2, {r2, r3}
 	pop	{r4, lr}
 	str	r2, [r0, #40]
 	str	r3, [r0, #44]
 	bx	lr
-.L60:
+.L69:
 	mov	r4, #2
 	mov	lr, #31
 	ldr	r3, [r2, #12]
@@ -406,9 +452,9 @@ updateStingerPosition:
 	str	r3, [r0, #44]
 	pop	{r4, lr}
 	bx	lr
-.L63:
+.L72:
 	.align	2
-.L62:
+.L71:
 	.word	queenBee
 	.size	updateStingerPosition, .-updateStingerPosition
 	.align	2
@@ -422,34 +468,34 @@ attackQueenBee:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	@ link register save eliminated.
-	ldr	r3, .L70
+	ldr	r3, .L79
 	ldr	r2, [r3, #32]
 	cmp	r2, #0
-	beq	.L67
+	beq	.L76
 	ldr	r2, [r3, #88]
 	cmp	r2, #0
-	beq	.L68
+	beq	.L77
 	ldr	r2, [r3, #144]
 	cmp	r2, #0
 	moveq	r2, #2
 	addeq	r0, r3, #112
 	bxne	lr
-.L65:
+.L74:
 	mov	r1, #1
 	rsb	r2, r2, r2, lsl #3
 	add	r3, r3, r2, lsl #3
 	str	r1, [r3, #32]
 	b	updateStingerPosition
-.L67:
+.L76:
 	mov	r0, r3
-	b	.L65
-.L68:
+	b	.L74
+.L77:
 	mov	r2, #1
 	add	r0, r3, #56
-	b	.L65
-.L71:
+	b	.L74
+.L80:
 	.align	2
-.L70:
+.L79:
 	.word	stingers
 	.size	attackQueenBee, .-attackQueenBee
 	.align	2
@@ -462,179 +508,259 @@ updateQueenBee:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, r5, r6, r7, r8, r9, r10, lr}
-	ldr	r5, .L125
-	ldr	r7, .L125+4
-	ldr	r2, [r5, #8]
-	ldr	r4, [r7]
-	sub	r4, r2, r4
+	push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
+	ldr	r5, .L139
+	ldr	r9, .L139+4
+	ldr	r3, [r5, #8]
+	ldr	r4, [r9]
+	sub	r4, r3, r4
 	cmp	r4, #239
 	mov	r6, r0
-	sub	sp, sp, #16
-	bhi	.L73
-	ldr	r3, [r5, #36]
-	cmp	r3, #0
-	beq	.L119
-.L73:
-	ldr	r3, [r5, #32]
-	cmp	r3, #0
-	ldr	r1, [r5, #12]
-	bne	.L75
-.L90:
-	ldr	r3, .L125+8
-	ldr	r2, [r5, #44]
-	ldr	r3, [r3]
+	sub	sp, sp, #20
+	bhi	.L82
+	ldr	r2, [r5, #36]
 	cmp	r2, #0
-	sub	r3, r1, r3
-	str	r3, [r5, #4]
+	beq	.L130
+.L82:
+	ldr	r2, [r5, #32]
+	cmp	r2, #0
+	ldr	r2, [r5, #12]
+	bne	.L84
+.L98:
+	ldr	r3, .L139+8
+	ldr	r1, [r5, #44]
+	ldr	r3, [r3]
+	cmp	r1, #0
+	sub	r2, r2, r3
 	moveq	r3, #16
 	str	r4, [r5]
+	str	r2, [r5, #4]
 	streq	r3, [r5, #52]
-	beq	.L89
-	cmp	r2, #1
+	beq	.L101
+	cmp	r1, #1
 	moveq	r3, #24
 	streq	r3, [r5, #52]
-.L89:
-	ldr	r0, .L125+12
+.L101:
+	ldr	r0, .L139+12
 	bl	updateStingers
-	ldr	r0, .L125+16
+	ldr	r0, .L139+16
 	bl	updateStingers
-	ldr	r0, .L125+20
-	add	sp, sp, #16
+	ldr	r0, .L139+20
+	add	sp, sp, #20
 	@ sp needed
-	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
+	pop	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	b	updateStingers
-.L119:
-	ldr	r8, .L125+24
-	ldr	r3, [r8]
-	cmp	r3, #0
-	bne	.L74
-	ldr	r3, .L125+28
+.L130:
+	ldr	r7, .L139+24
+	ldr	r2, [r7]
+	cmp	r2, #0
+	bne	.L83
+	ldr	r3, .L139+28
 	mov	lr, pc
 	bx	r3
 	mov	r2, #1
-	ldr	r3, .L125+32
-	ldr	r1, .L125+36
-	ldr	r0, .L125+40
+	ldr	r3, .L139+32
+	ldr	r1, .L139+36
+	ldr	r0, .L139+40
 	mov	lr, pc
 	bx	r3
-	mov	r3, #1
-	ldr	r2, [r5, #8]
-	str	r3, [r8]
-.L74:
-	mov	r3, #1
+	mov	r2, #1
+	ldr	r3, [r5, #8]
+	str	r2, [r7]
+.L83:
+	mov	r2, #1
 	str	r4, [r5]
-	str	r3, [r5, #32]
-	ldr	r1, [r5, #12]
-.L75:
-	ldr	r3, [r5, #40]
-	cmp	r3, #0
-	ble	.L120
-	ldr	r3, .L125+44
-	ldr	r3, [r3, #8]
-	cmp	r3, r2
-	movgt	r3, #1
-	movle	r3, #0
-	str	r3, [r5, #44]
-	lsl	r3, r1, #9
-	bgt	.L121
-	sub	r0, r2, #1
-	add	r3, r0, r3
-	lsl	r3, r3, #1
-	ldrh	r3, [r6, r3]
-	cmp	r3, #0
-	bne	.L122
-.L78:
-	ldr	r6, .L125+48
-	ldr	r0, .L125+52
+	str	r2, [r5, #32]
+	ldr	r2, [r5, #12]
+.L84:
+	ldr	r1, [r5, #40]
+	cmp	r1, #0
+	ble	.L131
+	ldr	r8, .L139+44
+	ldr	r1, [r8, #8]
+	cmp	r1, r3
+	movgt	r1, #1
+	movle	r1, #0
+	str	r1, [r5, #44]
+	lsl	r1, r2, #9
+	bgt	.L132
+	sub	r0, r3, #1
+	add	r1, r0, r1
+	lsl	r1, r1, #1
+	ldrh	r1, [r6, r1]
+	cmp	r1, #0
+	bne	.L133
+.L87:
+	ldr	r6, .L139+48
+	ldr	r0, .L139+52
 	ldr	r3, [r6]
-	ldr	r2, .L125+56
-	mla	r2, r3, r2, r0
-	ldr	r0, .L125+60
-	cmp	r0, r2, ror #2
+	ldr	r1, .L139+56
+	mla	r1, r3, r1, r0
+	ldr	r0, .L139+60
+	cmp	r0, r1, ror #2
 	addcc	r3, r3, #1
-	bcs	.L123
-.L80:
-	ldr	r4, .L125+64
+	bcs	.L134
+.L89:
+	ldr	r4, .L139+64
 	str	r3, [r6]
-	ldr	r2, [r5, #8]
-	ldr	r8, .L125+68
-	ldr	r10, .L125+72
-	ldr	r9, .L125+76
+	ldr	r0, [r5, #8]
+	ldr	ip, [r5, #28]
+	ldr	lr, [r5, #24]
+	ldr	r10, .L139+68
+	ldr	fp, .L139+72
 	add	r6, r4, #912
-	b	.L87
-.L81:
+	b	.L96
+.L90:
 	add	r4, r4, #76
 	cmp	r4, r6
-	beq	.L124
-.L87:
+	beq	.L135
+.L96:
 	ldr	r3, [r4, #32]
 	cmp	r3, #0
-	beq	.L81
-	ldr	r3, [r4, #40]
-	cmp	r3, #0
-	bne	.L81
-	add	r0, r5, #24
-	ldm	r0, {r0, r3}
-	str	r1, [sp, #4]
-	str	r2, [sp]
-	str	r0, [sp, #12]
-	str	r3, [sp, #8]
+	beq	.L90
+	ldr	r7, [r4, #40]
+	cmp	r7, #0
+	bne	.L90
+	stm	sp, {r0, r2, ip, lr}
 	ldr	r3, [r4, #16]
 	ldr	r2, [r4, #20]
 	ldm	r4, {r0, r1}
 	mov	lr, pc
-	bx	r8
+	bx	r10
 	cmp	r0, #0
-	beq	.L118
+	bne	.L91
+.L129:
+	add	r4, r4, #76
+	add	r0, r5, #8
+	cmp	r4, r6
+	ldm	r0, {r0, r2}
+	ldr	ip, [r5, #28]
+	ldr	lr, [r5, #24]
+	bne	.L96
+.L135:
+	ldr	r1, [r8, #12]
+	stm	sp, {r0, r2, ip, lr}
+	ldr	r3, [r8, #24]
+	ldr	r2, [r8, #28]
+	ldr	r0, [r8, #8]
+	asr	r1, r1, #8
+	mov	lr, pc
+	bx	r10
+	cmp	r0, #0
+	bne	.L97
+	ldr	r3, [r9]
+	ldr	r4, [r5, #8]
+	ldr	r2, [r5, #12]
+	sub	r4, r4, r3
+	b	.L98
+.L131:
+	mov	r1, #0
+	mov	ip, #1
+	ldr	r0, .L139+76
+	str	r1, [r5, #32]
+	ldr	r1, [r0]
+	ldr	r4, [r9]
+	sub	r1, r1, #1
+	str	r1, [r0]
+	str	ip, [r5, #36]
+	sub	r4, r3, r4
+	b	.L98
+.L91:
+	ldr	r3, .L139+80
+	mov	r2, r7
+	mov	r1, #3248
+	mov	r0, fp
+	mov	lr, pc
+	bx	r3
 	ldr	r3, [r4, #36]
 	cmp	r3, #0
-	bne	.L83
+	beq	.L136
+	cmp	r3, #1
+	beq	.L137
+.L93:
+	mov	r3, #0
+	str	r3, [r4, #32]
+	b	.L129
+.L97:
+	ldr	r6, .L139+84
+	ldr	r1, .L139+88
+	ldr	r2, .L139+92
+	ldr	r3, [r6]
+	mla	r2, r3, r2, r1
+	ldr	r1, .L139+96
+	cmp	r1, r2, ror #2
+	bcs	.L138
+.L99:
+	ldr	r1, [r9]
+	ldr	r4, [r5, #8]
+	add	r3, r3, #1
+	str	r3, [r6]
+	ldr	r2, [r5, #12]
+	sub	r4, r4, r1
+	b	.L98
+.L132:
+	ldr	r0, [r5, #28]
+	add	r0, r3, r0
+	add	r1, r0, r1
+	lsl	r1, r1, #1
+	ldrh	r1, [r6, r1]
+	cmp	r1, #0
+	beq	.L87
+	ldr	r1, [r5, #24]
+	add	r1, r2, r1
+	sub	r1, r1, #1
+	add	r1, r0, r1, lsl #9
+	lsl	r1, r1, #1
+	ldrh	r1, [r6, r1]
+	cmp	r1, #0
+	ldrne	r1, [r5, #16]
+	addne	r3, r1, r3
+	strne	r3, [r5, #8]
+	b	.L87
+.L136:
 	ldr	r3, [r5, #40]
 	sub	r3, r3, #100
 	str	r3, [r5, #40]
-.L84:
+	b	.L93
+.L133:
+	ldr	r1, [r5, #24]
+	add	r1, r2, r1
+	sub	r1, r1, #1
+	add	r0, r0, r1, lsl #9
+	lsl	r0, r0, #1
+	ldrh	r1, [r6, r0]
+	cmp	r1, #0
+	ldrne	r1, [r5, #16]
+	subne	r3, r3, r1
+	strne	r3, [r5, #8]
+	b	.L87
+.L138:
 	mov	r2, #0
-	mov	r1, #3248
-	mov	r0, r10
-	str	r2, [r4, #32]
+	ldr	r3, [r8, #68]
+	sub	r3, r3, #5
+	str	r3, [r8, #68]
+	ldr	r3, .L139+100
+	str	r2, [r6]
 	mov	lr, pc
-	bx	r9
-.L118:
-	add	r4, r4, #76
-	cmp	r4, r6
-	ldr	r1, [r5, #12]
-	ldr	r2, [r5, #8]
-	bne	.L87
-.L124:
-	ldr	r4, [r7]
-	sub	r4, r2, r4
-	b	.L90
-.L120:
-	mov	r3, #0
-	mov	ip, #1
-	ldr	r0, .L125+80
-	str	r3, [r5, #32]
-	ldr	r3, [r0]
-	ldr	r4, [r7]
-	sub	r3, r3, #1
-	str	r3, [r0]
-	str	ip, [r5, #36]
-	sub	r4, r2, r4
-	b	.L90
-.L83:
-	cmp	r3, #1
-	bne	.L84
+	bx	r3
+	ldr	r3, [r6]
+	b	.L99
+.L134:
+	bl	attackQueenBee
+	mov	r3, #1
+	ldr	r2, [r5, #12]
+	b	.L89
+.L137:
 	ldr	ip, [r4]
 	ldr	r0, [r4, #20]
-	ldr	r3, .L125+84
+	ldr	r3, .L139+104
 	ldr	r2, [r4, #48]
 	add	r0, ip, r0
 	add	lr, r3, #1088
 	add	r0, r0, r2
 	sub	ip, ip, r2
 	add	lr, lr, #4
-.L86:
+.L95:
 	ldr	r2, [r3, #8]
 	cmp	r2, r0
 	movlt	r1, #1
@@ -647,50 +773,14 @@ updateQueenBee:
 	strne	r2, [r3, #60]
 	add	r3, r3, #84
 	cmp	lr, r3
-	bne	.L86
+	bne	.L95
 	ldr	r3, [r5, #40]
 	sub	r3, r3, #34
 	str	r3, [r5, #40]
-	b	.L84
-.L121:
-	ldr	r0, [r5, #28]
-	add	r0, r2, r0
-	add	r3, r0, r3
-	lsl	r3, r3, #1
-	ldrh	r3, [r6, r3]
-	cmp	r3, #0
-	beq	.L78
-	ldr	r3, [r5, #24]
-	add	r3, r1, r3
-	sub	r3, r3, #1
-	add	r3, r0, r3, lsl #9
-	lsl	r3, r3, #1
-	ldrh	r3, [r6, r3]
-	cmp	r3, #0
-	ldrne	r3, [r5, #16]
-	addne	r2, r3, r2
-	strne	r2, [r5, #8]
-	b	.L78
-.L122:
-	ldr	r3, [r5, #24]
-	add	r3, r1, r3
-	sub	r3, r3, #1
-	add	r0, r0, r3, lsl #9
-	lsl	r0, r0, #1
-	ldrh	r3, [r6, r0]
-	cmp	r3, #0
-	ldrne	r3, [r5, #16]
-	subne	r2, r2, r3
-	strne	r2, [r5, #8]
-	b	.L78
-.L123:
-	bl	attackQueenBee
-	mov	r3, #1
-	ldr	r1, [r5, #12]
-	b	.L80
-.L126:
+	b	.L93
+.L140:
 	.align	2
-.L125:
+.L139:
 	.word	queenBee
 	.word	hOff
 	.word	vOff
@@ -710,10 +800,16 @@ updateQueenBee:
 	.word	allBalloons+8
 	.word	collision
 	.word	pop
-	.word	playSoundB
 	.word	remainingEnemiesL2
+	.word	playSoundB
+	.word	healthTimer
+	.word	28633112
+	.word	-1775253149
+	.word	14316556
+	.word	updateHearts
 	.word	bees
 	.size	updateQueenBee, .-updateQueenBee
+	.comm	healthTimer,4,4
 	.comm	attackTimer,4,4
 	.global	queenBeeSpawned
 	.comm	stingers,168,4

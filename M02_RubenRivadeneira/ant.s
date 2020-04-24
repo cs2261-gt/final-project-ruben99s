@@ -72,43 +72,42 @@ initAnts:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	mov	r3, #0
 	push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
-	mov	r6, #180
+	mov	r7, #180
 	mov	r0, #110
-	mov	fp, #14
-	mov	r10, #15
-	mov	r9, #1
-	mov	r8, #2
-	mov	r7, #30
-	mov	r5, #10
-	mov	r4, #24
+	mov	r10, #14
+	mov	r9, #15
+	mov	ip, #2
+	mov	r8, #30
+	mov	r6, #10
+	mov	r5, #24
+	mov	r4, #3
 	ldr	lr, .L13
-	ldr	ip, .L13+4
+	ldr	fp, .L13+4
 	ldr	lr, [lr]
 	mov	r2, r3
 	mov	r1, r3
-	str	r3, [ip]
+	str	r3, [fp]
 	ldr	r3, .L13+8
-	sub	lr, r6, lr
+	sub	lr, r7, lr
 .L10:
-	mov	ip, #3
 	str	r2, [r3, #52]
 	add	r2, r2, #1
 	cmp	r2, #15
 	str	r0, [r3, #8]
-	str	fp, [r3, #24]
-	str	r10, [r3, #28]
-	str	r9, [r3, #16]
-	str	r8, [r3, #20]
-	str	r7, [r3, #56]
+	str	r10, [r3, #24]
+	str	r9, [r3, #28]
+	str	ip, [r3, #16]
+	str	ip, [r3, #20]
+	str	r8, [r3, #56]
 	str	r1, [r3, #48]
-	str	r6, [r3, #12]
+	str	r7, [r3, #12]
 	str	lr, [r3, #4]
 	str	r1, [r3, #32]
 	str	r1, [r3, #36]
 	str	r1, [r3, #60]
-	str	r5, [r3, #64]
-	str	r4, [r3, #68]
-	str	ip, [r3, #72]
+	str	r6, [r3, #64]
+	str	r5, [r3, #68]
+	str	r4, [r3, #72]
 	add	r0, r0, #15
 	add	r3, r3, #76
 	bne	.L10
@@ -132,9 +131,9 @@ updateAnts:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
-	ldr	r8, .L73
+	ldr	r9, .L75
 	ldr	r2, [r0, #8]
-	ldr	r3, [r8]
+	ldr	r3, [r9]
 	sub	r3, r2, r3
 	cmp	r3, #239
 	mov	r5, r0
@@ -148,7 +147,7 @@ updateAnts:
 	ldr	ip, [r5, #32]
 	cmp	ip, #0
 	bne	.L17
-	ldr	r2, .L73+4
+	ldr	r2, .L75+4
 	ldr	r2, [r2]
 	sub	r0, r0, r2
 	str	r3, [r5]
@@ -166,8 +165,8 @@ updateAnts:
 	ldr	ip, [r5, #56]
 	cmp	ip, #0
 	ble	.L70
-	ldr	r7, .L73+8
-	ldr	r3, [r7, #8]
+	ldr	r8, .L75+8
+	ldr	r3, [r8, #8]
 	cmp	r2, r3
 	movlt	lr, #1
 	movge	lr, #0
@@ -206,10 +205,9 @@ updateAnts:
 	addne	r0, r0, r4
 	strne	r0, [r5, #12]
 .L22:
-	ldr	r4, .L73+12
-	mov	fp, #0
-	ldr	r9, .L73+16
-	ldr	r10, .L73+20
+	ldr	r4, .L75+12
+	ldr	r10, .L75+16
+	ldr	fp, .L75+20
 	add	r6, r4, #912
 	b	.L31
 .L23:
@@ -220,8 +218,8 @@ updateAnts:
 	ldr	r3, [r4, #32]
 	cmp	r3, #0
 	beq	.L23
-	ldr	r3, [r4, #40]
-	cmp	r3, #0
+	ldr	r7, [r4, #40]
+	cmp	r7, #0
 	bne	.L23
 	stmib	sp, {r0, lr}
 	str	ip, [sp, #12]
@@ -230,23 +228,9 @@ updateAnts:
 	ldr	r2, [r4, #20]
 	ldm	r4, {r0, r1}
 	mov	lr, pc
-	bx	r9
+	bx	r10
 	cmp	r0, #0
-	beq	.L68
-	ldr	r3, [r4, #36]
-	cmp	r3, #0
-	bne	.L25
-	ldr	r3, [r5, #56]
-	sub	r3, r3, #100
-	str	r3, [r5, #56]
-.L26:
-	mov	r2, #0
-	mov	r1, #3248
-	mov	r0, r10
-	str	fp, [r4, #32]
-	ldr	r3, .L73+24
-	mov	lr, pc
-	bx	r3
+	bne	.L24
 .L68:
 	add	r4, r4, #76
 	add	ip, r5, #24
@@ -256,25 +240,25 @@ updateAnts:
 	ldm	ip, {ip, lr}
 	bne	.L31
 .L71:
-	ldr	r1, [r7, #12]
+	ldr	r1, [r8, #12]
 	stmib	sp, {r0, lr}
 	str	r2, [sp]
 	str	ip, [sp, #12]
-	ldr	r3, [r7, #24]
-	ldr	r2, [r7, #28]
-	ldr	r0, [r7, #8]
+	ldr	r3, [r8, #24]
+	ldr	r2, [r8, #28]
+	ldr	r0, [r8, #8]
 	asr	r1, r1, #8
 	mov	lr, pc
-	bx	r9
+	bx	r10
 	cmp	r0, #0
 	bne	.L32
-	ldr	r3, [r8]
+	ldr	r3, [r9]
 	ldr	r2, [r5, #8]
 	ldr	r0, [r5, #32]
 	sub	r2, r2, r3
 	ldr	r3, [r5, #12]
 .L33:
-	ldr	r1, .L73+4
+	ldr	r1, .L75+4
 	ldr	r1, [r1]
 	cmp	r0, #0
 	sub	r3, r3, r1
@@ -303,8 +287,8 @@ updateAnts:
 .L70:
 	mov	r4, #0
 	mov	lr, #1
-	ldr	ip, .L73+28
-	ldr	r2, .L73+4
+	ldr	ip, .L75+24
+	ldr	r2, .L75+4
 	ldr	r1, [ip]
 	ldr	r2, [r2]
 	sub	r1, r1, #1
@@ -318,16 +302,32 @@ updateAnts:
 	@ sp needed
 	pop	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	bx	lr
+.L24:
+	ldr	r3, .L75+28
+	mov	r2, r7
+	mov	r1, #3248
+	mov	r0, fp
+	mov	lr, pc
+	bx	r3
+	ldr	r3, [r4, #36]
+	cmp	r3, #0
+	beq	.L72
+	cmp	r3, #1
+	beq	.L73
+.L26:
+	mov	r3, #0
+	str	r3, [r4, #32]
+	b	.L68
 .L32:
-	ldr	r4, .L73+32
-	ldr	r1, .L73+36
-	ldr	r2, .L73+40
+	ldr	r4, .L75+32
+	ldr	r1, .L75+36
+	ldr	r2, .L75+40
 	ldr	r3, [r4]
 	mla	r2, r3, r2, r1
 	cmp	r1, r2, ror #1
-	bcs	.L72
+	bcs	.L74
 .L34:
-	ldr	r1, [r8]
+	ldr	r1, [r9]
 	ldr	r2, [r5, #8]
 	add	r3, r3, #1
 	str	r3, [r4]
@@ -335,12 +335,26 @@ updateAnts:
 	ldr	r3, [r5, #12]
 	sub	r2, r2, r1
 	b	.L33
-.L25:
-	cmp	r3, #1
-	bne	.L26
+.L72:
+	ldr	r3, [r5, #56]
+	sub	r3, r3, #100
+	str	r3, [r5, #56]
+	b	.L26
+.L74:
+	mov	r2, #0
+	ldr	r3, [r8, #68]
+	sub	r3, r3, #5
+	str	r3, [r8, #68]
+	ldr	r3, .L75+44
+	str	r2, [r4]
+	mov	lr, pc
+	bx	r3
+	ldr	r3, [r4]
+	b	.L34
+.L73:
 	ldr	ip, [r4]
 	ldr	r0, [r4, #20]
-	ldr	r3, .L73+44
+	ldr	r3, .L75+48
 	ldr	r2, [r4, #48]
 	add	r0, ip, r0
 	add	lr, r3, #1136
@@ -362,33 +376,22 @@ updateAnts:
 	cmp	lr, r3
 	bne	.L29
 	b	.L26
-.L72:
-	mov	r2, #0
-	ldr	r3, [r7, #68]
-	sub	r3, r3, #5
-	str	r3, [r7, #68]
-	ldr	r3, .L73+48
-	str	r2, [r4]
-	mov	lr, pc
-	bx	r3
-	ldr	r3, [r4]
-	b	.L34
-.L74:
+.L76:
 	.align	2
-.L73:
+.L75:
 	.word	hOff
 	.word	vOff
 	.word	player
 	.word	allBalloons+8
 	.word	collision
 	.word	pop
-	.word	playSoundB
 	.word	remainingEnemiesL1
+	.word	playSoundB
 	.word	healthTimer
 	.word	17179868
 	.word	652835029
-	.word	ants
 	.word	updateHearts
+	.word	ants
 	.size	updateAnts, .-updateAnts
 	.align	2
 	.global	animateAnts
@@ -420,12 +423,12 @@ drawAnt:
 	ldr	r3, [r0, #52]
 	cmp	r2, #0
 	add	r3, r3, #52
-	beq	.L78
+	beq	.L80
 	push	{r4, lr}
 	ldr	r2, [r0]
 	ldr	r4, [r0, #68]
 	ldr	r1, [r0, #64]
-	ldr	ip, .L84
+	ldr	ip, .L86
 	lsl	r2, r2, #23
 	ldrb	lr, [r0, #4]	@ zero_extendqisi2
 	lsr	r2, r2, #23
@@ -438,15 +441,15 @@ drawAnt:
 	strh	r1, [r3, #4]	@ movhi
 	pop	{r4, lr}
 	bx	lr
-.L78:
+.L80:
 	mov	r1, #512
-	ldr	r2, .L84
+	ldr	r2, .L86
 	lsl	r3, r3, #3
 	strh	r1, [r2, r3]	@ movhi
 	bx	lr
-.L85:
+.L87:
 	.align	2
-.L84:
+.L86:
 	.word	shadowOAM
 	.size	drawAnt, .-drawAnt
 	.comm	healthTimer,4,4

@@ -334,7 +334,7 @@ void initAnts() {
         ants[i].num = i;
         ants[i].height = 14;
         ants[i].width = 15;
-        ants[i].colDelta = 1;
+        ants[i].colDelta = 2;
         ants[i].rowDelta = 2;
         ants[i].health = 30;
         ants[i].direction = LEFT;
@@ -409,6 +409,8 @@ void updateAnts(ANT *ant, const unsigned short *bitmap) {
                 if (collision(allBalloons[i].worldCol, allBalloons[i].worldRow, allBalloons[i].width, allBalloons[i].height,
                 ant->worldCol, ant->worldRow, ant->width, ant->height)) {
 
+                    playSoundB(pop, 3248, 0);
+
                     if (allBalloons[i].type == SINGLE) {
                         ant->health -= 100;
                     }
@@ -424,7 +426,7 @@ void updateAnts(ANT *ant, const unsigned short *bitmap) {
                     }
 
                     allBalloons[i].active = 0;
-                    playSoundB(pop, 3248, 0);
+
                 }
             }
         }

@@ -15,7 +15,7 @@ void initAnts() {
         ants[i].num = i;
         ants[i].height = 14;
         ants[i].width = 15;
-        ants[i].colDelta = 1; 
+        ants[i].colDelta = 2; 
         ants[i].rowDelta = 2;
         ants[i].health = 30;
         ants[i].direction = LEFT;
@@ -91,7 +91,7 @@ void updateAnts(ANT *ant, const unsigned short *bitmap) {
                 ant->worldCol, ant->worldRow, ant->width, ant->height)) {
 
                     playSoundB(pop, POPLEN, 0);
-                    
+
                     if (allBalloons[i].type == SINGLE) {
                         ant->health -= 100;
                     }

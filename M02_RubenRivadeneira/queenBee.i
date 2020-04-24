@@ -426,6 +426,7 @@ STINGER stingers[3];
 int queenBeeSpawned = 0;
 
 int attackTimer;
+int healthTimer;
 
 void initQueenBee() {
     queenBee.height = 64;
@@ -435,7 +436,7 @@ void initQueenBee() {
     queenBee.screenRow = queenBee.worldRow - vOff;
     queenBee.colDelta = 1;
     queenBee.rowDelta = 1;
-    queenBee.health = 500;
+    queenBee.health = 1500;
     queenBee.direction = LEFT;
     queenBee.aniState = 16;
     queenBee.curFrame = 0;
@@ -443,6 +444,7 @@ void initQueenBee() {
     queenBee.erased = 0;
 
     attackTimer = 0;
+    healthTimer = 0;
 
     initStingers();
 }
@@ -529,6 +531,8 @@ void updateQueenBee(const unsigned short *bitmap) {
                 if (collision(allBalloons[i].worldCol, allBalloons[i].worldRow, allBalloons[i].width, allBalloons[i].height,
                 queenBee.worldCol, queenBee.worldRow, queenBee.width, queenBee.height)) {
 
+                    playSoundB(pop, 3248, 0);
+
                     if (allBalloons[i].type == SINGLE) {
                         queenBee.health -= 100;
                     }
@@ -545,9 +549,20 @@ void updateQueenBee(const unsigned short *bitmap) {
                     }
 
                     allBalloons[i].active = 0;
-                    playSoundB(pop, 3248, 0);
+
                 }
             }
+        }
+
+
+        if (collision(player.worldCol, ((player.worldRow) >> 8), player.width, player.height,
+            queenBee.worldCol, queenBee.worldRow, queenBee.width, queenBee.height)) {
+                if (healthTimer % 300 == 0) {
+                    player.health -= 5;
+                    healthTimer = 0;
+                    updateHearts();
+                }
+                healthTimer++;
         }
 
 
@@ -608,13 +623,13 @@ void attackQueenBee() {
 void updateStingers(STINGER *stinger) {
     if (stinger->active) {
         if (stinger->direction == LEFT) {
-            if ((stinger->origWorldCol - stinger->worldCol) <= 150) {
+            if ((stinger->origWorldCol - stinger->worldCol) <= 300) {
                 stinger->worldCol += stinger->colDelta;
             } else {
                 stinger->active = 0;
             }
         } else if (stinger->direction == RIGHT) {
-            if ((stinger->worldCol - stinger->origWorldCol) <= 150) {
+            if ((stinger->worldCol - stinger->origWorldCol) <= 300) {
                 stinger->worldCol += stinger->colDelta;
             } else if (stinger->worldCol > 512) {
                 stinger->active = 0;
@@ -623,11 +638,23 @@ void updateStingers(STINGER *stinger) {
             }
         }
 
+
         if (collision(stinger->worldCol, stinger->worldRow, stinger->width, stinger->height,
             player.worldCol, ((player.worldRow) >> 8), player.width, player.height)) {
             stinger->active = 0;
-            player.health -= 10;
+            player.health -= 15;
             updateHearts();
+        }
+
+
+        for (int i = 0; i < 5; i++) {
+            if (allBalloons[i].active && collision(stinger->worldCol, stinger->worldRow, stinger->width, stinger->height,
+                allBalloons[i].worldCol, allBalloons[i].worldRow, allBalloons[i].width, allBalloons[i].height)) {
+
+                    allBalloons[i].active = 0;
+                    stinger->active = 0;
+                    playSoundB(pop, 3248, 0);
+            }
         }
 
         stinger->screenCol = stinger->worldCol - hOff;
