@@ -283,7 +283,7 @@ updateStingers:
 	bne	.L37
 	ldr	r2, [r4, #40]
 	sub	r2, r2, r0
-	cmp	r2, #100
+	cmp	r2, #150
 	strgt	r3, [r4, #32]
 	ble	.L53
 .L39:
@@ -324,7 +324,7 @@ updateStingers:
 	bne	.L39
 	ldr	r3, [r4, #40]
 	sub	r3, r0, r3
-	cmp	r3, #100
+	cmp	r3, #150
 	movgt	r3, #0
 	strgt	r3, [r4, #32]
 	bgt	.L39
@@ -337,7 +337,7 @@ updateStingers:
 	mov	r2, #0
 	ldr	r3, [r5, #68]
 	str	r2, [r4, #32]
-	sub	r3, r3, #15
+	sub	r3, r3, #10
 	ldr	r2, .L55+16
 	str	r3, [r5, #68]
 	mov	lr, pc
@@ -462,152 +462,235 @@ updateQueenBee:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, r5, r6, r7, r8, lr}
-	ldr	r4, .L107
-	ldr	r7, .L107+4
-	ldr	r2, [r4, #8]
-	ldr	r5, [r7]
-	sub	r5, r2, r5
-	cmp	r5, #239
+	push	{r4, r5, r6, r7, r8, r9, r10, lr}
+	ldr	r5, .L125
+	ldr	r7, .L125+4
+	ldr	r2, [r5, #8]
+	ldr	r4, [r7]
+	sub	r4, r2, r4
+	cmp	r4, #239
 	mov	r6, r0
+	sub	sp, sp, #16
 	bhi	.L73
-	ldr	r3, [r4, #36]
+	ldr	r3, [r5, #36]
 	cmp	r3, #0
-	beq	.L103
+	beq	.L119
 .L73:
-	ldr	r3, [r4, #32]
+	ldr	r3, [r5, #32]
 	cmp	r3, #0
-	ldr	r0, [r4, #12]
+	ldr	r1, [r5, #12]
 	bne	.L75
-.L76:
-	ldr	r1, [r4, #44]
-.L83:
-	ldr	r3, .L107+8
+.L90:
+	ldr	r3, .L125+8
+	ldr	r2, [r5, #44]
 	ldr	r3, [r3]
-	cmp	r1, #0
-	sub	r3, r0, r3
-	str	r3, [r4, #4]
+	cmp	r2, #0
+	sub	r3, r1, r3
+	str	r3, [r5, #4]
 	moveq	r3, #16
-	str	r5, [r4]
-	streq	r3, [r4, #52]
-	beq	.L82
-	cmp	r1, #1
+	str	r4, [r5]
+	streq	r3, [r5, #52]
+	beq	.L89
+	cmp	r2, #1
 	moveq	r3, #24
-	streq	r3, [r4, #52]
-.L82:
-	ldr	r0, .L107+12
+	streq	r3, [r5, #52]
+.L89:
+	ldr	r0, .L125+12
 	bl	updateStingers
-	ldr	r0, .L107+16
+	ldr	r0, .L125+16
 	bl	updateStingers
-	ldr	r0, .L107+20
-	pop	{r4, r5, r6, r7, r8, lr}
+	ldr	r0, .L125+20
+	add	sp, sp, #16
+	@ sp needed
+	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
 	b	updateStingers
-.L103:
-	ldr	r8, .L107+24
+.L119:
+	ldr	r8, .L125+24
 	ldr	r3, [r8]
 	cmp	r3, #0
 	bne	.L74
-	ldr	r3, .L107+28
+	ldr	r3, .L125+28
 	mov	lr, pc
 	bx	r3
 	mov	r2, #1
-	ldr	r3, .L107+32
-	ldr	r1, .L107+36
-	ldr	r0, .L107+40
+	ldr	r3, .L125+32
+	ldr	r1, .L125+36
+	ldr	r0, .L125+40
 	mov	lr, pc
 	bx	r3
 	mov	r3, #1
-	ldr	r2, [r4, #8]
+	ldr	r2, [r5, #8]
 	str	r3, [r8]
 .L74:
 	mov	r3, #1
-	str	r5, [r4]
-	str	r3, [r4, #32]
-	ldr	r0, [r4, #12]
+	str	r4, [r5]
+	str	r3, [r5, #32]
+	ldr	r1, [r5, #12]
 .L75:
-	ldr	r3, [r4, #40]
+	ldr	r3, [r5, #40]
 	cmp	r3, #0
-	ble	.L104
-	ldr	r3, .L107+44
+	ble	.L120
+	ldr	r3, .L125+44
 	ldr	r3, [r3, #8]
 	cmp	r3, r2
-	movgt	r1, #1
-	movle	r1, #0
-	lsl	r3, r0, #9
-	str	r1, [r4, #44]
-	bgt	.L105
-	sub	ip, r2, #1
-	add	r3, ip, r3
+	movgt	r3, #1
+	movle	r3, #0
+	str	r3, [r5, #44]
+	lsl	r3, r1, #9
+	bgt	.L121
+	sub	r0, r2, #1
+	add	r3, r0, r3
 	lsl	r3, r3, #1
 	ldrh	r3, [r6, r3]
 	cmp	r3, #0
-	beq	.L78
-	ldr	r3, [r4, #24]
-	add	r3, r0, r3
-	sub	r3, r3, #1
-	add	ip, ip, r3, lsl #9
-	lsl	ip, ip, #1
-	ldrh	r3, [r6, ip]
-	cmp	r3, #0
-	ldrne	r3, [r4, #16]
-	subne	r2, r2, r3
-	strne	r2, [r4, #8]
+	bne	.L122
 .L78:
-	ldr	r6, .L107+48
-	ldr	ip, .L107+52
+	ldr	r6, .L125+48
+	ldr	r0, .L125+52
 	ldr	r3, [r6]
-	ldr	r2, .L107+56
-	mla	r2, r3, r2, ip
-	ldr	ip, .L107+60
-	cmp	ip, r2, ror #2
+	ldr	r2, .L125+56
+	mla	r2, r3, r2, r0
+	ldr	r0, .L125+60
+	cmp	r0, r2, ror #2
 	addcc	r3, r3, #1
-	bcs	.L106
+	bcs	.L123
 .L80:
-	ldr	r2, [r7]
-	ldr	r5, [r4, #8]
+	ldr	r4, .L125+64
 	str	r3, [r6]
-	sub	r5, r5, r2
-	b	.L83
-.L104:
+	ldr	r2, [r5, #8]
+	ldr	r8, .L125+68
+	ldr	r10, .L125+72
+	ldr	r9, .L125+76
+	add	r6, r4, #912
+	b	.L87
+.L81:
+	add	r4, r4, #76
+	cmp	r4, r6
+	beq	.L124
+.L87:
+	ldr	r3, [r4, #32]
+	cmp	r3, #0
+	beq	.L81
+	ldr	r3, [r4, #40]
+	cmp	r3, #0
+	bne	.L81
+	add	r0, r5, #24
+	ldm	r0, {r0, r3}
+	str	r1, [sp, #4]
+	str	r2, [sp]
+	str	r0, [sp, #12]
+	str	r3, [sp, #8]
+	ldr	r3, [r4, #16]
+	ldr	r2, [r4, #20]
+	ldm	r4, {r0, r1}
+	mov	lr, pc
+	bx	r8
+	cmp	r0, #0
+	beq	.L118
+	ldr	r3, [r4, #36]
+	cmp	r3, #0
+	bne	.L83
+	ldr	r3, [r5, #40]
+	sub	r3, r3, #100
+	str	r3, [r5, #40]
+.L84:
+	mov	r2, #0
+	mov	r1, #3248
+	mov	r0, r10
+	str	r2, [r4, #32]
+	mov	lr, pc
+	bx	r9
+.L118:
+	add	r4, r4, #76
+	cmp	r4, r6
+	ldr	r1, [r5, #12]
+	ldr	r2, [r5, #8]
+	bne	.L87
+.L124:
+	ldr	r4, [r7]
+	sub	r4, r2, r4
+	b	.L90
+.L120:
 	mov	r3, #0
 	mov	ip, #1
-	ldr	r1, .L107+64
-	str	r3, [r4, #32]
-	ldr	r3, [r1]
-	ldr	r5, [r7]
+	ldr	r0, .L125+80
+	str	r3, [r5, #32]
+	ldr	r3, [r0]
+	ldr	r4, [r7]
 	sub	r3, r3, #1
-	str	r3, [r1]
-	str	ip, [r4, #36]
-	sub	r5, r2, r5
-	b	.L76
-.L105:
-	ldr	ip, [r4, #28]
-	add	ip, r2, ip
-	add	r3, ip, r3
+	str	r3, [r0]
+	str	ip, [r5, #36]
+	sub	r4, r2, r4
+	b	.L90
+.L83:
+	cmp	r3, #1
+	bne	.L84
+	ldr	ip, [r4]
+	ldr	r0, [r4, #20]
+	ldr	r3, .L125+84
+	ldr	r2, [r4, #48]
+	add	r0, ip, r0
+	add	lr, r3, #1088
+	add	r0, r0, r2
+	sub	ip, ip, r2
+	add	lr, lr, #4
+.L86:
+	ldr	r2, [r3, #8]
+	cmp	r2, r0
+	movlt	r1, #1
+	movge	r1, #0
+	cmp	r2, ip
+	movlt	r1, #0
+	cmp	r1, #0
+	ldrne	r2, [r3, #60]
+	subne	r2, r2, #34
+	strne	r2, [r3, #60]
+	add	r3, r3, #84
+	cmp	lr, r3
+	bne	.L86
+	ldr	r3, [r5, #40]
+	sub	r3, r3, #34
+	str	r3, [r5, #40]
+	b	.L84
+.L121:
+	ldr	r0, [r5, #28]
+	add	r0, r2, r0
+	add	r3, r0, r3
 	lsl	r3, r3, #1
 	ldrh	r3, [r6, r3]
 	cmp	r3, #0
 	beq	.L78
-	ldr	r3, [r4, #24]
-	add	r3, r0, r3
+	ldr	r3, [r5, #24]
+	add	r3, r1, r3
 	sub	r3, r3, #1
-	add	r3, ip, r3, lsl #9
+	add	r3, r0, r3, lsl #9
 	lsl	r3, r3, #1
 	ldrh	r3, [r6, r3]
 	cmp	r3, #0
-	ldrne	r3, [r4, #16]
+	ldrne	r3, [r5, #16]
 	addne	r2, r3, r2
-	strne	r2, [r4, #8]
+	strne	r2, [r5, #8]
 	b	.L78
-.L106:
+.L122:
+	ldr	r3, [r5, #24]
+	add	r3, r1, r3
+	sub	r3, r3, #1
+	add	r0, r0, r3, lsl #9
+	lsl	r0, r0, #1
+	ldrh	r3, [r6, r0]
+	cmp	r3, #0
+	ldrne	r3, [r5, #16]
+	subne	r2, r2, r3
+	strne	r2, [r5, #8]
+	b	.L78
+.L123:
 	bl	attackQueenBee
 	mov	r3, #1
-	ldr	r0, [r4, #12]
-	ldr	r1, [r4, #44]
+	ldr	r1, [r5, #12]
 	b	.L80
-.L108:
+.L126:
 	.align	2
-.L107:
+.L125:
 	.word	queenBee
 	.word	hOff
 	.word	vOff
@@ -624,7 +707,12 @@ updateQueenBee:
 	.word	85899344
 	.word	-1030792151
 	.word	42949672
+	.word	allBalloons+8
+	.word	collision
+	.word	pop
+	.word	playSoundB
 	.word	remainingEnemiesL2
+	.word	bees
 	.size	updateQueenBee, .-updateQueenBee
 	.comm	attackTimer,4,4
 	.global	queenBeeSpawned

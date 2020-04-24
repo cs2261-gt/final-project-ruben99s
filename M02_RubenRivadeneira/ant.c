@@ -90,6 +90,8 @@ void updateAnts(ANT *ant, const unsigned short *bitmap) {
                 if (collision(allBalloons[i].worldCol, allBalloons[i].worldRow, allBalloons[i].width, allBalloons[i].height, 
                 ant->worldCol, ant->worldRow, ant->width, ant->height)) {
 
+                    playSoundB(pop, POPLEN, 0);
+                    
                     if (allBalloons[i].type == SINGLE) {
                         ant->health -= 100;
                     }
@@ -105,7 +107,7 @@ void updateAnts(ANT *ant, const unsigned short *bitmap) {
                     }
                     
                     allBalloons[i].active = 0;
-                    playSoundB(pop, POPLEN, 0); 
+                     
                 }
             }   
         }

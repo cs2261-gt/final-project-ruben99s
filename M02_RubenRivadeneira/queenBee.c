@@ -5,6 +5,9 @@
 #include "sound.h"
 #include "fastGame2.h"
 #include "calmGame2.h"
+#include "balloon.h"
+#include "buzz.h"
+#include "Pop.h"
 
 void updateStingerPosition(STINGER *stinger);
 
@@ -104,11 +107,41 @@ void updateQueenBee(const unsigned short *bitmap) {
             } 
         }
 
+        //queenBee shoots stinger
         if (attackTimer % 100 == 0) {
             attackQueenBee();
             attackTimer = 0;
         }
         attackTimer++;
+
+        //collision with balloons
+        for (int i = 0; i < MAXBALLOONS * 2 + 2; i++) { 
+            if (allBalloons[i].active && !allBalloons[i].held) {
+                if (collision(allBalloons[i].worldCol, allBalloons[i].worldRow, allBalloons[i].width, allBalloons[i].height, 
+                queenBee.worldCol, queenBee.worldRow, queenBee.width, queenBee.height)) {
+
+                    playSoundB(pop, POPLEN, 0);
+                    
+                    if (allBalloons[i].type == SINGLE) { 
+                        queenBee.health -= 100;
+                    }
+                    if (allBalloons[i].type == AOE) { 
+                        //a data structure that allows for O(1) lookup of bees coordinates
+                        int rightLimit = allBalloons[i].worldCol + allBalloons[i].width + allBalloons[i].radius;
+                        int leftLimit = allBalloons[i].worldCol - allBalloons[i].radius;
+                        for (int i = 0; i < MAXBEES; i++) {
+                            if (bees[i].worldCol >= leftLimit && bees[i].worldCol < rightLimit) {
+                                bees[i].health -= 34;
+                            }
+                        }
+                        queenBee.health -= 34;
+                    }
+                    
+                    allBalloons[i].active = 0; 
+                    
+                }
+            }   
+        }
 
         
     }

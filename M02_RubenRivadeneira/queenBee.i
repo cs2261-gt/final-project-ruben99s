@@ -299,6 +299,124 @@ extern const signed char fastGame2[989182];
 
 extern const signed char calmGame2[881783];
 # 8 "queenBee.c" 2
+# 1 "balloon.h" 1
+
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+
+    int prevWorldCol;
+    int prevWorldRow;
+
+    int active;
+    int type;
+    int held;
+    int num;
+
+    int radius;
+
+    int aniState;
+    int curFrame;
+    int aniCounter;
+    int numFrames;
+} BALLOON;
+
+typedef enum {
+    SINGLE,
+    AOE,
+    JUMP,
+    CHEAT
+};
+
+
+extern BALLOON allBalloons[];
+# 46 "balloon.h"
+void initBalloons();
+void initBalloonsSingle();
+void initBalloonsAOE();
+void initJumpBalloon();
+void initCheatBalloon();
+
+void updateBalloons();
+void drawBalloons();
+void animateBalloons();
+void updateHeldBalloon();
+void updateDropBalloon();
+# 9 "queenBee.c" 2
+# 1 "buzz.h" 1
+
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+    int erased;
+
+    int rightLimit;
+    int leftLimit;
+    int direction;
+    int state;
+    int num;
+
+    int health;
+
+    int aniCounter;
+    int aniState;
+    int prevAniState;
+    int curFrame;
+    int numFrames;
+} BUZZ;
+
+typedef struct {
+    int screenCol;
+    int screenRow;
+    int worldCol;
+    int worldRow;
+    int colDelta;
+    int rowDelta;
+    int height;
+    int width;
+    int active;
+} HONEY;
+
+
+typedef enum {
+    CALM,
+    ANGRY
+};
+
+
+extern BUZZ bees[];
+
+
+
+
+
+void initBuzz();
+void updateBuzz(BUZZ *buzz, int level);
+void animateBuzz(BUZZ *buzz);
+void drawBuzz(BUZZ *buzz);
+# 10 "queenBee.c" 2
+# 1 "Pop.h" 1
+
+
+
+
+extern const signed char pop[3248];
+# 11 "queenBee.c" 2
 
 void updateStingerPosition(STINGER *stinger);
 
@@ -398,11 +516,39 @@ void updateQueenBee(const unsigned short *bitmap) {
             }
         }
 
+
         if (attackTimer % 100 == 0) {
             attackQueenBee();
             attackTimer = 0;
         }
         attackTimer++;
+
+
+        for (int i = 0; i < 5 * 2 + 2; i++) {
+            if (allBalloons[i].active && !allBalloons[i].held) {
+                if (collision(allBalloons[i].worldCol, allBalloons[i].worldRow, allBalloons[i].width, allBalloons[i].height,
+                queenBee.worldCol, queenBee.worldRow, queenBee.width, queenBee.height)) {
+
+                    if (allBalloons[i].type == SINGLE) {
+                        queenBee.health -= 100;
+                    }
+                    if (allBalloons[i].type == AOE) {
+
+                        int rightLimit = allBalloons[i].worldCol + allBalloons[i].width + allBalloons[i].radius;
+                        int leftLimit = allBalloons[i].worldCol - allBalloons[i].radius;
+                        for (int i = 0; i < 13; i++) {
+                            if (bees[i].worldCol >= leftLimit && bees[i].worldCol < rightLimit) {
+                                bees[i].health -= 34;
+                            }
+                        }
+                        queenBee.health -= 34;
+                    }
+
+                    allBalloons[i].active = 0;
+                    playSoundB(pop, 3248, 0);
+                }
+            }
+        }
 
 
     }
@@ -462,13 +608,13 @@ void attackQueenBee() {
 void updateStingers(STINGER *stinger) {
     if (stinger->active) {
         if (stinger->direction == LEFT) {
-            if ((stinger->origWorldCol - stinger->worldCol) <= 100) {
+            if ((stinger->origWorldCol - stinger->worldCol) <= 150) {
                 stinger->worldCol += stinger->colDelta;
             } else {
                 stinger->active = 0;
             }
         } else if (stinger->direction == RIGHT) {
-            if ((stinger->worldCol - stinger->origWorldCol) <= 100) {
+            if ((stinger->worldCol - stinger->origWorldCol) <= 150) {
                 stinger->worldCol += stinger->colDelta;
             } else if (stinger->worldCol > 512) {
                 stinger->active = 0;
@@ -480,7 +626,7 @@ void updateStingers(STINGER *stinger) {
         if (collision(stinger->worldCol, stinger->worldRow, stinger->width, stinger->height,
             player.worldCol, ((player.worldRow) >> 8), player.width, player.height)) {
             stinger->active = 0;
-            player.health -= 15;
+            player.health -= 10;
             updateHearts();
         }
 

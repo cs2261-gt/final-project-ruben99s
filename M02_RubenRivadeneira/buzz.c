@@ -117,6 +117,8 @@ void updateBuzz(BUZZ *buzz, int level) {
                 if (collision(allBalloons[i].worldCol, allBalloons[i].worldRow, allBalloons[i].width, allBalloons[i].height, 
                 buzz->worldCol, buzz->worldRow, buzz->width, buzz->height)) {
 
+                    playSoundB(pop, POPLEN, 0);
+                    
                     if (allBalloons[i].type == SINGLE) { 
                         buzz->health -= 100;
                     }
@@ -132,7 +134,7 @@ void updateBuzz(BUZZ *buzz, int level) {
                     }
                     
                     allBalloons[i].active = 0; 
-                    playSoundB(pop, POPLEN, 0);
+                    
                 }
             }   
         } 
