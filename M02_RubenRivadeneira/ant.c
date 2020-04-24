@@ -105,15 +105,15 @@ void updateAnts(ANT *ant, const unsigned short *bitmap) {
                     }
                     
                     allBalloons[i].active = 0;
-                    playSoundB(pop, POPLEN, 0);
+                    playSoundB(pop, POPLEN, 0); 
                 }
             }   
         }
 
         if (collision(player.worldCol, SHIFTDOWN(player.worldRow), player.width, player.height, 
             ant->worldCol, ant->worldRow, ant->width, ant->height)) {
-            if (healthTimer % 150 == 0) {
-                player.health -= 2;
+            if (healthTimer % 250 == 0) {
+                player.health -= 5;
                 healthTimer = 0;
                 updateHearts();
             }

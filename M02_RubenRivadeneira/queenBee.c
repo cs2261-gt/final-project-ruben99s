@@ -6,11 +6,14 @@
 #include "fastGame2.h"
 #include "calmGame2.h"
 
+void updateStingerPosition(STINGER *stinger);
+
 QUEENBEE queenBee;
 STINGER stingers[MAXSTINGERS];
 
 int queenBeeSpawned = 0;
 // int queenBeeDead = 0;
+int attackTimer;
 
 void initQueenBee() {
     queenBee.height = 64;
@@ -26,6 +29,8 @@ void initQueenBee() {
     queenBee.curFrame = 0;
     queenBee.active = 0;
     queenBee.erased = 0;
+
+    attackTimer = 0;
 
     initStingers();
 }
@@ -71,7 +76,13 @@ void updateQueenBee(const unsigned short *bitmap) {
     // }
 
     if (queenBee.active) {
-        if (player.worldCol >= 320 && player.worldCol <= queenBee.worldCol) {
+        // if (player.worldCol >= 320 && player.worldCol <= queenBee.worldCol) {
+        //     queenBee.direction = LEFT;
+        // } else if (player.worldCol > queenBee.worldCol) {
+        //     queenBee.direction = RIGHT;
+        // }
+
+        if (player.worldCol <= queenBee.worldCol) {
             queenBee.direction = LEFT;
         } else if (player.worldCol > queenBee.worldCol) {
             queenBee.direction = RIGHT;
@@ -83,24 +94,33 @@ void updateQueenBee(const unsigned short *bitmap) {
                 
                 queenBee.worldCol -= queenBee.colDelta;
 
-            } else {
-                queenBee.direction = RIGHT;
-            }
+            } 
         } else if (queenBee.direction == RIGHT) {
             if (bitmap[OFFSET(queenBee.worldCol + queenBee.width - 1 + 1, queenBee.worldRow, MAPWIDTH)] &&
                 bitmap[OFFSET(queenBee.worldCol + queenBee.width - 1 + 1, queenBee.worldRow + queenBee.height - 1, MAPWIDTH)]) {
                 
                 queenBee.worldCol += queenBee.colDelta;
 
-            } else {
-                queenBee.direction = LEFT;
-            }
+            } 
         }
+
+        if (attackTimer % 100 == 0) {
+            attackQueenBee();
+            attackTimer = 0;
+        }
+        attackTimer++;
+
+        
     }
 
     queenBee.screenCol = queenBee.worldCol - hOff;
     queenBee.screenRow = queenBee.worldRow - vOff;
     animateQueenBee();
+
+    for (int i = 0; i < MAXSTINGERS; i++) {
+        updateStingers(&stingers[i]);
+    }
+    
 }
 
 void drawQueenBee() {
@@ -119,8 +139,8 @@ void drawQueenBee() {
 
 void drawStingers(STINGER *stinger) {
     if (stinger->active) {
-        shadowOAM[71 + stinger->num].attr0 = (ROWMASK & stinger->screenRow) | ATTR0_SQUARE;
-        shadowOAM[71 + stinger->num].attr1 = (COLMASK & stinger->screenCol) | ATTR1_MEDIUM;
+        shadowOAM[71 + stinger->num].attr0 = (ROWMASK & stinger->screenRow) | ATTR0_WIDE;
+        shadowOAM[71 + stinger->num].attr1 = (COLMASK & stinger->screenCol) | ATTR1_TINY;
         shadowOAM[71 + stinger->num].attr2 = ATTR2_TILEID(0, stinger->curFrame) | ATTR2_PALROW(0); 
     } else {
         shadowOAM[71 + stinger->num].attr0 = ATTR0_HIDE;
@@ -133,4 +153,63 @@ void animateQueenBee() {
     } else if (queenBee.direction == RIGHT) {
         queenBee.aniState = 24;
     }
+}
+
+void attackQueenBee() {
+    for (int i = 0; i < MAXSTINGERS; i++) {
+        if (!stingers[i].active) {
+            stingers[i].active = 1;
+            updateStingerPosition(&stingers[i]);
+            break;
+        }
+    }
+}
+
+void updateStingers(STINGER *stinger) {
+    if (stinger->active) {
+        if (stinger->direction == LEFT) {
+            if ((stinger->origWorldCol - stinger->worldCol) <= 100) {
+                stinger->worldCol += stinger->colDelta;
+            } else {
+                stinger->active = 0;
+            }
+        } else if (stinger->direction == RIGHT) {
+            if ((stinger->worldCol - stinger->origWorldCol) <= 100) {
+                stinger->worldCol += stinger->colDelta;
+            } else if (stinger->worldCol > 512) {
+                stinger->active = 0;
+            } else {
+                stinger->active = 0;
+            }
+        }
+
+        if (collision(stinger->worldCol, stinger->worldRow, stinger->width, stinger->height, 
+            player.worldCol, SHIFTDOWN(player.worldRow), player.width, player.height)) {
+            stinger->active = 0;
+            player.health -= 10;
+            updateHearts();
+        }
+
+        stinger->screenCol = stinger->worldCol - hOff;
+        stinger->screenRow = stinger->worldRow - vOff;
+    }
+}
+
+void updateStingerPosition(STINGER *stinger) {
+    if (queenBee.direction == LEFT) {
+        stinger->direction = LEFT;
+        stinger->worldCol = queenBee.worldCol;
+        stinger->worldRow = queenBee.worldRow + 64;
+        stinger->colDelta = -2;
+        stinger->curFrame = 30;
+    } else if (queenBee.direction == RIGHT) {
+        stinger->direction = RIGHT;
+        stinger->worldCol = queenBee.worldCol + 64;
+        stinger->worldRow = queenBee.worldRow + 64;
+        stinger->colDelta = 2;
+        stinger->curFrame = 31;
+    }
+
+    stinger->origWorldCol = stinger->worldCol;
+    stinger->origWorldRow = stinger->worldRow;
 }

@@ -395,7 +395,7 @@ void goToPause() {
 void pause() {
     if(BUTTON_PRESSED(BUTTON_START)) { 
         stopSoundB();
-        unPauseSoundA();
+        unPauseSoundA(); 
         if (prevState == GAME) {
             goToGame();
         } else if (prevState == GAME1) {

@@ -113,7 +113,7 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level)
 
     //change MAPWIDTH value in game.h to make map longer
     if(BUTTON_HELD(BUTTON_RIGHT)) {
-        if (player.worldCol + player.width + 12 - 1 < MAPWIDTH) {
+        if (player.worldCol + player.width + 12 - 1 < MAPWIDTH) { 
 
             if (bitmap[OFFSET(player.worldCol + player.width - 1 + 1, SHIFTDOWN(player.worldRow), MAPWIDTH)] &&
                 bitmap[OFFSET(player.worldCol + player.width - 1 + 1, SHIFTDOWN(player.worldRow) + player.height - 1, MAPWIDTH)]) {

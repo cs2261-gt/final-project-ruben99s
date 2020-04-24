@@ -365,7 +365,7 @@ updateAnts:
 .L72:
 	mov	r2, #0
 	ldr	r3, [r7, #68]
-	sub	r3, r3, #2
+	sub	r3, r3, #5
 	str	r3, [r7, #68]
 	ldr	r3, .L73+48
 	str	r2, [r4]
@@ -385,8 +385,8 @@ updateAnts:
 	.word	playSoundB
 	.word	remainingEnemiesL1
 	.word	healthTimer
-	.word	28633114
-	.word	-1775253149
+	.word	17179868
+	.word	652835029
 	.word	ants
 	.word	updateHearts
 	.size	updateAnts, .-updateAnts

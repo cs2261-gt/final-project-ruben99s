@@ -117,7 +117,7 @@ void updateBuzz(BUZZ *buzz, int level) {
                 if (collision(allBalloons[i].worldCol, allBalloons[i].worldRow, allBalloons[i].width, allBalloons[i].height, 
                 buzz->worldCol, buzz->worldRow, buzz->width, buzz->height)) {
 
-                    if (allBalloons[i].type == SINGLE) {
+                    if (allBalloons[i].type == SINGLE) { 
                         buzz->health -= 100;
                     }
                     if (allBalloons[i].type == AOE) { 

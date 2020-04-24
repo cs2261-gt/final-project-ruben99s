@@ -352,6 +352,10 @@ typedef struct {
     int active;
     int num;
 
+    int origWorldCol;
+    int origWorldRow;
+    int direction;
+
     int curFrame;
 } STINGER;
 
@@ -367,6 +371,7 @@ void updateStingers(STINGER *stinger);
 void drawQueenBee();
 void drawStingers(STINGER *stinger);
 void animateQueenBee();
+void attackQueenBee();
 # 8 "game2.c" 2
 
 # 1 "bg00L2CollisionMap.h" 1

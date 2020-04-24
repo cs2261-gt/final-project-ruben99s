@@ -16,7 +16,7 @@ int remainingEnemies;
 int numBalloons;
 int isPlayerEnd;
 int playerHealth;
-int secondWaveHappened;
+int secondWaveHappened; 
 
 void activateSecondWave();
 

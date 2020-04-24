@@ -37,7 +37,7 @@ void initGame1() {
 void updateGame1() {
     int numActiveBalloons = 0; 
 
-    updatePlayer(&bg00L1CollisionMapBitmap, &hOff, &vOff, 1);
+    updatePlayer(&bg00L1CollisionMapBitmap, &hOff, &vOff, 1); 
     // for (int i = 0; i < MAXBEES; i++) {
     //     updateBuzz(&bees[i]);
     // }

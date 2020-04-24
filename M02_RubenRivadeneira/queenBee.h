@@ -33,6 +33,10 @@ typedef struct {
     int active;
     int num;
 
+    int origWorldCol;
+    int origWorldRow;
+    int direction;
+
     int curFrame;
 } STINGER;
 
@@ -48,3 +52,4 @@ void updateStingers(STINGER *stinger);
 void drawQueenBee();
 void drawStingers(STINGER *stinger);
 void animateQueenBee();
+void attackQueenBee();
