@@ -176,13 +176,13 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level)
         player.jumping = 1;
     }
 
-    // player.rowDelta += GRAVITY;
+    // player.rowDelta += GRAVITY; 
 
 
 
 
     //allows to jump higher if balloon type is jump
-    if (player.balloonType == JUMP || player.balloonType == CHEAT) {
+    if (player.balloonType == JUMP) {
         // player.upLimit = 90;
         jumpPower = JUMPPOWER + 700;
     } else {
@@ -357,7 +357,9 @@ void playerAttack(int level) {
             }
         }
         if (level == 2) {
-            queenBee.health = 0;
+            if (queenBee.screenCol >= 0 && queenBee.screenCol < 240) {
+                queenBee.health = 0;
+            }
         }
     }
 

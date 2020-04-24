@@ -2,9 +2,15 @@
 #include "queenBee.h"
 #include "game2.h"
 #include "player.h"
+#include "sound.h"
+#include "fastGame2.h"
+#include "calmGame2.h"
 
 QUEENBEE queenBee;
 STINGER stingers[MAXSTINGERS];
+
+int queenBeeSpawned = 0;
+// int queenBeeDead = 0;
 
 void initQueenBee() {
     queenBee.height = 64;
@@ -42,6 +48,11 @@ void initStingers() {
 void updateQueenBee(const unsigned short *bitmap) {
     int screenCol = queenBee.worldCol - hOff;
     if (screenCol >= 0 && screenCol < 240 && !queenBee.erased) {
+        if (!queenBeeSpawned) {
+            stopSound();
+            playSoundA(fastGame2, FASTGAME2LEN, 1);
+            queenBeeSpawned = 1;
+        }
         queenBee.active = 1;
         queenBee.screenCol = screenCol;
     }
@@ -49,8 +60,15 @@ void updateQueenBee(const unsigned short *bitmap) {
     if (queenBee.active && queenBee.health <= 0) {
         queenBee.active = 0;
         queenBee.erased = 1;
+        // queenBeeDead = 1;
         remainingEnemiesL2--;
     }
+
+    // if (queenBee.erased && queenBeeDead) {
+    //     stopSound();
+    //     playSoundA(calmGame2, CALMGAME2LEN, 1);
+    //     queenBeeDead = 0;
+    // }
 
     if (queenBee.active) {
         if (player.worldCol <= queenBee.worldCol) {

@@ -377,13 +377,20 @@ void interruptHandler();
 void pauseSound();
 void unpauseSound();
 void stopSound();
+
+void pauseSoundA();
+void pauseSoundB();
+void unPauseSoundA();
+void unPauseSoundB();
+void stopSoundA();
+void stopSoundB();
 # 9 "buzz.c" 2
 # 1 "Pop.h" 1
 
 
 
 
-extern const signed char pop[8189];
+extern const signed char pop[3248];
 # 10 "buzz.c" 2
 
 
@@ -510,7 +517,7 @@ void updateBuzz(BUZZ *buzz, int level) {
                     }
 
                     allBalloons[i].active = 0;
-                    playSoundB(pop, 8189, 0);
+                    playSoundB(pop, 3248, 0);
                 }
             }
         }

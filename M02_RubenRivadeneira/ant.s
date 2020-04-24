@@ -131,14 +131,14 @@ updateAnts:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	push	{r4, r5, r6, r7, r8, r9, r10, lr}
+	push	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	ldr	r8, .L73
 	ldr	r2, [r0, #8]
 	ldr	r3, [r8]
 	sub	r3, r2, r3
 	cmp	r3, #239
 	mov	r5, r0
-	sub	sp, sp, #16
+	sub	sp, sp, #20
 	ldr	r0, [r0, #12]
 	bhi	.L16
 	ldr	ip, [r5, #36]
@@ -154,9 +154,9 @@ updateAnts:
 	str	r3, [r5]
 	str	r0, [r5, #4]
 .L15:
-	add	sp, sp, #16
+	add	sp, sp, #20
 	@ sp needed
-	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
+	pop	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	bx	lr
 .L69:
 	mov	ip, #1
@@ -207,8 +207,9 @@ updateAnts:
 	strne	r0, [r5, #12]
 .L22:
 	ldr	r4, .L73+12
-	mov	r10, #0
+	mov	fp, #0
 	ldr	r9, .L73+16
+	ldr	r10, .L73+20
 	add	r6, r4, #912
 	b	.L31
 .L23:
@@ -239,7 +240,13 @@ updateAnts:
 	sub	r3, r3, #100
 	str	r3, [r5, #56]
 .L26:
-	str	r10, [r4, #32]
+	mov	r2, #0
+	mov	r1, #3248
+	mov	r0, r10
+	str	fp, [r4, #32]
+	ldr	r3, .L73+24
+	mov	lr, pc
+	bx	r3
 .L68:
 	add	r4, r4, #76
 	add	ip, r5, #24
@@ -274,9 +281,9 @@ updateAnts:
 	stm	r5, {r2, r3}
 	beq	.L15
 	mov	r0, r5
-	add	sp, sp, #16
+	add	sp, sp, #20
 	@ sp needed
-	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
+	pop	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	b	animateAnts.part.0
 .L35:
 	sub	r6, r2, #1
@@ -296,7 +303,7 @@ updateAnts:
 .L70:
 	mov	r4, #0
 	mov	lr, #1
-	ldr	ip, .L73+20
+	ldr	ip, .L73+28
 	ldr	r2, .L73+4
 	ldr	r1, [ip]
 	ldr	r2, [r2]
@@ -307,14 +314,14 @@ updateAnts:
 	str	r3, [r5]
 	str	r4, [r5, #32]
 	str	lr, [r5, #36]
-	add	sp, sp, #16
+	add	sp, sp, #20
 	@ sp needed
-	pop	{r4, r5, r6, r7, r8, r9, r10, lr}
+	pop	{r4, r5, r6, r7, r8, r9, r10, fp, lr}
 	bx	lr
 .L32:
-	ldr	r4, .L73+24
-	ldr	r1, .L73+28
-	ldr	r2, .L73+32
+	ldr	r4, .L73+32
+	ldr	r1, .L73+36
+	ldr	r2, .L73+40
 	ldr	r3, [r4]
 	mla	r2, r3, r2, r1
 	cmp	r1, r2, ror #1
@@ -333,7 +340,7 @@ updateAnts:
 	bne	.L26
 	ldr	ip, [r4]
 	ldr	r0, [r4, #20]
-	ldr	r3, .L73+36
+	ldr	r3, .L73+44
 	ldr	r2, [r4, #48]
 	add	r0, ip, r0
 	add	lr, r3, #1136
@@ -360,7 +367,7 @@ updateAnts:
 	ldr	r3, [r7, #68]
 	sub	r3, r3, #2
 	str	r3, [r7, #68]
-	ldr	r3, .L73+40
+	ldr	r3, .L73+48
 	str	r2, [r4]
 	mov	lr, pc
 	bx	r3
@@ -374,6 +381,8 @@ updateAnts:
 	.word	player
 	.word	allBalloons+8
 	.word	collision
+	.word	pop
+	.word	playSoundB
 	.word	remainingEnemiesL1
 	.word	healthTimer
 	.word	28633114
@@ -442,4 +451,6 @@ drawAnt:
 	.size	drawAnt, .-drawAnt
 	.comm	healthTimer,4,4
 	.comm	ants,1140,4
+	.comm	soundB,32,4
+	.comm	soundA,32,4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

@@ -1,18 +1,22 @@
 #include "myLib.h"
-#include "mainScreen.h"
-#include "gameScreen2.h"
-#include "pauseScreen.h"
-#include "winScreen.h"
-#include "loseScreen.h"
+// #include "mainScreen.h"
+// #include "gameScreen2.h"
+// #include "pauseScreen.h"
+// #include "winScreen.h"
+// #include "loseScreen.h"
 
 #include "bg00.h"
 #include "bg01.h"
 // #include "spriteSheet.h"
 #include "game.h"
-#include "spriteSheetTest.h"
+// #include "spriteSheetTest.h"
 #include "finalSpriteSheet.h"
-#include "instructionScreen.h"
+// #include "instructionScreen.h"
 #include "FinalInstructionScreen.h"
+#include "finalMainScreen.h"
+#include "finalLoseScreen.h"
+#include "finalWinScreen.h"
+#include "finalPauseScreen.h"
 
 #include "bg00Level1.h"
 #include "bg01Level1.h"
@@ -24,6 +28,10 @@
 #include "sound.h"
 #include "News_Room_News.h"
 #include "Pop.h"
+#include "mainMenuSong.h"
+#include "game0Song.h"
+#include "calmGame2.h"
+#include "pauseSong.h"
 
 /*Different sounds need to be added and there is a bug with
 the gravity that needs to be fixed as well. The instruction screen
@@ -130,6 +138,8 @@ void initialize() {
     setupSounds();
 
     //sets state to start
+    // prevState = START;
+    // state = START;
     goToStart();
 }
 
@@ -145,11 +155,16 @@ void goToStart() {
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
     //testing bg
-    DMANow(3, mainScreenPal, PALETTE, 256);
-    DMANow(3, mainScreenTiles, &CHARBLOCK[0], mainScreenTilesLen/2);
-    DMANow(3, mainScreenMap, &SCREENBLOCK[28], mainScreenMapLen/2);
+    DMANow(3, finalMainScreenPal, PALETTE, 256);
+    DMANow(3, finalMainScreenTiles, &CHARBLOCK[0], finalMainScreenTilesLen/2);
+    DMANow(3, finalMainScreenMap, &SCREENBLOCK[28], finalMainScreenMapLen/2);
 
     // playSoundA(gameSong, GAMESONGLEN, 1);
+    prevState = state;
+    if (prevState != INSTRUCTION) {
+        stopSound();
+        playSoundA(mainSong, MAINSONGLEN, 1);
+    }
     state = START;
 }
 
@@ -161,6 +176,7 @@ void start() {
         // srand(seed);
     }
     if (BUTTON_PRESSED(BUTTON_SELECT)) {
+        // playSoundB(pop, POPLEN, 0);
         goToInstruction();
     }
 }
@@ -187,8 +203,13 @@ void goToGame() {
     DMANow(3, bg01Tiles, &CHARBLOCK[1], bg01TilesLen/2);
     DMANow(3, bg01Map, &SCREENBLOCK[30], bg01MapLen/2);
     
-    // playSoundB(pop, POPLEN, 0);
     prevState = state;
+
+    if (prevState != PAUSE) {
+        stopSound();
+        playSoundA(game0Song, GAME0SONGLEN, 1);
+    }
+    
     state = GAME;
 }
 
@@ -198,6 +219,7 @@ void game() {
     drawGame();
 
     if(BUTTON_PRESSED(BUTTON_START)) {
+        pauseSound();
         goToPause();
     }
     // if(BUTTON_PRESSED(BUTTON_A)) {
@@ -248,6 +270,10 @@ void goToGame1() {
 
 
     prevState = state;
+    if (prevState != PAUSE) {
+        stopSound();
+        playSoundA(gameSong, GAMESONGLEN, 1);
+    }
     state = GAME1;
 }
 
@@ -257,6 +283,7 @@ void game1() {
     drawGame1();
 
     if(BUTTON_PRESSED(BUTTON_START)) {
+        pauseSound();
         goToPause();
     }
   
@@ -308,6 +335,10 @@ void goToGame2() {
     DMANow(3, bg00Level2Map, &SCREENBLOCK[28], bg00Level2MapLen/2);
 
     prevState = state;
+    if (prevState != PAUSE) {
+        stopSound();
+        playSoundA(calmGame2, CALMGAME2LEN, 1);
+    }
     state = GAME2;
 }
 
@@ -317,6 +348,7 @@ void game2() {
     drawGame2(); 
 
     if(BUTTON_PRESSED(BUTTON_START)) {
+        pauseSound();
         goToPause();
     }
   
@@ -350,16 +382,20 @@ void goToPause() {
     REG_BG0HOFF = 0;
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
-    DMANow(3, pauseScreenPal, PALETTE, 256);
-    DMANow(3, pauseScreenTiles, &CHARBLOCK[0], pauseScreenTilesLen/2);
-    DMANow(3, pauseScreenMap, &SCREENBLOCK[28], pauseScreenMapLen/2);
+    DMANow(3, finalPauseScreenPal, PALETTE, 256);
+    DMANow(3, finalPauseScreenTiles, &CHARBLOCK[0], finalPauseScreenTilesLen/2);
+    DMANow(3, finalPauseScreenMap, &SCREENBLOCK[28], finalPauseScreenMapLen/2);
+
+    playSoundB(pauseSong, PAUSESONGLEN, 1);
 
     prevState = state;
     state = PAUSE;
 }
 
 void pause() {
-    if(BUTTON_PRESSED(BUTTON_START)) {
+    if(BUTTON_PRESSED(BUTTON_START)) { 
+        stopSoundB();
+        unPauseSoundA();
         if (prevState == GAME) {
             goToGame();
         } else if (prevState == GAME1) {
@@ -384,9 +420,9 @@ void goToWin() {
     REG_BG0HOFF = 0;
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
-    DMANow(3, winScreenPal, PALETTE, 256);
-    DMANow(3, winScreenTiles, &CHARBLOCK[0], winScreenTilesLen/2);
-    DMANow(3, winScreenMap, &SCREENBLOCK[28], winScreenMapLen/2);
+    DMANow(3, finalWinScreenPal, PALETTE, 256);
+    DMANow(3, finalWinScreenTiles, &CHARBLOCK[0], finalWinScreenTilesLen/2);
+    DMANow(3, finalWinScreenMap, &SCREENBLOCK[28], finalWinScreenMapLen/2);
 
     prevState = state;
     state = WIN;
@@ -408,9 +444,9 @@ void goToLose() {
     REG_BG0HOFF = 0;
     hideSprites();
     DMANow(3, shadowOAM, OAM, 512);
-    DMANow(3, loseScreenPal, PALETTE, 256);
-    DMANow(3, loseScreenTiles, &CHARBLOCK[0], loseScreenTilesLen/2);
-    DMANow(3, loseScreenMap, &SCREENBLOCK[28], loseScreenMapLen/2);
+    DMANow(3, finalLoseScreenPal, PALETTE, 256);
+    DMANow(3, finalLoseScreenTiles, &CHARBLOCK[0], finalLoseScreenTilesLen/2);
+    DMANow(3, finalLoseScreenMap, &SCREENBLOCK[28], finalLoseScreenMapLen/2);
 
     prevState = state;
     state = LOSE;

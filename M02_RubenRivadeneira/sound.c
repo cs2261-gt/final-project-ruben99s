@@ -142,6 +142,26 @@ void unpauseSound() {
     REG_TM1CNT = TIMER_ON;
 }
 
+void pauseSoundA() {
+    soundA.isPlaying = 0;
+    REG_TM0CNT = TIMER_OFF;
+}
+
+void pauseSoundB() {
+    soundB.isPlaying = 0;
+    REG_TM1CNT = TIMER_OFF;
+}
+
+void unPauseSoundA() {
+    soundA.isPlaying = 1;
+    REG_TM0CNT = TIMER_ON;
+}
+
+void unPauseSoundB() {
+    soundB.isPlaying = 1;
+    REG_TM1CNT = TIMER_ON;
+}
+
 void stopSound() {
 
     // TODO 4.3 - Complete the stopSound function
@@ -149,6 +169,18 @@ void stopSound() {
     REG_TM0CNT = TIMER_OFF;
     soundA.isPlaying = 0;
 
+    dma[2].cnt = 0;
+    REG_TM1CNT = TIMER_OFF;
+    soundB.isPlaying = 0;
+}
+
+void stopSoundA() {
+    dma[1].cnt = 0;
+    REG_TM0CNT = TIMER_OFF;
+    soundA.isPlaying = 0;
+}
+
+void stopSoundB() {
     dma[2].cnt = 0;
     REG_TM1CNT = TIMER_OFF;
     soundB.isPlaying = 0;

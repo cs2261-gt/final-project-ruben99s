@@ -216,12 +216,12 @@ updateBuzz:
 	ldr	r7, .L80+8
 .L33:
 	ldr	r4, .L80+12
+	mov	fp, #0
 	ldr	r0, [r5, #12]
 	ldr	ip, [r5, #28]
 	ldr	lr, [r5, #24]
 	ldr	r9, .L80+16
-	ldr	fp, .L80+20
-	ldr	r10, .L80+24
+	ldr	r10, .L80+20
 	add	r6, r4, #912
 	b	.L45
 .L37:
@@ -252,10 +252,10 @@ updateBuzz:
 	str	r3, [r5, #60]
 .L40:
 	mov	r2, #0
-	mov	r1, fp
+	mov	r1, #3248
 	mov	r0, r10
-	str	r2, [r4, #32]
-	ldr	r3, .L80+28
+	str	fp, [r4, #32]
+	ldr	r3, .L80+24
 	mov	lr, pc
 	bx	r3
 .L73:
@@ -278,12 +278,12 @@ updateBuzz:
 	bx	r9
 	cmp	r0, #0
 	beq	.L46
-	ldr	r4, .L80+32
-	ldr	r1, .L80+36
-	ldr	r2, .L80+40
+	ldr	r4, .L80+28
+	ldr	r1, .L80+32
+	ldr	r2, .L80+36
 	ldr	r3, [r4]
 	mla	r2, r3, r2, r1
-	ldr	r1, .L80+44
+	ldr	r1, .L80+40
 	cmp	r2, r1
 	bls	.L78
 .L47:
@@ -322,7 +322,7 @@ updateBuzz:
 	str	r3, [r5, #36]
 	beq	.L79
 	cmp	r1, #2
-	ldreq	r1, .L80+48
+	ldreq	r1, .L80+44
 	ldreq	r3, [r1]
 	subeq	r3, r3, #1
 	streq	r3, [r1]
@@ -332,7 +332,7 @@ updateBuzz:
 	bne	.L40
 	ldr	ip, [r4]
 	ldr	r0, [r4, #20]
-	ldr	r3, .L80+52
+	ldr	r3, .L80+48
 	ldr	r2, [r4, #48]
 	add	r0, ip, r0
 	add	lr, r3, #1088
@@ -361,7 +361,7 @@ updateBuzz:
 	ldr	r7, .L80+8
 	b	.L33
 .L79:
-	ldr	r1, .L80+56
+	ldr	r1, .L80+52
 	ldr	r3, [r1]
 	sub	r3, r3, #1
 	str	r3, [r1]
@@ -371,7 +371,7 @@ updateBuzz:
 	ldr	r3, [r7, #68]
 	sub	r3, r3, #5
 	str	r3, [r7, #68]
-	ldr	r3, .L80+60
+	ldr	r3, .L80+56
 	str	r2, [r4]
 	mov	lr, pc
 	bx	r3
@@ -400,7 +400,6 @@ updateBuzz:
 	.word	player
 	.word	allBalloons+8
 	.word	collision
-	.word	8189
 	.word	pop
 	.word	playSoundB
 	.word	healthTimer

@@ -293,6 +293,37 @@ void animateBalloons();
 void updateHeldBalloon();
 void updateDropBalloon();
 # 6 "ant.c" 2
+# 1 "sound.h" 1
+SOUND soundA;
+SOUND soundB;
+
+
+
+void setupSounds();
+void playSoundA(const signed char* sound, int length, int loops);
+void playSoundB(const signed char* sound, int length, int loops);
+
+void setupInterrupts();
+void interruptHandler();
+
+void pauseSound();
+void unpauseSound();
+void stopSound();
+
+void pauseSoundA();
+void pauseSoundB();
+void unPauseSoundA();
+void unPauseSoundB();
+void stopSoundA();
+void stopSoundB();
+# 7 "ant.c" 2
+# 1 "Pop.h" 1
+
+
+
+
+extern const signed char pop[3248];
+# 8 "ant.c" 2
 
 ANT ants[15];
 int healthTimer;
@@ -393,6 +424,7 @@ void updateAnts(ANT *ant, const unsigned short *bitmap) {
                     }
 
                     allBalloons[i].active = 0;
+                    playSoundB(pop, 3248, 0);
                 }
             }
         }

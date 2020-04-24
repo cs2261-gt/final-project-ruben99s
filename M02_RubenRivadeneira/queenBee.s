@@ -150,110 +150,145 @@ updateQueenBee:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r3, .L46
-	ldr	r2, .L46+4
-	push	{r4, r5, lr}
-	ldr	r2, [r2]
-	ldr	lr, [r3, #8]
-	sub	r1, lr, r2
-	cmp	r1, #239
-	ldr	r4, [r3, #12]
+	push	{r4, r5, r6, r7, r8, lr}
+	ldr	r4, .L48
+	ldr	r7, .L48+4
+	ldr	r2, [r4, #8]
+	ldr	r5, [r7]
+	sub	r5, r2, r5
+	cmp	r5, #239
+	mov	r6, r0
 	bhi	.L17
-	ldr	ip, [r3, #36]
-	cmp	ip, #0
+	ldr	r3, [r4, #36]
+	cmp	r3, #0
 	bne	.L17
-	mov	ip, #1
-	str	r1, [r3]
-	str	ip, [r3, #32]
+	ldr	r8, .L48+8
+	ldr	r3, [r8]
+	cmp	r3, #0
+	beq	.L45
 .L18:
-	ldr	ip, [r3, #40]
-	cmp	ip, #0
-	ble	.L44
-	ldr	ip, .L46+8
-	ldr	ip, [ip, #8]
-	cmp	lr, ip
-	movlt	ip, #1
-	movge	ip, #0
-	str	ip, [r3, #44]
-	lsl	ip, r4, #9
-	blt	.L45
-	sub	r5, lr, #1
-	add	ip, ip, r5
-	lsl	ip, ip, #1
-	ldrh	ip, [r0, ip]
-	cmp	ip, #0
-	beq	.L21
-	ldr	ip, [r3, #24]
-	add	ip, r4, ip
-	sub	ip, ip, #1
-	add	r5, r5, ip, lsl #9
-	lsl	r5, r5, #1
-	ldrh	r0, [r0, r5]
-	cmp	r0, #0
-	beq	.L21
-	ldr	r1, [r3, #16]
-	sub	r1, lr, r1
-	str	r1, [r3, #8]
-	sub	r1, r1, r2
-.L22:
-	ldr	r0, .L46+12
-	ldr	r2, [r0]
-	sub	r2, r4, r2
-	stm	r3, {r1, r2}
-	pop	{r4, r5, lr}
+	mov	r3, #1
+	str	r5, [r4]
+	str	r3, [r4, #32]
+	ldr	r1, [r4, #12]
+.L19:
+	ldr	r3, [r4, #40]
+	cmp	r3, #0
+	ble	.L46
+	ldr	r3, .L48+12
+	ldr	r3, [r3, #8]
+	cmp	r3, r2
+	movgt	r3, #1
+	movle	r3, #0
+	str	r3, [r4, #44]
+	lsl	r3, r1, #9
+	bgt	.L47
+	sub	r0, r2, #1
+	add	r3, r0, r3
+	lsl	r3, r3, #1
+	ldrh	r3, [r6, r3]
+	cmp	r3, #0
+	beq	.L22
+	ldr	r3, [r4, #24]
+	add	r3, r1, r3
+	sub	r3, r3, #1
+	add	r0, r0, r3, lsl #9
+	lsl	r0, r0, #1
+	ldrh	r3, [r6, r0]
+	cmp	r3, #0
+	beq	.L22
+	ldr	r5, [r4, #16]
+	ldr	r3, [r7]
+	sub	r5, r2, r5
+	str	r5, [r4, #8]
+	sub	r5, r5, r3
+.L23:
+	ldr	r3, .L48+16
+	ldr	r3, [r3]
+	sub	r3, r1, r3
+	str	r5, [r4]
+	str	r3, [r4, #4]
+	pop	{r4, r5, r6, r7, r8, lr}
 	bx	lr
 .L17:
-	ldr	ip, [r3, #32]
-	cmp	ip, #0
-	beq	.L22
-	b	.L18
-.L44:
-	mov	lr, #0
-	mov	ip, #1
-	ldr	r0, .L46+16
-	ldr	r2, [r0]
-	sub	r2, r2, #1
-	str	r2, [r0]
-	str	lr, [r3, #32]
-	str	ip, [r3, #36]
-	b	.L22
-.L45:
-	ldr	r5, [r3, #28]
-	add	r5, lr, r5
-	add	ip, ip, r5
-	lsl	ip, ip, #1
-	ldrh	ip, [r0, ip]
-	cmp	ip, #0
+	ldr	r3, [r4, #32]
+	cmp	r3, #0
+	ldr	r1, [r4, #12]
 	beq	.L23
-	ldr	ip, [r3, #24]
-	add	ip, r4, ip
-	sub	ip, ip, #1
-	add	r5, r5, ip, lsl #9
-	lsl	r5, r5, #1
-	ldrh	r0, [r0, r5]
-	cmp	r0, #0
-	beq	.L23
-	ldr	r1, [r3, #16]
-	add	r1, lr, r1
-	str	r1, [r3, #8]
-	sub	r1, r1, r2
-	b	.L22
-.L21:
-	mov	r2, #1
-	str	r2, [r3, #44]
-	b	.L22
-.L23:
-	mov	r2, #0
-	str	r2, [r3, #44]
-	b	.L22
-.L47:
-	.align	2
+	b	.L19
 .L46:
+	mov	r3, #0
+	mov	ip, #1
+	ldr	r0, .L48+20
+	str	r3, [r4, #32]
+	ldr	r3, [r0]
+	ldr	r5, [r7]
+	sub	r3, r3, #1
+	str	r3, [r0]
+	str	ip, [r4, #36]
+	sub	r5, r2, r5
+	b	.L23
+.L47:
+	ldr	r0, [r4, #28]
+	add	r0, r2, r0
+	add	r3, r0, r3
+	lsl	r3, r3, #1
+	ldrh	r3, [r6, r3]
+	cmp	r3, #0
+	beq	.L24
+	ldr	r3, [r4, #24]
+	add	r3, r1, r3
+	sub	r3, r3, #1
+	add	r0, r0, r3, lsl #9
+	lsl	r0, r0, #1
+	ldrh	r3, [r6, r0]
+	cmp	r3, #0
+	beq	.L24
+	ldr	r5, [r4, #16]
+	ldr	r3, [r7]
+	add	r5, r2, r5
+	str	r5, [r4, #8]
+	sub	r5, r5, r3
+	b	.L23
+.L22:
+	mov	r3, #1
+	ldr	r5, [r7]
+	str	r3, [r4, #44]
+	sub	r5, r2, r5
+	b	.L23
+.L45:
+	ldr	r3, .L48+24
+	mov	lr, pc
+	bx	r3
+	mov	r2, #1
+	ldr	r3, .L48+28
+	ldr	r1, .L48+32
+	ldr	r0, .L48+36
+	mov	lr, pc
+	bx	r3
+	mov	r3, #1
+	ldr	r2, [r4, #8]
+	str	r3, [r8]
+	b	.L18
+.L24:
+	mov	r3, #0
+	ldr	r5, [r7]
+	str	r3, [r4, #44]
+	sub	r5, r2, r5
+	b	.L23
+.L49:
+	.align	2
+.L48:
 	.word	queenBee
 	.word	hOff
+	.word	.LANCHOR0
 	.word	player
 	.word	vOff
 	.word	remainingEnemiesL2
+	.word	stopSound
+	.word	playSoundA
+	.word	989182
+	.word	fastGame2
 	.size	updateQueenBee, .-updateQueenBee
 	.align	2
 	.global	drawQueenBee
@@ -265,11 +300,11 @@ drawQueenBee:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r2, .L56
+	ldr	r2, .L58
 	ldr	r3, [r2, #32]
 	cmp	r3, #0
 	push	{r4, r5, r6, r7, r8, lr}
-	beq	.L49
+	beq	.L51
 	ldr	r3, [r2]
 	lsl	r3, r3, #23
 	lsr	r3, r3, #23
@@ -278,42 +313,42 @@ drawQueenBee:
 	add	r0, r2, #52
 	ldm	r0, {r0, lr}
 	ldrb	ip, [r2, #4]	@ zero_extendqisi2
-	ldr	r1, .L56+4
+	ldr	r1, .L58+4
 	add	r2, r0, lr, lsl #5
 	strh	r3, [r1, #2]	@ movhi
 	strh	ip, [r1]	@ movhi
 	strh	r2, [r1, #4]	@ movhi
-.L51:
+.L53:
 	mov	r6, #512
-	ldr	r4, .L56+8
-	ldr	r7, .L56+12
+	ldr	r4, .L58+8
+	ldr	r7, .L58+12
 	add	r5, r4, #132
-.L50:
+.L52:
 	ldr	r3, [r4, #32]
 	cmp	r3, #0
-	beq	.L52
+	beq	.L54
 	mov	r0, r4
 	bl	drawStingers.part.0
-.L53:
+.L55:
 	add	r4, r4, #44
 	cmp	r4, r5
-	bne	.L50
+	bne	.L52
 	pop	{r4, r5, r6, r7, r8, lr}
 	bx	lr
-.L52:
+.L54:
 	ldr	r3, [r4, #36]
 	add	r3, r3, #71
 	lsl	r3, r3, #3
 	strh	r6, [r7, r3]	@ movhi
-	b	.L53
-.L49:
+	b	.L55
+.L51:
 	mov	r2, #512
-	ldr	r3, .L56+4
+	ldr	r3, .L58+4
 	strh	r2, [r3]	@ movhi
-	b	.L51
-.L57:
+	b	.L53
+.L59:
 	.align	2
-.L56:
+.L58:
 	.word	queenBee
 	.word	shadowOAM+560
 	.word	stingers
@@ -333,19 +368,29 @@ drawStingers:
 	ldr	r2, [r0, #32]
 	cmp	r2, #0
 	bne	drawStingers.part.0
-.L59:
+.L61:
 	mov	r1, #512
 	ldr	r3, [r0, #36]
-	ldr	r2, .L60
+	ldr	r2, .L62
 	add	r3, r3, #71
 	lsl	r3, r3, #3
 	strh	r1, [r2, r3]	@ movhi
 	bx	lr
-.L61:
+.L63:
 	.align	2
-.L60:
+.L62:
 	.word	shadowOAM
 	.size	drawStingers, .-drawStingers
+	.global	queenBeeSpawned
 	.comm	stingers,132,4
 	.comm	queenBee,64,4
+	.comm	soundB,32,4
+	.comm	soundA,32,4
+	.bss
+	.align	2
+	.set	.LANCHOR0,. + 0
+	.type	queenBeeSpawned, %object
+	.size	queenBeeSpawned, 4
+queenBeeSpawned:
+	.space	4
 	.ident	"GCC: (devkitARM release 53) 9.1.0"

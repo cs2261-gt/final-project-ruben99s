@@ -112,56 +112,11 @@ int collision(int colA, int rowA, int widthA, int heightA, int colB, int rowB, i
 
 typedef enum {LEFT, RIGHT};
 # 2 "main.c" 2
-# 1 "mainScreen.h" 1
-# 22 "mainScreen.h"
-extern const unsigned short mainScreenTiles[960];
 
 
-extern const unsigned short mainScreenMap[1024];
 
 
-extern const unsigned short mainScreenPal[256];
-# 3 "main.c" 2
-# 1 "gameScreen2.h" 1
-# 22 "gameScreen2.h"
-extern const unsigned short gameScreen2Tiles[32];
 
-
-extern const unsigned short gameScreen2Map[1024];
-
-
-extern const unsigned short gameScreen2Pal[256];
-# 4 "main.c" 2
-# 1 "pauseScreen.h" 1
-# 22 "pauseScreen.h"
-extern const unsigned short pauseScreenTiles[816];
-
-
-extern const unsigned short pauseScreenMap[1024];
-
-
-extern const unsigned short pauseScreenPal[256];
-# 5 "main.c" 2
-# 1 "winScreen.h" 1
-# 22 "winScreen.h"
-extern const unsigned short winScreenTiles[784];
-
-
-extern const unsigned short winScreenMap[1024];
-
-
-extern const unsigned short winScreenPal[256];
-# 6 "main.c" 2
-# 1 "loseScreen.h" 1
-# 22 "loseScreen.h"
-extern const unsigned short loseScreenTiles[800];
-
-
-extern const unsigned short loseScreenMap[1024];
-
-
-extern const unsigned short loseScreenPal[256];
-# 7 "main.c" 2
 
 # 1 "bg00.h" 1
 # 22 "bg00.h"
@@ -207,13 +162,7 @@ void initGame();
 void updateGame();
 void drawGame();
 # 12 "main.c" 2
-# 1 "spriteSheetTest.h" 1
-# 21 "spriteSheetTest.h"
-extern const unsigned short spriteSheetTestTiles[16384];
 
-
-extern const unsigned short spriteSheetTestPal[256];
-# 13 "main.c" 2
 # 1 "finalSpriteSheet.h" 1
 # 21 "finalSpriteSheet.h"
 extern const unsigned short finalSpriteSheetTiles[16384];
@@ -221,16 +170,7 @@ extern const unsigned short finalSpriteSheetTiles[16384];
 
 extern const unsigned short finalSpriteSheetPal[256];
 # 14 "main.c" 2
-# 1 "instructionScreen.h" 1
-# 22 "instructionScreen.h"
-extern const unsigned short instructionScreenTiles[1152];
 
-
-extern const unsigned short instructionScreenMap[1024];
-
-
-extern const unsigned short instructionScreenPal[256];
-# 15 "main.c" 2
 # 1 "FinalInstructionScreen.h" 1
 # 22 "FinalInstructionScreen.h"
 extern const unsigned short FinalInstructionScreenTiles[5616];
@@ -241,6 +181,46 @@ extern const unsigned short FinalInstructionScreenMap[1024];
 
 extern const unsigned short FinalInstructionScreenPal[256];
 # 16 "main.c" 2
+# 1 "finalMainScreen.h" 1
+# 22 "finalMainScreen.h"
+extern const unsigned short finalMainScreenTiles[4112];
+
+
+extern const unsigned short finalMainScreenMap[1024];
+
+
+extern const unsigned short finalMainScreenPal[256];
+# 17 "main.c" 2
+# 1 "finalLoseScreen.h" 1
+# 22 "finalLoseScreen.h"
+extern const unsigned short finalLoseScreenTiles[768];
+
+
+extern const unsigned short finalLoseScreenMap[1024];
+
+
+extern const unsigned short finalLoseScreenPal[256];
+# 18 "main.c" 2
+# 1 "finalWinScreen.h" 1
+# 22 "finalWinScreen.h"
+extern const unsigned short finalWinScreenTiles[1584];
+
+
+extern const unsigned short finalWinScreenMap[1024];
+
+
+extern const unsigned short finalWinScreenPal[256];
+# 19 "main.c" 2
+# 1 "finalPauseScreen.h" 1
+# 22 "finalPauseScreen.h"
+extern const unsigned short finalPauseScreenTiles[1936];
+
+
+extern const unsigned short finalPauseScreenMap[1024];
+
+
+extern const unsigned short finalPauseScreenPal[256];
+# 20 "main.c" 2
 
 # 1 "bg00Level1.h" 1
 # 22 "bg00Level1.h"
@@ -251,7 +231,7 @@ extern const unsigned short bg00Level1Map[2048];
 
 
 extern const unsigned short bg00Level1Pal[256];
-# 18 "main.c" 2
+# 22 "main.c" 2
 # 1 "bg01Level1.h" 1
 # 22 "bg01Level1.h"
 extern const unsigned short bg01Level1Tiles[8160];
@@ -261,7 +241,7 @@ extern const unsigned short bg01Level1Map[2048];
 
 
 extern const unsigned short bg01Level1Pal[256];
-# 19 "main.c" 2
+# 23 "main.c" 2
 # 1 "game1.h" 1
 
 
@@ -284,7 +264,7 @@ extern int playerHealth;
 void initGame1();
 void updateGame1();
 void drawGame1();
-# 20 "main.c" 2
+# 24 "main.c" 2
 
 # 1 "bg00Level2.h" 1
 # 22 "bg00Level2.h"
@@ -295,7 +275,7 @@ extern const unsigned short bg00Level2Map[2048];
 
 
 extern const unsigned short bg00Level2Pal[256];
-# 22 "main.c" 2
+# 26 "main.c" 2
 # 1 "game2.h" 1
 
 
@@ -318,7 +298,7 @@ extern int playerHealth;
 void initGame2();
 void updateGame2();
 void drawGame2();
-# 23 "main.c" 2
+# 27 "main.c" 2
 
 # 1 "sound.h" 1
 SOUND soundA;
@@ -336,22 +316,57 @@ void interruptHandler();
 void pauseSound();
 void unpauseSound();
 void stopSound();
-# 25 "main.c" 2
+
+void pauseSoundA();
+void pauseSoundB();
+void unPauseSoundA();
+void unPauseSoundB();
+void stopSoundA();
+void stopSoundB();
+# 29 "main.c" 2
 # 1 "News_Room_News.h" 1
 
 
 
 
 extern const signed char gameSong[1045440];
-# 26 "main.c" 2
+# 30 "main.c" 2
 # 1 "Pop.h" 1
 
 
 
 
-extern const signed char pop[8189];
-# 27 "main.c" 2
-# 35 "main.c"
+extern const signed char pop[3248];
+# 31 "main.c" 2
+# 1 "mainMenuSong.h" 1
+
+
+
+
+extern const signed char mainSong[2727936];
+# 32 "main.c" 2
+# 1 "game0Song.h" 1
+
+
+
+
+extern const signed char game0Song[2271168];
+# 33 "main.c" 2
+# 1 "calmGame2.h" 1
+
+
+
+
+extern const signed char calmGame2[881783];
+# 34 "main.c" 2
+# 1 "pauseSong.h" 1
+
+
+
+
+extern const signed char pauseSong[1289664];
+# 35 "main.c" 2
+# 43 "main.c"
 void initialize();
 void goToStart();
 void start();
@@ -450,6 +465,8 @@ void initialize() {
     setupSounds();
 
 
+
+
     goToStart();
 }
 
@@ -465,11 +482,16 @@ void goToStart() {
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
 
-    DMANow(3, mainScreenPal, ((unsigned short *)0x5000000), 256);
-    DMANow(3, mainScreenTiles, &((charblock *)0x6000000)[0], 1920/2);
-    DMANow(3, mainScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
+    DMANow(3, finalMainScreenPal, ((unsigned short *)0x5000000), 256);
+    DMANow(3, finalMainScreenTiles, &((charblock *)0x6000000)[0], 8224/2);
+    DMANow(3, finalMainScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
 
 
+    prevState = state;
+    if (prevState != INSTRUCTION) {
+        stopSound();
+        playSoundA(mainSong, 2727936, 1);
+    }
     state = START;
 }
 
@@ -481,6 +503,7 @@ void start() {
 
     }
     if ((!(~(oldButtons)&((1<<2))) && (~buttons & ((1<<2))))) {
+
         goToInstruction();
     }
 }
@@ -507,8 +530,13 @@ void goToGame() {
     DMANow(3, bg01Tiles, &((charblock *)0x6000000)[1], 14528/2);
     DMANow(3, bg01Map, &((screenblock *)0x6000000)[30], 4096/2);
 
-
     prevState = state;
+
+    if (prevState != PAUSE) {
+        stopSound();
+        playSoundA(game0Song, 2271168, 1);
+    }
+
     state = GAME;
 }
 
@@ -518,6 +546,7 @@ void game() {
     drawGame();
 
     if((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
+        pauseSound();
         goToPause();
     }
 
@@ -541,7 +570,7 @@ void game() {
 
 
 void goToGame1() {
-# 234 "main.c"
+# 256 "main.c"
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<9) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 96;
     (*(volatile unsigned short *)0x04000010) = 0;
@@ -559,6 +588,10 @@ void goToGame1() {
 
 
     prevState = state;
+    if (prevState != PAUSE) {
+        stopSound();
+        playSoundA(gameSong, 1045440, 1);
+    }
     state = GAME1;
 }
 
@@ -568,6 +601,7 @@ void game1() {
     drawGame1();
 
     if((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
+        pauseSound();
         goToPause();
     }
 
@@ -596,7 +630,7 @@ void game1() {
 
 
 void goToGame2() {
-# 298 "main.c"
+# 325 "main.c"
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 96;
     (*(volatile unsigned short *)0x04000010) = 0;
@@ -610,6 +644,10 @@ void goToGame2() {
     DMANow(3, bg00Level2Map, &((screenblock *)0x6000000)[28], 4096/2);
 
     prevState = state;
+    if (prevState != PAUSE) {
+        stopSound();
+        playSoundA(calmGame2, 881783, 1);
+    }
     state = GAME2;
 }
 
@@ -619,6 +657,7 @@ void game2() {
     drawGame2();
 
     if((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
+        pauseSound();
         goToPause();
     }
 
@@ -652,9 +691,11 @@ void goToPause() {
     (*(volatile unsigned short *)0x04000010) = 0;
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
-    DMANow(3, pauseScreenPal, ((unsigned short *)0x5000000), 256);
-    DMANow(3, pauseScreenTiles, &((charblock *)0x6000000)[0], 1632/2);
-    DMANow(3, pauseScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
+    DMANow(3, finalPauseScreenPal, ((unsigned short *)0x5000000), 256);
+    DMANow(3, finalPauseScreenTiles, &((charblock *)0x6000000)[0], 3872/2);
+    DMANow(3, finalPauseScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
+
+    playSoundB(pauseSong, 1289664, 1);
 
     prevState = state;
     state = PAUSE;
@@ -662,6 +703,8 @@ void goToPause() {
 
 void pause() {
     if((!(~(oldButtons)&((1<<3))) && (~buttons & ((1<<3))))) {
+        stopSoundB();
+        unPauseSoundA();
         if (prevState == GAME) {
             goToGame();
         } else if (prevState == GAME1) {
@@ -686,9 +729,9 @@ void goToWin() {
     (*(volatile unsigned short *)0x04000010) = 0;
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
-    DMANow(3, winScreenPal, ((unsigned short *)0x5000000), 256);
-    DMANow(3, winScreenTiles, &((charblock *)0x6000000)[0], 1568/2);
-    DMANow(3, winScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
+    DMANow(3, finalWinScreenPal, ((unsigned short *)0x5000000), 256);
+    DMANow(3, finalWinScreenTiles, &((charblock *)0x6000000)[0], 3168/2);
+    DMANow(3, finalWinScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
 
     prevState = state;
     state = WIN;
@@ -710,9 +753,9 @@ void goToLose() {
     (*(volatile unsigned short *)0x04000010) = 0;
     hideSprites();
     DMANow(3, shadowOAM, ((OBJ_ATTR*)(0x7000000)), 512);
-    DMANow(3, loseScreenPal, ((unsigned short *)0x5000000), 256);
-    DMANow(3, loseScreenTiles, &((charblock *)0x6000000)[0], 1600/2);
-    DMANow(3, loseScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
+    DMANow(3, finalLoseScreenPal, ((unsigned short *)0x5000000), 256);
+    DMANow(3, finalLoseScreenTiles, &((charblock *)0x6000000)[0], 1536/2);
+    DMANow(3, finalLoseScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
 
     prevState = state;
     state = LOSE;

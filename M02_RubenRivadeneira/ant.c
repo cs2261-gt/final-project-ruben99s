@@ -3,6 +3,8 @@
 #include "game1.h"
 #include "player.h"
 #include "balloon.h"
+#include "sound.h"
+#include "Pop.h"
 
 ANT ants[MAXANTS];
 int healthTimer;
@@ -103,6 +105,7 @@ void updateAnts(ANT *ant, const unsigned short *bitmap) {
                     }
                     
                     allBalloons[i].active = 0;
+                    playSoundB(pop, POPLEN, 0);
                 }
             }   
         }

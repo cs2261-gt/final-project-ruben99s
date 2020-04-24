@@ -255,9 +255,50 @@ void initHearts();
 void updateHearts();
 void drawHearts();
 # 5 "queenBee.c" 2
+# 1 "sound.h" 1
+SOUND soundA;
+SOUND soundB;
+
+
+
+void setupSounds();
+void playSoundA(const signed char* sound, int length, int loops);
+void playSoundB(const signed char* sound, int length, int loops);
+
+void setupInterrupts();
+void interruptHandler();
+
+void pauseSound();
+void unpauseSound();
+void stopSound();
+
+void pauseSoundA();
+void pauseSoundB();
+void unPauseSoundA();
+void unPauseSoundB();
+void stopSoundA();
+void stopSoundB();
+# 6 "queenBee.c" 2
+# 1 "fastGame2.h" 1
+
+
+
+
+extern const signed char fastGame2[989182];
+# 7 "queenBee.c" 2
+# 1 "calmGame2.h" 1
+
+
+
+
+extern const signed char calmGame2[881783];
+# 8 "queenBee.c" 2
 
 QUEENBEE queenBee;
 STINGER stingers[3];
+
+int queenBeeSpawned = 0;
+
 
 void initQueenBee() {
     queenBee.height = 64;
@@ -295,6 +336,11 @@ void initStingers() {
 void updateQueenBee(const unsigned short *bitmap) {
     int screenCol = queenBee.worldCol - hOff;
     if (screenCol >= 0 && screenCol < 240 && !queenBee.erased) {
+        if (!queenBeeSpawned) {
+            stopSound();
+            playSoundA(fastGame2, 989182, 1);
+            queenBeeSpawned = 1;
+        }
         queenBee.active = 1;
         queenBee.screenCol = screenCol;
     }
@@ -302,8 +348,15 @@ void updateQueenBee(const unsigned short *bitmap) {
     if (queenBee.active && queenBee.health <= 0) {
         queenBee.active = 0;
         queenBee.erased = 1;
+
         remainingEnemiesL2--;
     }
+
+
+
+
+
+
 
     if (queenBee.active) {
         if (player.worldCol <= queenBee.worldCol) {
