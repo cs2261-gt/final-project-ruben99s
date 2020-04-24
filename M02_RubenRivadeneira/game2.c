@@ -24,7 +24,7 @@ void initGame2() {
     vOff = 96;
     hOff = 0;
     direction = RIGHT; 
-    remainingEnemiesL2 = MAXBEES - 7; 
+    remainingEnemiesL2 = MAXBEES - 4; 
     numBalloons = 0;
     isPlayerEndL2 = 0;
     REG_BG0VOFF = vOff;

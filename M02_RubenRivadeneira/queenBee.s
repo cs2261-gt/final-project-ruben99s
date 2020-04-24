@@ -151,134 +151,176 @@ updateQueenBee:
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, r5, r6, r7, r8, lr}
-	ldr	r4, .L48
-	ldr	r7, .L48+4
-	ldr	r2, [r4, #8]
-	ldr	r5, [r7]
-	sub	r5, r2, r5
+	ldr	r4, .L60
+	ldr	r6, .L60+4
+	ldr	r3, [r4, #8]
+	ldr	r2, [r6]
+	sub	r5, r3, r2
 	cmp	r5, #239
-	mov	r6, r0
+	mov	r7, r0
 	bhi	.L17
-	ldr	r3, [r4, #36]
-	cmp	r3, #0
+	ldr	r1, [r4, #36]
+	cmp	r1, #0
 	bne	.L17
-	ldr	r8, .L48+8
-	ldr	r3, [r8]
-	cmp	r3, #0
-	beq	.L45
+	ldr	r8, .L60+8
+	ldr	r1, [r8]
+	cmp	r1, #0
+	beq	.L57
 .L18:
-	mov	r3, #1
+	mov	r1, #1
 	str	r5, [r4]
-	str	r3, [r4, #32]
+	str	r1, [r4, #32]
 	ldr	r1, [r4, #12]
 .L19:
-	ldr	r3, [r4, #40]
-	cmp	r3, #0
-	ble	.L46
-	ldr	r3, .L48+12
-	ldr	r3, [r3, #8]
-	cmp	r3, r2
-	movgt	r3, #1
-	movle	r3, #0
-	str	r3, [r4, #44]
-	lsl	r3, r1, #9
-	bgt	.L47
-	sub	r0, r2, #1
-	add	r3, r0, r3
-	lsl	r3, r3, #1
-	ldrh	r3, [r6, r3]
-	cmp	r3, #0
-	beq	.L22
-	ldr	r3, [r4, #24]
-	add	r3, r1, r3
-	sub	r3, r3, #1
-	add	r0, r0, r3, lsl #9
+	ldr	r0, [r4, #40]
+	cmp	r0, #0
+	ble	.L58
+	ldr	r0, .L60+12
+	ldr	r0, [r0, #8]
+	cmp	r0, #320
+	blt	.L59
+	cmp	r0, r3
+	movle	r0, #0
+	strle	r0, [r4, #44]
+	ble	.L23
+.L22:
+	mov	r0, #1
+	str	r0, [r4, #44]
+.L25:
+	ldr	r0, [r4, #28]
+	add	r0, r3, r0
+	add	ip, r0, r1, lsl #9
+	lsl	ip, ip, #1
+	ldrh	ip, [r7, ip]
+	cmp	ip, #0
+	beq	.L31
+	ldr	ip, [r4, #24]
+	add	ip, r1, ip
+	sub	ip, ip, #1
+	add	r0, r0, ip, lsl #9
 	lsl	r0, r0, #1
-	ldrh	r3, [r6, r0]
-	cmp	r3, #0
-	beq	.L22
+	ldrh	r0, [r7, r0]
+	cmp	r0, #0
+	beq	.L31
 	ldr	r5, [r4, #16]
-	ldr	r3, [r7]
-	sub	r5, r2, r5
-	str	r5, [r4, #8]
-	sub	r5, r5, r3
-.L23:
-	ldr	r3, .L48+16
+	add	r3, r3, r5
+	str	r3, [r4, #8]
+	ldr	ip, [r4, #44]
+	sub	r5, r3, r2
+	b	.L28
+.L17:
+	ldr	r1, [r4, #32]
+	cmp	r1, #0
+	ldr	r1, [r4, #12]
+	bne	.L19
+.L20:
+	ldr	ip, [r4, #44]
+.L28:
+	ldr	r3, .L60+16
 	ldr	r3, [r3]
-	sub	r3, r1, r3
+	cmp	ip, #0
+	sub	r1, r1, r3
 	str	r5, [r4]
-	str	r3, [r4, #4]
+	str	r1, [r4, #4]
+	bne	.L30
+.L32:
+	mov	r3, #16
+	str	r3, [r4, #52]
 	pop	{r4, r5, r6, r7, r8, lr}
 	bx	lr
-.L17:
-	ldr	r3, [r4, #32]
-	cmp	r3, #0
-	ldr	r1, [r4, #12]
+.L59:
+	cmp	r0, r3
+	bgt	.L22
+	ldr	ip, [r4, #44]
+	cmp	ip, #0
 	beq	.L23
-	b	.L19
-.L46:
-	mov	r3, #0
+	cmp	ip, #1
+	beq	.L25
+	ldr	r0, .L60+16
+	ldr	r0, [r0]
+	sub	r3, r3, r2
+	sub	r1, r1, r0
+	str	r3, [r4]
+	str	r1, [r4, #4]
+.L30:
+	cmp	ip, #1
+	beq	.L29
+	pop	{r4, r5, r6, r7, r8, lr}
+	bx	lr
+.L58:
+	mov	lr, #0
 	mov	ip, #1
-	ldr	r0, .L48+20
-	str	r3, [r4, #32]
+	ldr	r0, .L60+20
+	sub	r5, r3, r2
 	ldr	r3, [r0]
-	ldr	r5, [r7]
 	sub	r3, r3, #1
 	str	r3, [r0]
+	str	lr, [r4, #32]
 	str	ip, [r4, #36]
-	sub	r5, r2, r5
-	b	.L23
-.L47:
-	ldr	r0, [r4, #28]
-	add	r0, r2, r0
-	add	r3, r0, r3
-	lsl	r3, r3, #1
-	ldrh	r3, [r6, r3]
-	cmp	r3, #0
-	beq	.L24
-	ldr	r3, [r4, #24]
-	add	r3, r1, r3
-	sub	r3, r3, #1
-	add	r0, r0, r3, lsl #9
+	b	.L20
+.L23:
+	sub	r0, r3, #1
+	add	ip, r0, r1, lsl #9
+	lsl	ip, ip, #1
+	ldrh	ip, [r7, ip]
+	cmp	ip, #0
+	beq	.L27
+	ldr	ip, [r4, #24]
+	add	ip, r1, ip
+	sub	ip, ip, #1
+	add	r0, r0, ip, lsl #9
 	lsl	r0, r0, #1
-	ldrh	r3, [r6, r0]
-	cmp	r3, #0
-	beq	.L24
+	ldrh	r0, [r7, r0]
+	cmp	r0, #0
+	beq	.L27
 	ldr	r5, [r4, #16]
-	ldr	r3, [r7]
-	add	r5, r2, r5
-	str	r5, [r4, #8]
-	sub	r5, r5, r3
-	b	.L23
-.L22:
-	mov	r3, #1
-	ldr	r5, [r7]
-	str	r3, [r4, #44]
-	sub	r5, r2, r5
-	b	.L23
-.L45:
-	ldr	r3, .L48+24
+	sub	r3, r3, r5
+	str	r3, [r4, #8]
+	ldr	ip, [r4, #44]
+	sub	r5, r3, r2
+	b	.L28
+.L27:
+	mov	ip, #1
+	ldr	r0, .L60+16
+	ldr	r0, [r0]
+	sub	r3, r3, r2
+	sub	r1, r1, r0
+	str	r3, [r4]
+	str	r1, [r4, #4]
+	str	ip, [r4, #44]
+.L29:
+	mov	r3, #24
+	str	r3, [r4, #52]
+	pop	{r4, r5, r6, r7, r8, lr}
+	bx	lr
+.L57:
+	ldr	r3, .L60+24
 	mov	lr, pc
 	bx	r3
 	mov	r2, #1
-	ldr	r3, .L48+28
-	ldr	r1, .L48+32
-	ldr	r0, .L48+36
+	ldr	r3, .L60+28
+	ldr	r1, .L60+32
+	ldr	r0, .L60+36
 	mov	lr, pc
 	bx	r3
 	mov	r3, #1
-	ldr	r2, [r4, #8]
+	ldr	r2, [r6]
 	str	r3, [r8]
+	ldr	r3, [r4, #8]
 	b	.L18
-.L24:
-	mov	r3, #0
-	ldr	r5, [r7]
-	str	r3, [r4, #44]
-	sub	r5, r2, r5
-	b	.L23
-.L49:
+.L31:
+	mov	ip, #0
+	ldr	r0, .L60+16
+	ldr	r0, [r0]
+	sub	r3, r3, r2
+	sub	r1, r1, r0
+	str	r3, [r4]
+	str	r1, [r4, #4]
+	str	ip, [r4, #44]
+	b	.L32
+.L61:
 	.align	2
-.L48:
+.L60:
 	.word	queenBee
 	.word	hOff
 	.word	.LANCHOR0
@@ -300,11 +342,11 @@ drawQueenBee:
 	@ Function supports interworking.
 	@ args = 0, pretend = 0, frame = 0
 	@ frame_needed = 0, uses_anonymous_args = 0
-	ldr	r2, .L58
+	ldr	r2, .L70
 	ldr	r3, [r2, #32]
 	cmp	r3, #0
 	push	{r4, r5, r6, r7, r8, lr}
-	beq	.L51
+	beq	.L63
 	ldr	r3, [r2]
 	lsl	r3, r3, #23
 	lsr	r3, r3, #23
@@ -313,42 +355,42 @@ drawQueenBee:
 	add	r0, r2, #52
 	ldm	r0, {r0, lr}
 	ldrb	ip, [r2, #4]	@ zero_extendqisi2
-	ldr	r1, .L58+4
+	ldr	r1, .L70+4
 	add	r2, r0, lr, lsl #5
 	strh	r3, [r1, #2]	@ movhi
 	strh	ip, [r1]	@ movhi
 	strh	r2, [r1, #4]	@ movhi
-.L53:
+.L65:
 	mov	r6, #512
-	ldr	r4, .L58+8
-	ldr	r7, .L58+12
+	ldr	r4, .L70+8
+	ldr	r7, .L70+12
 	add	r5, r4, #132
-.L52:
+.L64:
 	ldr	r3, [r4, #32]
 	cmp	r3, #0
-	beq	.L54
+	beq	.L66
 	mov	r0, r4
 	bl	drawStingers.part.0
-.L55:
+.L67:
 	add	r4, r4, #44
 	cmp	r4, r5
-	bne	.L52
+	bne	.L64
 	pop	{r4, r5, r6, r7, r8, lr}
 	bx	lr
-.L54:
+.L66:
 	ldr	r3, [r4, #36]
 	add	r3, r3, #71
 	lsl	r3, r3, #3
 	strh	r6, [r7, r3]	@ movhi
-	b	.L55
-.L51:
+	b	.L67
+.L63:
 	mov	r2, #512
-	ldr	r3, .L58+4
+	ldr	r3, .L70+4
 	strh	r2, [r3]	@ movhi
-	b	.L53
-.L59:
+	b	.L65
+.L71:
 	.align	2
-.L58:
+.L70:
 	.word	queenBee
 	.word	shadowOAM+560
 	.word	stingers
@@ -368,19 +410,47 @@ drawStingers:
 	ldr	r2, [r0, #32]
 	cmp	r2, #0
 	bne	drawStingers.part.0
-.L61:
+.L73:
 	mov	r1, #512
 	ldr	r3, [r0, #36]
-	ldr	r2, .L62
+	ldr	r2, .L74
 	add	r3, r3, #71
 	lsl	r3, r3, #3
 	strh	r1, [r2, r3]	@ movhi
 	bx	lr
-.L63:
+.L75:
 	.align	2
-.L62:
+.L74:
 	.word	shadowOAM
 	.size	drawStingers, .-drawStingers
+	.align	2
+	.global	animateQueenBee
+	.syntax unified
+	.arm
+	.fpu softvfp
+	.type	animateQueenBee, %function
+animateQueenBee:
+	@ Function supports interworking.
+	@ args = 0, pretend = 0, frame = 0
+	@ frame_needed = 0, uses_anonymous_args = 0
+	@ link register save eliminated.
+	ldr	r3, .L79
+	ldr	r2, [r3, #44]
+	cmp	r2, #0
+	bne	.L77
+	mov	r2, #16
+	str	r2, [r3, #52]
+	bx	lr
+.L77:
+	cmp	r2, #1
+	moveq	r2, #24
+	streq	r2, [r3, #52]
+	bx	lr
+.L80:
+	.align	2
+.L79:
+	.word	queenBee
+	.size	animateQueenBee, .-animateQueenBee
 	.global	queenBeeSpawned
 	.comm	stingers,132,4
 	.comm	queenBee,64,4

@@ -366,6 +366,7 @@ void updateQueenBee(const unsigned short *bitmap);
 void updateStingers(STINGER *stinger);
 void drawQueenBee();
 void drawStingers(STINGER *stinger);
+void animateQueenBee();
 # 8 "game2.c" 2
 
 # 1 "bg00L2CollisionMap.h" 1
@@ -389,7 +390,7 @@ void initGame2() {
     vOff = 96;
     hOff = 0;
     direction = RIGHT;
-    remainingEnemiesL2 = 13 - 7;
+    remainingEnemiesL2 = 13 - 4;
     numBalloons = 0;
     isPlayerEndL2 = 0;
     (*(volatile unsigned short *)0x04000012) = vOff;

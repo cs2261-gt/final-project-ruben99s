@@ -450,7 +450,39 @@ void updateQueenBee(const unsigned short *bitmap);
 void updateStingers(STINGER *stinger);
 void drawQueenBee();
 void drawStingers(STINGER *stinger);
+void animateQueenBee();
 # 11 "player.c" 2
+# 1 "sound.h" 1
+SOUND soundA;
+SOUND soundB;
+
+
+
+void setupSounds();
+void playSoundA(const signed char* sound, int length, int loops);
+void playSoundB(const signed char* sound, int length, int loops);
+
+void setupInterrupts();
+void interruptHandler();
+
+void pauseSound();
+void unpauseSound();
+void stopSound();
+
+void pauseSoundA();
+void pauseSoundB();
+void unPauseSoundA();
+void unPauseSoundB();
+void stopSoundA();
+void stopSoundB();
+# 12 "player.c" 2
+# 1 "Pop.h" 1
+
+
+
+
+extern const signed char pop[3248];
+# 13 "player.c" 2
 
 PLAYER player;
 HEART healthMeter[20];
@@ -632,7 +664,7 @@ void updatePlayer(const unsigned short *bitmap, int *hOff, int *vOff, int level)
 
         jumpPower = 1500;
     }
-# 217 "player.c"
+# 219 "player.c"
     if((!(~(oldButtons)&((1<<0))) && (~buttons & ((1<<0)))) && player.balloonTimer >= 10) {
         playerAttack(level);
         player.balloonTimer = 0;
@@ -761,6 +793,7 @@ void playerAttack(int level) {
     }
 
     if (player.balloonType == CHEAT) {
+        playSoundB(pop, 3248, 0);
         if (level == 0 || level == 2) {
             for (int i = 0; i < 13; i++) {
                 if (bees[i].active && bees[i].screenCol >= 0 && bees[i].screenCol < 240) {

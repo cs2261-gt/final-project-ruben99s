@@ -71,9 +71,9 @@ void updateQueenBee(const unsigned short *bitmap) {
     // }
 
     if (queenBee.active) {
-        if (player.worldCol <= queenBee.worldCol) {
+        if (player.worldCol >= 320 && player.worldCol <= queenBee.worldCol) {
             queenBee.direction = LEFT;
-        } else {
+        } else if (player.worldCol > queenBee.worldCol) {
             queenBee.direction = RIGHT;
         }
 
@@ -100,6 +100,7 @@ void updateQueenBee(const unsigned short *bitmap) {
 
     queenBee.screenCol = queenBee.worldCol - hOff;
     queenBee.screenRow = queenBee.worldRow - vOff;
+    animateQueenBee();
 }
 
 void drawQueenBee() {
@@ -123,5 +124,13 @@ void drawStingers(STINGER *stinger) {
         shadowOAM[71 + stinger->num].attr2 = ATTR2_TILEID(0, stinger->curFrame) | ATTR2_PALROW(0); 
     } else {
         shadowOAM[71 + stinger->num].attr0 = ATTR0_HIDE;
+    }
+}
+
+void animateQueenBee() {
+    if (queenBee.direction == LEFT) {
+        queenBee.aniState = 16;
+    } else if (queenBee.direction == RIGHT) {
+        queenBee.aniState = 24;
     }
 }

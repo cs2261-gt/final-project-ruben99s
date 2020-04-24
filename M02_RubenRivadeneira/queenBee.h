@@ -47,3 +47,4 @@ void updateQueenBee(const unsigned short *bitmap);
 void updateStingers(STINGER *stinger);
 void drawQueenBee();
 void drawStingers(STINGER *stinger);
+void animateQueenBee();

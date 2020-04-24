@@ -8,6 +8,8 @@
 #include "game1.h"
 #include "game2.h"
 #include "queenBee.h"
+#include "sound.h"
+#include "Pop.h"
 
 PLAYER player;
 HEART healthMeter[numHearts];
@@ -342,6 +344,7 @@ void playerAttack(int level) {
     }
 
     if (player.balloonType == CHEAT) {
+        playSoundB(pop, POPLEN, 0);
         if (level == 0 || level == 2) {
             for (int i = 0; i < MAXBEES; i++) {
                 if (bees[i].active && bees[i].screenCol >= 0 && bees[i].screenCol < 240) {
