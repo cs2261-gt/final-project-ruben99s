@@ -32,6 +32,8 @@
 #include "game0Song.h"
 #include "calmGame2.h"
 #include "pauseSong.h"
+#include "winSong.h"
+#include "loseSong.h"
 
 /*Different sounds need to be added and there is a bug with
 the gravity that needs to be fixed as well. The instruction screen
@@ -424,6 +426,9 @@ void goToWin() {
     DMANow(3, finalWinScreenTiles, &CHARBLOCK[0], finalWinScreenTilesLen/2);
     DMANow(3, finalWinScreenMap, &SCREENBLOCK[28], finalWinScreenMapLen/2);
 
+    stopSound();
+    playSoundA(winSong, WINSONGLEN, 1);
+
     prevState = state;
     state = WIN;
 }
@@ -448,6 +453,9 @@ void goToLose() {
     DMANow(3, finalLoseScreenTiles, &CHARBLOCK[0], finalLoseScreenTilesLen/2);
     DMANow(3, finalLoseScreenMap, &SCREENBLOCK[28], finalLoseScreenMapLen/2);
 
+    stopSound();
+    playSoundA(loseSong, LOSESONGLEN, 1);
+    
     prevState = state;
     state = LOSE;
 }

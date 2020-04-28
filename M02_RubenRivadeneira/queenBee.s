@@ -107,8 +107,8 @@ initQueenBee:
 	@ frame_needed = 0, uses_anonymous_args = 0
 	push	{r4, lr}
 	mov	lr, #167
-	mov	r2, #0
 	mov	r4, #16
+	mov	r2, #0
 	mov	ip, #64
 	mov	r0, #1
 	ldr	r3, .L14
@@ -119,11 +119,13 @@ initQueenBee:
 	str	lr, [r3, #12]
 	ldr	r1, .L14+8
 	add	lr, lr, #227
-	str	lr, [r3, #8]
-	ldr	lr, .L14+12
-	str	r1, [r3, #40]
-	ldr	r1, .L14+16
 	str	r4, [r3, #52]
+	str	lr, [r3, #8]
+	ldr	r4, .L14+12
+	ldr	lr, .L14+16
+	str	r1, [r3, #40]
+	ldr	r1, .L14+20
+	str	r2, [r4]
 	str	r2, [lr]
 	pop	{r4, lr}
 	str	ip, [r3, #24]
@@ -144,6 +146,7 @@ initQueenBee:
 	.word	1500
 	.word	attackTimer
 	.word	healthTimer
+	.word	.LANCHOR0
 	.size	initQueenBee, .-initQueenBee
 	.align	2
 	.global	drawQueenBee

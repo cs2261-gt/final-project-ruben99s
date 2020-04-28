@@ -37,6 +37,7 @@ void initQueenBee() {
     attackTimer = 0;
     healthTimer = 0;
 
+    queenBeeSpawned = 0;
     initStingers();
 }
 

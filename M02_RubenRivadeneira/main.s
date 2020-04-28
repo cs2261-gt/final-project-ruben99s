@@ -629,15 +629,24 @@ goToWin:
 	ldr	r1, .L66+16
 	mov	lr, pc
 	bx	r4
-	mov	r3, #1024
 	mov	r0, #3
 	ldr	r2, .L66+20
 	ldr	r1, .L66+24
+	mov	r3, #1024
 	mov	lr, pc
 	bx	r4
-	mov	r0, #5
 	ldr	r3, .L66+28
-	ldr	r2, .L66+32
+	mov	lr, pc
+	bx	r3
+	mov	r2, #1
+	ldr	r1, .L66+32
+	ldr	r0, .L66+36
+	ldr	r3, .L66+40
+	mov	lr, pc
+	bx	r3
+	mov	r0, #5
+	ldr	r3, .L66+44
+	ldr	r2, .L66+48
 	ldr	r1, [r3]
 	pop	{r4, lr}
 	str	r0, [r3]
@@ -653,6 +662,10 @@ goToWin:
 	.word	finalWinScreenTiles
 	.word	100720640
 	.word	finalWinScreenMap
+	.word	stopSound
+	.word	378000
+	.word	winSong
+	.word	playSoundA
 	.word	state
 	.word	prevState
 	.size	goToWin, .-goToWin
@@ -716,15 +729,24 @@ goToLose:
 	ldr	r1, .L74+16
 	mov	lr, pc
 	bx	r4
-	mov	r3, #1024
 	mov	r0, #3
 	ldr	r2, .L74+20
 	ldr	r1, .L74+24
+	mov	r3, #1024
 	mov	lr, pc
 	bx	r4
-	mov	r0, #6
 	ldr	r3, .L74+28
-	ldr	r2, .L74+32
+	mov	lr, pc
+	bx	r3
+	mov	r2, #1
+	ldr	r1, .L74+32
+	ldr	r0, .L74+36
+	ldr	r3, .L74+40
+	mov	lr, pc
+	bx	r3
+	mov	r0, #6
+	ldr	r3, .L74+44
+	ldr	r2, .L74+48
 	ldr	r1, [r3]
 	pop	{r4, lr}
 	str	r0, [r3]
@@ -740,6 +762,10 @@ goToLose:
 	.word	finalLoseScreenTiles
 	.word	100720640
 	.word	finalLoseScreenMap
+	.word	stopSound
+	.word	330750
+	.word	loseSong
+	.word	playSoundA
 	.word	state
 	.word	prevState
 	.size	goToLose, .-goToLose

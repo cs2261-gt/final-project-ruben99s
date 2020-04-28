@@ -366,7 +366,21 @@ extern const signed char calmGame2[881783];
 
 extern const signed char pauseSong[1289664];
 # 35 "main.c" 2
-# 43 "main.c"
+# 1 "winSong.h" 1
+
+
+
+
+extern const signed char winSong[378000];
+# 36 "main.c" 2
+# 1 "loseSong.h" 1
+
+
+
+
+extern const signed char loseSong[330750];
+# 37 "main.c" 2
+# 45 "main.c"
 void initialize();
 void goToStart();
 void start();
@@ -570,7 +584,7 @@ void game() {
 
 
 void goToGame1() {
-# 256 "main.c"
+# 258 "main.c"
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<9) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 96;
     (*(volatile unsigned short *)0x04000010) = 0;
@@ -630,7 +644,7 @@ void game1() {
 
 
 void goToGame2() {
-# 325 "main.c"
+# 327 "main.c"
     (*(unsigned short *)0x4000000) = 0 | (1<<8) | (1<<12);
     (*(volatile unsigned short *)0x04000012) = 96;
     (*(volatile unsigned short *)0x04000010) = 0;
@@ -733,6 +747,9 @@ void goToWin() {
     DMANow(3, finalWinScreenTiles, &((charblock *)0x6000000)[0], 3168/2);
     DMANow(3, finalWinScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
 
+    stopSound();
+    playSoundA(winSong, 378000, 1);
+
     prevState = state;
     state = WIN;
 }
@@ -756,6 +773,9 @@ void goToLose() {
     DMANow(3, finalLoseScreenPal, ((unsigned short *)0x5000000), 256);
     DMANow(3, finalLoseScreenTiles, &((charblock *)0x6000000)[0], 1536/2);
     DMANow(3, finalLoseScreenMap, &((screenblock *)0x6000000)[28], 2048/2);
+
+    stopSound();
+    playSoundA(loseSong, 330750, 1);
 
     prevState = state;
     state = LOSE;
